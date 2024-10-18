@@ -17,7 +17,7 @@ document.getElementById('clickMe').addEventListener('click', () => {
     });
   });
 
-document.getElementById('scrape').addEventListener('click', () => {
+  document.getElementById('scrape').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       // Inject content.js dynamically
       chrome.scripting.executeScript({
@@ -35,28 +35,3 @@ document.getElementById('scrape').addEventListener('click', () => {
       });
     });
   });
-/*
-document.getElementById('scrapeButton').addEventListener('click', () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-            target: { tabId: tabs[0].id },
-            function: scrapeData
-        });
-    });
-});
-
-// The function to be injected into the current tab
-function scrapeData() {
-    const products = Array.from(document.querySelectorAll('.product')); // Change this selector as needed
-    const productData = products.map(product => {
-        return {
-            title: product.querySelector('.product-title').textContent,  // Adjust selectors
-            price: product.querySelector('.product-price').textContent,    // Adjust selectors
-            imageUrl: product.querySelector('.product-image img').src      // Adjust selectors
-        };
-    });
-
-    // Send the data back to the background or popup script
-    console.log(productData); // For demonstration; handle the data as needed
-}
-    */
