@@ -9,7 +9,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ status: 'Color changed' });
     }
     else if(request.action === 'scrapeSite') {
-        scrapeH1Tags(currentUrl);
+        //scrapeH1Tags(currentUrl);
+        scrapeSite();
         sendResponse({ status: 'Site Scraped' });
     }    
     }
@@ -41,12 +42,44 @@ async function scrapeH1Tags(url) {
   }
 }
 
+//another attempt at web scraping - it works in some places but not all, also only pulls some of the data
+async function scrapeSite() {
+
+  // Try extracting JSON-LD first
+  let jsonLDScript = document.querySelector('script[type="application/ld+json"]');
+  if (jsonLDScript) {
+      let productData = JSON.parse(jsonLDScript.textContent);
+      let productName = productData.name;
+      let productImage = productData.image;
+      let productPrice = productData.offers?.price;
+      console.log('jsonLD: ', { productName, productPrice, productImage });
+  }
+
+  // Fallback to Microdata
+  let productScope = document.querySelector('[itemscope][itemtype="https://schema.org/Product"]');
+  if (productScope) {
+      let productName = productScope.querySelector('[itemprop="name"]')?.innerText;
+      let productPrice = productScope.querySelector('[itemprop="price"]')?.content || productScope.querySelector('[itemprop="price"]')?.innerText;
+      let productImage = productScope.querySelector('[itemprop="image"]')?.src;
+      console.log('productScope: ', { productName, productPrice, productImage });
+  } 
+
+  // Fallback to Open Graph meta tags
+  let productName = document.querySelector('meta[property="og:title"]')?.content;
+  let productImage = document.querySelector('meta[property="og:image"]')?.content;
+  let productPrice = document.querySelector('meta[property="product:price:amount"]')?.content;
+  console.log('fallback: ', { productName, productPrice, productImage });
+
+}
+
+/*
 currentUrl = '';
 
 chrome.webNavigation.onCompleted.addListener((details) => {
   currentUrl = details.url; // Update the current URL when navigation is complete
-}, { url: [{ urlMatches: 'https://*/*' }] }); // Match all URLs or specific ones
+}, { url: [{ urlMatches: 'https://*//*' }] }); // Match all URLs or specific ones
 
 
+*/
 
 
