@@ -1,0 +1,204 @@
+html, body {
+    width: 300px;
+    height: 350px;
+    margin: 0;
+    padding: 0;
+    font-family: Tahoma, sans-serif;
+    justify-items: center;
+}
+
+body { 
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 10px; 
+    height: 10px; 
+}
+
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1; 
+    border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888; 
+    border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555; 
+}
+
+.extension-header {
+    justify-content: flex-start;
+    width: 100%;
+    align-items: center;
+    margin: 0 0 0 0;
+    position: fixed;  /* Fixes the header at the top */
+    top: 0;           /* Aligns the header to the top of the viewport */
+    left: 0;          /* Aligns the header to the left of the viewport */
+    width: 100%;      /* Ensures the header spans the full width */
+    background-color: #fff; /* Optional, for background color */
+    z-index: 1000;    /* Optional, makes sure the header stays above other content */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    padding: .2em;
+}
+
+.extension-header * {
+    display: inline-flex;
+    font-weight: lighter;
+}
+
+.extension-header h1 {
+    margin: 0 0 0 10px;
+    width: 75%;
+    font-weight: lighter;
+}
+
+.extension-header button {
+    background: none;
+    border: none;
+    width: auto;
+    font-size: 30px;
+    margin-left: 5%;
+}
+
+.extension-header button:hover{
+    cursor: pointer;
+}
+
+.organization-section {
+    margin-top: 60px;
+    width: 100%;
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 300px;
+    margin-top: 60px;
+}
+
+.expand-section {
+    background-color: rgb(255, 197, 88);
+    color: white;
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    transition: height 0.5s;
+    height: 45px;
+    overflow: hidden;
+}
+
+.expand-section-main-display > * {
+    display: inline-flex;
+    font-size: 14px;
+    margin: 0 auto;
+    padding: .5em 0;
+    font-weight: lighter;
+    color: rgb(224, 146, 1);
+}
+
+.expand-section-button { 
+    padding: 5%;
+    width: fit-content;
+    height: fit-content;
+    background: none;
+    border: none;
+    margin-right: 5px;
+    transition: transform .5s; 
+}
+
+.rotate {
+  transform: rotate(90deg); 
+}
+
+.expand-section-button:hover {
+    cursor: pointer;
+}
+
+.expand-section-title {
+    width: 72%;
+}
+
+.expand-section-items {
+    width: 5%;
+}
+
+.extension-footer { 
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 60px;
+    align-items: center;  
+    position: fixed;
+    bottom: 0;
+    position: fixed;  /* Fixes the header at the top */
+    left: 0;          /* Aligns the header to the left of the viewport */
+    width: 100%;      /* Ensures the header spans the full width */
+    background-color: #fff; /* Optional, for background color */
+    z-index: 1000;    /* Optional, makes sure the header stays above other content */
+    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    align-items: center;
+}
+
+
+.expand-section-expanded-display {
+    justify-items: center;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.shopping-item-container {
+    background-color: rgb(234, 176, 69);
+    border-radius: 10px;
+    height: 100px;
+    width: 90%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.shopping-item-image-container {
+    display: flex;
+    height: 80px;
+    width: 80px;
+    background-color: white;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.shopping-item-image-container img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.shopping-item-information-container {
+    margin-left: 5px;
+    width: 135px;
+}
+
+.shopping-item-information-container h4 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.extension-footer button {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    text-align: center;
+    border: 2px solid rgb(255, 197, 88);
+    background-color: rgb(247, 247, 247);
+    margin: 0 35px;
+}
+
+.extension-footer button:hover {
+    cursor: pointer;
+}
+
+.extension-footer button:active{
+    transform: translateY(1px);  /* Move the button down to simulate pressing */
+}
