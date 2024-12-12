@@ -3,20 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <title>Popup</title>
 </head>
 <body>
   <header class="extension-header">
     <h1>🐝BuyHive</h1>
-    <button id="close-button"> &#215; </button>
+    <button id="close-button"> &#10005; </button>
   </header>
-  <section class="organization-section"> 
-    <div class="expand-section">
+  <section id="organization-section" class="section"> 
+    <div class="expand-section" class="section">
       <section class="expand-section-main-display">
         <button class="expand-section-button"> ▶ </button>
         <h4 class="expand-section-title"> Section 1 </h4>
-        <h4 class="expand-section-items"> 5 </h4>
+        <h4 class="expand-section-items"> 1 </h4>
       </section>
       <section class="expand-section-expanded-display">
         <div class="shopping-item-container">
@@ -26,34 +27,26 @@
           <div class="shopping-item-information-container">
             <h4 class="shopping-item-name"> Spider Man Pillow </h4>
             <h4 class="shopping-item-price"> $4.99 </h4>
+            <div class="shopping-item-notes"></div>
           </div>
         </div>
       </section>
-    
     </div>
-    <div class="expand-section">
-      <section class="expand-section-main-display">
-        <button class="expand-section-button"> ▶ </button>
-        <h4 class="expand-section-title"> Section 1 </h4>
-        <h4 class="expand-section-items"> 5 </h4>
-      </section>
-      <section class="expand-section-expanded-display">
-      </section>
-        </div>
-    </div>
-    <div class="expand-section">
-      <section class="expand-section-main-display">
-        <button class="expand-section-button"> ▶ </button>
-        <h4 class="expand-section-title"> Section 1 </h4>
-        <h4 class="expand-section-items"> 5 </h4>
-      </section>
-    </div>
-    <div class="expand-section">
-      <section class="expand-section-main-display">
-        <button class="expand-section-button"> ▶ </button>
-        <h4 class="expand-section-title"> Section 1 </h4>
-        <h4 class="expand-section-items"> 5 </h4>
-      </section>
+  </section>
+  <section id="add-file-section"> 
+    <input type="text" id="file-title" placeholder="Folder Name"> 
+    <button type="button" id="submit-file"> ✓ </button>
+  </section>
+  <section id="add-item-section">
+    <div class="add-item-container">
+      <div class="add-item-image-container">
+        <img src="images/spider_man.png">
+      </div>
+      <div class="add-file-section">
+        <h4 class="add-item-name"> Spider Man Pillow </h4>
+        <h4 class="add-item-price"> $4.99 </h4>
+        <div class="add-item-notes"></div>
+      </div>
     </div>
   </section>
   <footer class="extension-footer"> 
