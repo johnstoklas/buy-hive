@@ -72,14 +72,6 @@ async function scrapeSite() {
 
 }
 
-/*
-currentUrl = '';
 
-chrome.webNavigation.onCompleted.addListener((details) => {
-  currentUrl = details.url; // Update the current URL when navigation is complete
-}, { url: [{ urlMatches: 'https://*//*' }] }); // Match all URLs or specific ones
-
-
-*/
 
 

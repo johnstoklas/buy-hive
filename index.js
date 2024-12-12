@@ -1,37 +1,119 @@
-document.getElementById('clickMe').addEventListener('click', () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      // Inject content.js dynamically
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        files: ['content.js']  // Ensure you're injecting content.js
-      }, () => {
-        // Send a message after content.js is injected
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'changeColor' }, (response) => {
-          if (response) {
-            console.log('Response from content script:', response.status);
-          } else {
-            console.log('No response from content script.');
-          }
-        });
-      });
-    });
-  });
+document.addEventListener('DOMContentLoaded', function() {
+  const buttonContainer = document.getElementById('organization-section');
 
-  document.getElementById('scrape').addEventListener('click', () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      // Inject content.js dynamically
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        files: ['content.js']  // Ensure you're injecting content.js
-      }, () => {
-        // Send a message after content.js is injected
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'scrapeSite' }, (response) => {
-          if (response) {
-            console.log('Response from content script:', response.status);
-          } else {
-            console.log('No response from content script.');
-          }
-        });
-      });
+  buttonContainer.addEventListener('click', function(event) {
+      if (event.target && event.target.classList.contains('expand-section-button')) {
+          rotateSection(event.target);
+      }
+  });
+});
+
+function rotateSection(button) {
+  const expandableSection = button.closest('.expand-section');
+  const expandedDisplay = expandableSection.querySelector('.expand-section-expanded-display');
+
+  if (expandableSection.style.height === "45px" || !expandableSection.style.height) {
+      const calculatedHeight = calculateTotalHeight(expandedDisplay);
+      expandableSection.style.height = calculatedHeight + "px"; 
+  } else {
+      expandableSection.style.height = "45px"; 
+  }
+
+  button.classList.toggle('rotate');
+}
+
+function calculateTotalHeight(expandedDisplay) {
+  const expandableSectionHeight = expandedDisplay.offsetHeight;
+  if(!expandableSectionHeight) {
+    return 45;
+  }
+  const totalHeight = expandableSectionHeight + 60;
+  return totalHeight;
+}
+
+document.getElementById('close-button').addEventListener('click', function() {
+  window.close(); 
+});
+
+const inputElement = document.getElementById('file-title');
+
+inputElement.addEventListener('keypress', function(event) {
+  if (event.key === 'Enter') {
+      handleSubmit();
+  }
+});
+
+document.getElementById('submit-file').addEventListener('click', function() {
+  handleSubmit();
+});
+
+function handleSubmit() {
+  const title = document.getElementById('file-title');
+  const titleTrimmed = title.value.trim();
+
+  if(titleTrimmed) {
+    const groupingSection = document.getElementById('organization-section');
+
+    const newDiv = document.createElement('div');
+    newDiv.innerHTML = `<div class="expand-section">
+                          <section class="expand-section-main-display">
+                            <button class="expand-section-button"> ▶ </button>
+                            <h4 class="expand-section-title"> ${titleTrimmed} </h4>
+                            <h4 class="expand-section-items"> 0 </h4>
+                          </section>
+                          <section class="expand-section-expanded-display">
+                          </section>
+                        </div>`
+    groupingSection.appendChild(newDiv);
+    title.value = '';
+  }
+}
+
+function addFileIn() {
+  const div = document.getElementById('add-file-section');
+  div.classList.remove('slide-out');
+  div.classList.add('slide-in');
+  div.style.display = 'flex'; 
+}
+
+function addFileOut() {
+  const div = document.getElementById('add-file-section');
+  div.classList.remove('slide-in');
+  div.classList.add('slide-out');
+  setTimeout(() => { 
+    div.style.display = 'none'; 
+  }, 400);
+}
+
+let addFileState = false;
+
+document.getElementById('section').addEventListener('click', function() {
+  if(!addFileState) {
+    addFileIn();
+  }
+  else {
+    addFileOut();
+  }
+  addFileState = !addFileState;
+});
+
+
+
+document.getElementById('scrape').addEventListener('click', () => {
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  // Inject content.js dynamically
+  chrome.scripting.executeScript({
+    target: { tabId: tabs[0].id },
+    files: ['content.js']  // Ensure you're injecting content.js
+  }, () => {
+    // Send a message after content.js is injected
+    chrome.tabs.sendMessage(tabs[0].id, { action: 'scrapeSite' }, (response) => {
+      if (response) {
+        console.log('Response from content script:', response.status);
+      } else {
+        console.log('No response from content script.');
+      }
     });
   });
+});
+});
