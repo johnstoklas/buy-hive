@@ -1,20 +1,19 @@
 #add-item-section {
-    margin-top: -150px;
+    margin-top: -200px;
     width: 260px;
-    height: 120px;
+    height: 160px;
     justify-items: center;
     background-color: #242424;
     border-radius: 10px;
-    display: inline-flex;
     justify-content: center;
-    align-items: center;
-    display: flex;
-    /*box-shadow: 0 4px 6px var(--shadow-color); /* Optional, for a subtle shadow */
+    box-shadow: 0 4px 6px var(--shadow-color); /* Optional, for a subtle shadow */
     color: white;
+    display: none;
+    overflow: hidden;
+    position: absolute;
 }
 
 .add-item-container {
-    background-color: #242424;
     border-radius: 10px;
     height: 100px;
     width: 90%;
@@ -30,9 +29,7 @@
     display: flex;
     height: 80px;
     width: 80px;
-    align-items: center;
     justify-content: center;
-    margin-left: 10px;
 }
 
 .add-item-image-container img {
@@ -63,9 +60,32 @@
 
 .add-item-notes {
     background-color: #2c2c2c;
-    width: 125px;
+    width: 140px;
     height: 45px;
     border-radius: 10px;
     margin-top: 5px;
     color: white;
+    box-sizing: border-box;
+    border-style: none;
+    font-size: 10px;
+}
+
+.add-item-notes:focus {
+    border: none; /* Remove the border */
+    outline: none; /* Remove the outline */
+    box-shadow: none;
+}
+
+#add-item-select-folder {
+    margin-top: 15px;
+    background-color: #2c2c2c;
+    border-style: none;
+    width: 220px;
+    color: white;
+}
+
+#add-item-select-folder:focus {
+    border: none; /* Remove the border */
+    outline: none; /* Remove the outline */
+    box-shadow: none;
 }

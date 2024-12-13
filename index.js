@@ -69,15 +69,20 @@ function handleSubmit() {
   }
 }
 
-function addFileIn() {
-  const div = document.getElementById('add-file-section');
+function popUpIn(item) {
+  const div = document.getElementById(item);
   div.classList.remove('slide-out');
   div.classList.add('slide-in');
-  div.style.display = 'flex'; 
+  if(item === 'add-file-section') {
+    div.style.display = 'flex'; 
+  }
+  else {
+    div.style.display = 'block'; 
+  }
 }
 
-function addFileOut() {
-  const div = document.getElementById('add-file-section');
+function popUpOut(item) {
+  const div = document.getElementById(item);
   div.classList.remove('slide-in');
   div.classList.add('slide-out');
   setTimeout(() => { 
@@ -85,18 +90,29 @@ function addFileOut() {
   }, 400);
 }
 
+
 let addFileState = false;
+let addItemState = false;
 
 document.getElementById('section').addEventListener('click', function() {
   if(!addFileState) {
-    addFileIn();
+    popUpIn('add-file-section');
   }
   else {
-    addFileOut();
+    popUpOut('add-file-section');
   }
   addFileState = !addFileState;
 });
 
+document.getElementById('scrape').addEventListener('click', function() {
+  if(!addItemState) {
+    popUpIn('add-item-section');
+  }
+  else {
+    popUpOut('add-item-section');
+  }
+  addItemState = !addItemState;
+});
 
 
 document.getElementById('scrape').addEventListener('click', () => {

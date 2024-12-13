@@ -5,11 +5,10 @@
     margin-top: -95px;
     background-color: #242424;
     color: var(--text-color);
-    width: 242px;
+    width: 240px;
     height: 35px;
     align-items: center;
     padding: 10px 10px 10px 10px;
-    margin-left: -2px;
     display: none;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
     border-radius: 10px;
@@ -51,39 +50,3 @@
 #submit-file:active {
     transform: translateY(1px);  /* Move the button down to simulate pressing */
 }
-
-@keyframes expandCenter {
-    from {
-        opacity: 0;
-        transform: scaleX(0); /* Start at the center with zero width */
-    }
-    to {
-        opacity: 1;
-        transform: scaleX(1); /* Expand to full width */
-    }
-}
-
-@keyframes slideIn {
-    from { 
-        transform: translateY(100%);
-        opacity: 0; 
-    }
-    to { 
-        transform: translateY(0); 
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(100%); opacity: 0; }
-}
-
-.slide-in {
-    animation: slideIn 0.5s ease-out;
-}
-
-.slide-out {
-    animation: slideOut 0.5s ease-out;
-}
-  
