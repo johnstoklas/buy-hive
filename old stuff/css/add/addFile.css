@@ -3,7 +3,7 @@
 #add-file-section { 
     position: fixed;
     margin-top: -95px;
-    background-color: #242424;
+    background-color: var(--background-color);
     color: var(--text-color);
     width: 240px;
     height: 35px;
@@ -21,23 +21,19 @@
     padding: 7px 0 7px 10px;
     font-size: 13px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
-    background-color: #292929;
-    color: white;
-}
-
-#file-title:active {
-    transform: translateY(1px);  /* Move the button down to simulate pressing */
+    background-color: #eaeaea;
+    color: black;
 }
 
 #submit-file {
     background: none;
     border: none;
-    color: white;
+    color: black;
     padding: 3px 5px;
     border-radius: 12px;
     height: 27px;
     width: 32px;
-    background-color: #292929;
+    background-color:var(--accent-color);
     font-size: 10px;
     margin-left: 5px;
     box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */

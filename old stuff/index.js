@@ -1,3 +1,10 @@
+// src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Extension from './extension/Extension';
+
+ReactDOM.render(<Extension />, document.getElementById('root'));
+
 document.addEventListener('DOMContentLoaded', function() {
   const buttonContainer = document.getElementById('organization-section');
 
@@ -33,6 +40,19 @@ function calculateTotalHeight(expandedDisplay) {
 
 document.getElementById('close-button').addEventListener('click', function() {
   window.close(); 
+});
+
+document.getElementById('profile').addEventListener('click', function() {
+  const signInPage = document.getElementById('sign-in-page');
+
+  console.log(signInPage.style.display);
+
+  if(signInPage.style.display === 'none' || !signInPage.style.display) {
+    signInPage.style.display = 'flex';
+  }
+  else {
+    signInPage.style.display = 'none';
+  }
 });
 
 const inputElement = document.getElementById('file-title');

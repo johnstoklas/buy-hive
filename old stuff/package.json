@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "supertokens-web-js": "^0.14.0"
+  }
+}

@@ -7,7 +7,7 @@
 }
 
 .shopping-item-container {
-    background-color: #242424;
+    background-color: var(--background-color);
     border-radius: 10px;
     height: 100px;
     width: 90%;
@@ -16,7 +16,7 @@
     align-items: center;
     display: flex;
     /*box-shadow: 0 4px 6px var(--shadow-color); /* Optional, for a subtle shadow */
-    color: white;
+    color: black;
 }
 
 .shopping-item-image-container {
@@ -55,7 +55,7 @@
 }
 
 .shopping-item-notes {
-    background-color: #2c2c2c;
+    background-color: #eaeaea;
     width: 125px;
     height: 45px;
     border-radius: 10px;

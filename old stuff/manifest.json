@@ -7,6 +7,10 @@
       "default_popup": "index.html",
       "default_icon": "images/spider_man.png"
     },
+    "background": { 
+      "scripts": ["background.js"], 
+      "persistent": false 
+    },
     "permissions": ["storage", "activeTab", "scripting", "webNavigation"],
     "content_scripts": [
         {

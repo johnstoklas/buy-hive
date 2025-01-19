@@ -23,16 +23,11 @@
     font-size: 18px;
     text-align: center;
     border:none;
-    background-color: var(--shadow-color);
-    box-shadow: 2px 0 5px var(--shadow-color); /* Optional, for a subtle shadow */
     margin: 0 35px;
+    background-color: white;
 }
 
 .extension-footer button:hover {
     cursor: pointer;
-    background-color: rgb(236, 236, 236);
-}
-
-.extension-footer button:active{
-    transform: translateY(1px);  /* Move the button down to simulate pressing */
+    background-color: var(--hover-color);
 }

@@ -23,7 +23,7 @@
 
 .extension-header h1 {
     margin: 0 0 0 10px;
-    width: 75%;
+    width: 170px;
     font-weight: 500;
     letter-spacing: .5px;
 }
@@ -31,14 +31,15 @@
 .extension-header button {
     background: none;
     border: none;
-    width: auto;
+    width: fit-content;
     font-size: 20px;
-    margin-left: 5%;
+    margin-left: 70px;
     height: 32px;
     width: 32px;
+    color: black;
 }
 
 .extension-header button:hover{
     cursor: pointer;
-    color: var(--background-color);
+    color: rgb(118, 118, 118);
 }

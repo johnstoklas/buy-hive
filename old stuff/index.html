@@ -10,8 +10,21 @@
 <body>
   <header class="extension-header">
     <h1>🐝BuyHive</h1>
-    <button id="close-button"> &#10005; </button>
+    <div>
+      <!--<button id="profile"> 👤 </button>
+      <button id="settings"> ⚙️ </button>-->
+      <button id="close-button"> &#10005; </button>
+    </div>
   </header>
+  <section id="sign-in-page">
+    <input placeholder="Username" id="username">
+    <input type="password" placeholder="Password" id="password">
+    <button id="submit-sign-in"> Sign In </button>
+    <div>
+      <p class="sign-up-question"> Don't have an account? </p>
+      <p id="sign-up-button"> Sign Up </p>
+    </div>
+  </section>
   <section id="organization-section" class="section"> 
     <div class="expand-section" class="section">
       <section class="expand-section-main-display">
@@ -34,7 +47,7 @@
     </div>
   </section>
   <section id="add-file-section"> 
-    <input type="text" id="file-title" placeholder="Folder Name"> 
+    <input type="text" id="file-title" placeholder="Folder Name" maxlength="22"> 
     <button type="button" id="submit-file"> ✓ </button>
   </section>
   <section id="add-item-section">
@@ -45,18 +58,23 @@
       <div class="add-item-information-container">
         <h4 class="add-item-name"> Spider Man Pillow </h4>
         <h4 class="add-item-price"> $4.99 </h4>
-        <input textarea class="add-item-notes"></input>
+        <textarea id="add-item-notes" placeholder="Notes"></textarea>
       </div>
     </div>
-    <select select id="add-item-select-folder">
-      <option value="" disabled selected>Select a folder</option>
-      <option value="1"> Option 1</option>
-      <option value="2"> Option 2</option>
-    </select>
+    <div class="add-item-organization-container">
+      <select select id="add-item-select-folder">
+        <option value="" disabled selected>Select a folder</option>
+        <option value="1"> Option 1</option>
+        <option value="2"> Option 2</option>
+      </select>
+      <button id="add-item"> Add Item </button>
+    </div>
+    
   </section>
   <footer class="extension-footer"> 
     <button id="scrape"> 🛒 </button>
     <button id="section"> 📁 </button>
+    <button id="profile"> ⚙️ </button>
   </footer>
   
   <div id="result"></div>
