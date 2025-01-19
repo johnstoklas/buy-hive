@@ -1,18 +1,21 @@
-const path = require('path');
+const path = require('path');  // This imports the 'path' module
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  entry: './src/index.js', // Adjust this based on your project structure
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    clean: true,  // This ensures the dist folder is cleaned before each build
+  entry: {
+    popup: './src/index.js',  // Entry point for popup
+    content: './content.js',  // Entry point for content script
   },
-  mode: 'production', // Ensure you're in the correct mode
+  output: {
+    filename: '[name].bundle.js',  // Output a separate file for each entry point
+    path: path.resolve(__dirname, 'dist'),  // Correctly resolve the path to the 'dist' folder
+    clean: true,  // Ensures the dist folder is cleaned before each build
+  },
+  mode: 'production',  // You can switch to 'development' for easier debugging
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/, // Handles both .js and .jsx files
+        test: /\.(js|jsx)$/,  // Handles both .js and .jsx files
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -22,15 +25,15 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/, // Add this rule to handle CSS files
-        use: ['style-loader', 'css-loader'], // Use both loaders
+        test: /\.css$/,  // Add this rule to handle CSS files
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
   plugins: [
     new Dotenv({
-      path: './.env', // Path to .env file (this is the default)
-      systemvars: true, // Add Node.js environment variables to process.env
+      path: './.env',  // Path to .env file (this is the default)
+      systemvars: true,  // Add Node.js environment variables to process.env
     }),
   ],
 };

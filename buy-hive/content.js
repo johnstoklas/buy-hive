@@ -1,3 +1,18 @@
+/*
+document.body.style.border = '5px solid red';
+console.log('Content script loaded');
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'sendTextContent') {
+      console.log(message.textContent);  // Handle the plain text here
+  }
+});
+*/
+
+
+
+
+
 /* Listen for messages from the popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'changeColor') {

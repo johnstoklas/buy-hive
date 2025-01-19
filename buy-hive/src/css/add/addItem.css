@@ -10,7 +10,14 @@
     overflow: hidden;
     display: block;
     position: fixed;
-    margin-top: -180px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0px;
+    transition: bottom 0.3s ease-in-out;
+}
+
+#add-item-section.visible {
+    bottom: 75px;
 }
 
 .add-item-container {
@@ -71,6 +78,7 @@
     text-wrap: wrap;
     resize: none;
     padding: 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #add-item-notes:focus {

@@ -1,8 +1,8 @@
 import React from 'react';
 
-const AddFile = ({ onAddSection, setFileName, fileName }) => (
+const AddFile = ({ onAddSection, setFileName, fileName, isVisible }) => (
   <>
-    <section id="add-file-section"> 
+    <section id="add-file-section" className={isVisible ? "visible" : ""}> 
         <input 
           type="text" 
           id="file-title" 

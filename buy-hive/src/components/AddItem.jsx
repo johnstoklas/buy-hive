@@ -1,8 +1,8 @@
 import React from 'react';
 
-const AddItem = () => (
+const AddItem = ({ isVisible, organizationSections }) => (
   <>
-    <section id="add-item-section">
+    <section id="add-item-section" className={isVisible ? "visible" : ""}>
         <div class="add-item-container">
         <div class="add-item-image-container">
             <img src="images/spider_man.png"></img>
@@ -16,8 +16,11 @@ const AddItem = () => (
         <div class="add-item-organization-container">
         <select select id="add-item-select-folder">
             <option value="" disabled selected>Select a folder</option>
-            <option value="1"> Option 1</option>
-            <option value="2"> Option 2</option>
+            {organizationSections.map((section) => (
+            <option key={section.id} value={section.title}>
+              {section.title}
+            </option>
+            ))}
         </select>
         <button id="add-item"> Add Item </button>
         </div>

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ExpandSection from './ExpandSection.jsx';
+import ModifyOrgSec from './ModifyOrgSec.jsx';
 
 function OrganizationSection({ title }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [sectionHeight, setSectionHeight] = useState('45px');
     const [expandSectionCount, setExpandSectionCount] = useState(0); // Initialize with a count of 2 for example
     const expandedSectionRef = useRef(null);
+    const [modifyOrgSec, setModifyOrgSec] = useState(false);
 
     const expandSectionClick = () => {
         setIsExpanded((prevState) => !prevState);
@@ -22,7 +24,12 @@ function OrganizationSection({ title }) {
         }
     }, [isExpanded]); 
 
+    const openModifySec = () => {
+        setModifyOrgSec(!modifyOrgSec)
+    }
+
     return (
+        <>
         <div
             className="expand-section-main-display section"
             style={{ height: sectionHeight, overflow: 'hidden', transition: 'height 0.3s ease' }}
@@ -36,7 +43,7 @@ function OrganizationSection({ title }) {
                 </button>
                 <h4 className="expand-section-title"> { title } </h4>
                 <h4 className="expand-section-items">{expandSectionCount}</h4> {/* Dynamically set the count */}
-                <button className="expand-section-share"> &#8942; </button>
+                <button className="expand-section-share" onClick={openModifySec}> &#8942; </button>
             </section>
 
             <div
@@ -50,6 +57,9 @@ function OrganizationSection({ title }) {
                 )}
             </div>
         </div>
+        {modifyOrgSec && <ModifyOrgSec />}
+        {/*<ModifyOrgSec />*/}
+        </>
     );
 }
 

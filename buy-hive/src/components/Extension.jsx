@@ -6,19 +6,22 @@ import OrganizationSection from './OrganizationSection.jsx';
 import AddFile from './AddFile.jsx';
 
 const Extension = () => {
-    const [organizationSections, setOrganizationSections] = useState([]); // Start with no sections
+    const [organizationSections, setOrganizationSections] = useState([
+      { id: 0, title: 'Test Section 1' }
+    ]); // Start with no sections
     const [fileName, setFileName] = useState('');
 
     // Function to add a new OrganizationSection when the button is clicked
     const handleAddSection = (newFileName) => {
       if (newFileName.trim()) {
-          setOrganizationSections((prevSections) => [
-              ...prevSections,
-              <OrganizationSection key={prevSections.length} title={newFileName} />
-          ]);
+        setOrganizationSections((prevSections) => [
+          ...prevSections,
+          { id: prevSections.length, title: newFileName } // Store only the data
+        ]);
       }
-      setFileName('');
+      setFileName(''); // Reset fileName after adding
     };
+    
 
     return (
         <>
@@ -30,13 +33,16 @@ const Extension = () => {
                     <p> Click 📁 to get started! </p>  
                   </div>
                 ) : (
-                    organizationSections 
+                  organizationSections.map((section) => (
+                    <OrganizationSection key={section.id} title={section.title} />
+                ))
                 )}
             </section>
             <Footer 
               fileName={fileName} 
               setFileName={setFileName}
               handleAddSection={handleAddSection}
+              organizationSections={organizationSections}
             />
         </>
     );
