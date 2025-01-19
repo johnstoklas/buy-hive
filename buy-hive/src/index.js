@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Extension from './Extension.jsx'; // Import your main Extension component
+import Extension from './components/Extension.jsx'; // Import your main Extension component
 import { Auth0Provider } from '@auth0/auth0-react';
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;

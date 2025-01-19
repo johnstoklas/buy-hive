@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './css/base/footer.css'
+import '../css/base/footer.css'
 import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
 import SignInPage from './SignInPage.jsx';

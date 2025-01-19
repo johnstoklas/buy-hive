@@ -1,5 +1,5 @@
 import React from 'react';
-import './css/base/header.css'
+import '../css/base/header.css'
 
 function Header() {
     const handleCloseClick = () => {
