@@ -3,7 +3,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("Message received in background:", message);
+    //console.log("Message received in background:", message);
 
     if (message.action === "scrapePage") {
         // Get the current tab information

@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
+import EditPopup from './EditPopup.jsx';
 
-const ModifyOrgSec = ({ onAddSection, setFileName, fileName, isVisible }) => (
+const ModifyOrgSec = ({ updateFileName, newFileName }) => {
+  const [editPopupVisible, setEditPopupVisible] = useState(false);
+
+  const toggleEditPopup = () => {
+    console.log(!editPopupVisible);
+    setEditPopupVisible(!editPopupVisible);
+  }
+
+  return (
   <>
+    {editPopupVisible && <EditPopup 
+      newFileName={newFileName}
+      updateFileName={updateFileName}
+      setIsVisible={setEditPopupVisible}
+    />}
     <div className="modify-org-sec">
-        <button>Edit</button>
+        <button onClick={toggleEditPopup}>Edit</button>
         <button>Share</button>
-        <button>Delete</button>
+        <button className="delete-button">Delete</button>
     </div>
   </>
-);
+  );
+};
 
 export default ModifyOrgSec;

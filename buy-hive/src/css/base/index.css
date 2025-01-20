@@ -42,4 +42,7 @@ input[type="text"]:focus {
 .slide-out {
     animation: slideOut 0.5s ease-out;
 }
-  
+
+.delete-button {
+    color: var(--delete-color);
+}

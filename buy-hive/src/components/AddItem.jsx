@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-const AddItem = ({ isVisible, organizationSections }) => (
+const AddItem = ({ isVisible, organizationSections }) => {
+  return(
   <>
     <section id="add-item-section" className={isVisible ? "visible" : ""}>
         <div class="add-item-container">
@@ -26,6 +27,7 @@ const AddItem = ({ isVisible, organizationSections }) => (
         </div>
     </section>
   </>
-);
+  )
+};
 
 export default AddItem;

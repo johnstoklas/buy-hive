@@ -57,10 +57,6 @@
     margin: 6px 0 2px 0;
 }
 
-#sign-in-page div {
-    display: inline-flex;
-}
-
 #sign-up-button {
     font-weight: 500;
     margin: 6px 0 2px 4px;
