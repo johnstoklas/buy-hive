@@ -1,4 +1,19 @@
-// Listen for messages from the popup
+/*
+document.body.style.border = '5px solid red';
+console.log('Content script loaded');
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'sendTextContent') {
+      console.log(message.textContent);  // Handle the plain text here
+  }
+});
+*/
+
+
+
+
+
+/* Listen for messages from the popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'changeColor') {
       // Change the color of all paragraphs to red
@@ -71,14 +86,6 @@ async function scrapeSite() {
   console.log('fallback: ', { productName, productPrice, productImage });
 
 }
-
-/*
-currentUrl = '';
-
-chrome.webNavigation.onCompleted.addListener((details) => {
-  currentUrl = details.url; // Update the current URL when navigation is complete
-}, { url: [{ urlMatches: 'https://*//*' }] }); // Match all URLs or specific ones
-
 
 */
 

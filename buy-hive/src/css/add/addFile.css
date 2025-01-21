@@ -1,0 +1,58 @@
+@import '../variable.css';
+
+#add-file-section { 
+    position: fixed;
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    width: 250px;
+    height: 35px;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    border-radius: 10px;
+    display: flex;
+    left: 50%;
+    transform: translate(-50%, -140%);
+    transition: transform 0.3s ease-in;
+}
+
+.slide-in {
+    transform: translate(-50%, 0);
+}
+
+.slide-out {
+    transform: translate(-50%, 110%);
+}
+
+#file-title {
+    width: 80%;
+    border: none;
+    border-radius: 25px;
+    padding: 7px 0 7px 10px;
+    font-size: 13px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    background-color: #eaeaea;
+    color: black;
+}
+
+#submit-file {
+    background: none;
+    border: none;
+    color: black;
+    padding: 3px 5px;
+    border-radius: 12px;
+    height: 27px;
+    width: 32px;
+    background-color:var(--accent-color);
+    font-size: 10px;
+    margin-left: 5px;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+}
+
+#submit-file:hover {
+    cursor: pointer;
+}
+
+#submit-file:active {
+    transform: translateY(1px);  /* Move the button down to simulate pressing */
+}
