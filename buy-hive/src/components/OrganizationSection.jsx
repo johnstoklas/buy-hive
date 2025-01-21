@@ -51,16 +51,23 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
             id={sectionId}
         >
             <section className="expand-section">
-                <button
-                    className={`expand-section-button ${isExpanded && (expandSectionCount > 0) ? 'rotate' : ''}`}
-                    onClick={expandSectionClick}
-                >
-                    ▶
-                </button>
-                <h4 className="expand-section-title"> { sectionTitle } </h4>
-                <h4 className="expand-section-items">{expandSectionCount}</h4> {/* Dynamically set the count */}
-                <button className="expand-section-share" onClick={openModifySec}> &#8942; </button>
+                <div className="expand-section-content">
+                    <button
+                        className={`expand-section-button ${isExpanded && (expandSectionCount > 0) ? 'rotate' : ''}`}
+                        onClick={expandSectionClick}
+                    >
+                        ▶
+                    </button>
+                    <h4 className="expand-section-title"> { sectionTitle } </h4>
+                    <h4 className="expand-section-items">{expandSectionCount}</h4> {/* Dynamically set the count */}
+                    <button className="expand-section-share" onClick={openModifySec}> &#8942; </button>
+                </div>
             </section>
+            {modifyOrgSec && <ModifyOrgSec 
+                newFileName={sectionTitle}
+                updateFileName={setSectionTitle}
+                />}
+            {/*<ModifyOrgSec />*/}
 
             <div
                 className="expand-section-expanded-display"
@@ -73,11 +80,6 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
                 )}
             </div>
         </div>
-        {modifyOrgSec && <ModifyOrgSec 
-            newFileName={sectionTitle}
-            updateFileName={setSectionTitle}
-        />}
-        {/*<ModifyOrgSec />*/}
         </>
     );
 }
