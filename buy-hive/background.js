@@ -18,9 +18,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         func: getTextContent
                     },
                     (injectionResults) => {
-                        const textContent = injectionResults[0].result;  // Extracted content
+                        const textContent = injectionResults[0].result; // Extracted content
                         console.log("Scraped content:", textContent);
-                        sendResponse({ action: 'scrapeComplete', textContent: textContent });
+
+                        // Make a POST request to your backend
+                        fetch("http://127.0.0.1:8000/extract", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "text/plain",
+                            },
+                            body: textContent, // Send the extracted textContent
+                        })
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then((data) => {
+                                console.log("Response from backend:", data);
+                                // Send response back to the frontend
+                                sendResponse({ action: "scrapeComplete", result: data });
+                            })
+                            .catch((error) => {
+                                console.error("Error sending request to backend:", error);
+                                sendResponse({ action: "scrapeFailed", error: error.message });
+                            });
                     }
                 );
             }
@@ -32,5 +55,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 function getTextContent() {
-    return document.body.innerText || document.body.textContent;  // Extract plain text
+    return document.body.innerText || document.body.textContent; // Extract plain text
 }
