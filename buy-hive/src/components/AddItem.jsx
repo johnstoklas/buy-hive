@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const AddItem = ({ isVisible, organizationSections, scrapedData, errorData }) => {
-  
+  const cartItem = scrapedData?.cart_items?.[0];
 
   return(
   <>
@@ -17,10 +17,10 @@ const AddItem = ({ isVisible, organizationSections, scrapedData, errorData }) =>
         </div>
         <div class="add-item-information-container">
             <h4 class="add-item-name"> 
-              {scrapedData?.product_name}
+              {cartItem.product_name}
             </h4>
             <h4 class="add-item-price">
-              {scrapedData?.price}  
+              {cartItem.price}  
             </h4>
             <textarea id="add-item-notes" placeholder="Notes"></textarea>
         </div>

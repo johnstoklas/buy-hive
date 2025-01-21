@@ -31,15 +31,14 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
 
     const handleScrapeClick = () => {
         // Send a message to the background script to scrape the page
-        chrome.runtime.sendMessage({ action: "scrapePage" });
-        (response) => {
+        chrome.runtime.sendMessage({ action: "scrapePage" }, (response) => {
             if(response?.action === 'scrapeComplete') {
                 setScrapedData(response.result);
             }
             else if (response?.action === 'scrapeFailed') {
                 setError(response.error);
             }
-        }
+        });
         setAddItemState(!addItemState);  // Toggle the state for rendering AddItem component
         setAddFileState(false);
         setSignInState(false);
