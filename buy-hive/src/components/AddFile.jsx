@@ -2,7 +2,7 @@ import React from 'react';
 
 const AddFile = ({ onAddSection, setFileName, fileName, isVisible }) => (
   <>
-    <section id="add-file-section" className={isVisible ? "visible" : ""}> 
+    <section id="add-file-section" className={isVisible ? "slide-in" : "slide-out"}> 
         <input 
           type="text" 
           id="file-title" 

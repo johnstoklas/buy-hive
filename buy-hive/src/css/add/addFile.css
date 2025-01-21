@@ -12,13 +12,16 @@
     border-radius: 10px;
     display: flex;
     left: 50%;
-    transform: translateX(-50%);
-    bottom: -100px;
-    transition: bottom 0.3s ease-in;
+    transform: translate(-50%, -140%);
+    transition: transform 0.3s ease-in;
 }
 
-#add-file-section.visible {
-    bottom: 75px;
+.slide-in {
+    transform: translate(-50%, 0);
+}
+
+.slide-out {
+    transform: translate(-50%, 110%);
 }
 
 #file-title {

@@ -140,3 +140,7 @@
     outline: none;
     transform: translateY(1px);
 }
+
+.processing-add-item {
+    margin-top: 70px;
+}

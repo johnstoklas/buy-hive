@@ -1,16 +1,27 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const AddItem = ({ isVisible, organizationSections }) => {
+const AddItem = ({ isVisible, organizationSections, scrapedData, errorData }) => {
+  
+
   return(
   <>
     <section id="add-item-section" className={isVisible ? "visible" : ""}>
+      {errorData
+        ? ( <h4 className="processing-add-item"> `Error: ${errorData}` </h4>)
+        : scrapedData 
+        ? (
+        <>
         <div class="add-item-container">
         <div class="add-item-image-container">
             <img src="images/spider_man.png"></img>
         </div>
         <div class="add-item-information-container">
-            <h4 class="add-item-name"> Spider Man Pillow </h4>
-            <h4 class="add-item-price"> $4.99 </h4>
+            <h4 class="add-item-name"> 
+              {scrapedData?.product_name}
+            </h4>
+            <h4 class="add-item-price">
+              {scrapedData?.price}  
+            </h4>
             <textarea id="add-item-notes" placeholder="Notes"></textarea>
         </div>
         </div>
@@ -24,7 +35,11 @@ const AddItem = ({ isVisible, organizationSections }) => {
             ))}
         </select>
         <button id="add-item"> Add Item </button>
-        </div>
+        </div> 
+        </>
+        )
+        : ( <h4 className="processing-add-item"> Loading... </h4> )
+      }
     </section>
   </>
   )

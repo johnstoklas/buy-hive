@@ -10,6 +10,9 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
     const [signInState, setSignInState] = useState(false);
     const [outerHtml, setOuterHtml] = useState(''); // Store the text content here
 
+    const [scrapedData, setScrapedData] = useState(null);
+    const [error, setError] = useState(null);
+
     useEffect(() => {
         const messageListener = (message) => {
             if (message.action === 'scrapeComplete') {
@@ -29,6 +32,14 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
     const handleScrapeClick = () => {
         // Send a message to the background script to scrape the page
         chrome.runtime.sendMessage({ action: "scrapePage" });
+        (response) => {
+            if(response?.action === 'scrapeComplete') {
+                setScrapedData(response.result);
+            }
+            else if (response?.action === 'scrapeFailed') {
+                setError(response.error);
+            }
+        }
         setAddItemState(!addItemState);  // Toggle the state for rendering AddItem component
         setAddFileState(false);
         setSignInState(false);
@@ -36,11 +47,13 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
 
     const handleFileClick = () => {
         setAddFileState((prevState) => {
+            /*
             // Force a reflow before toggling the state
             setTimeout(() => {
                 const addFileSection = document.getElementById('add-file-section');
                 addFileSection.offsetHeight; // Trigger reflow
             }, 0);
+            */
 
             return !prevState;
         });
@@ -59,6 +72,8 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
             {addItemState && <AddItem  
                 isVisible={addItemState}
                 organizationSections={organizationSections}
+                scrapedData={scrapedData}
+                errorData={error}
             />}
             {addFileState && <AddFile 
                 onAddSection={handleAddSection}
