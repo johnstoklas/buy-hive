@@ -30,6 +30,8 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
         // Send a message to the background script to scrape the page
         chrome.runtime.sendMessage({ action: "scrapePage" });
         setAddItemState(!addItemState);  // Toggle the state for rendering AddItem component
+        setAddFileState(false);
+        setSignInState(false);
     };
 
     const handleFileClick = () => {
@@ -42,10 +44,14 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
 
             return !prevState;
         });
+        setAddItemState(false);
+        setSignInState(false);
     };
 
     const signInClick = () => {
         setSignInState(!signInState);
+        setAddFileState(false);
+        setAddItemState(false);
     };
 
     return (

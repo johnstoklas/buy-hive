@@ -6,4 +6,6 @@
 @import './groupings/shoppingItem.css';
 @import './add/addItem.css';
 @import './signIn/signInPage.css';
-@import './groupings/modifyOrgSec.css';
+@import './modification/modifyOrgSec.css';
+@import './modification/editPopup.css';
+@import './signIn/profile.css';

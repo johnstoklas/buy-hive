@@ -28,7 +28,11 @@
     margin-top: 0px;
 }
 
-.expand-section > * {
+.expand-section {
+    overflow: visible;
+}
+
+.expand-section-content > * {
     display: inline-flex;
     font-size: 14px;
     margin: 0 auto;

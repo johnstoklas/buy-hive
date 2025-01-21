@@ -3,7 +3,6 @@ import '../css/main.css';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
 import OrganizationSection from './OrganizationSection.jsx';
-import AddFile from './AddFile.jsx';
 
 const Extension = () => {
     const [organizationSections, setOrganizationSections] = useState([
@@ -21,8 +20,17 @@ const Extension = () => {
       }
       setFileName(''); // Reset fileName after adding
     };
-    
 
+    const updateSectionTitle = (updatedTitle, sectionId) => {
+      setOrganizationSections(prevSections =>
+          prevSections.map(section =>
+              section.id === sectionId
+                  ? { ...section, title: updatedTitle }
+                  : section
+          )
+      );
+    };
+  
     return (
         <>
             <Header />
@@ -34,7 +42,12 @@ const Extension = () => {
                   </div>
                 ) : (
                   organizationSections.map((section) => (
-                    <OrganizationSection key={section.id} title={section.title} />
+                    <OrganizationSection 
+                      sectionId={section.id} 
+                      title={section.title} 
+                      sectionTitle={section.title}
+                      updateSectionTitle={updateSectionTitle}
+                    />
                 ))
                 )}
             </section>

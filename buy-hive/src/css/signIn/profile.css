@@ -1,0 +1,27 @@
+.profile-info {
+    display: inline-flex;
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+.profile-name-info {
+    display: block;
+    margin-left: 20px;
+}
+
+.profile-name-info * {
+    margin: 0;
+}
+
+.profile-name-info h2 {
+    font-weight: 600;
+}
+
+.profile-name-info h4 {
+    font-weight: 300;
+}

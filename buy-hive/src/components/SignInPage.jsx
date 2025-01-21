@@ -16,8 +16,9 @@ const SignInPage = () => {
         {!error && !isLoading && (
           <>
             <LoginButton />
-            <LogoutButton />
+            
             <Profile />
+            <LogoutButton />
           </>
         )}
           {/*
