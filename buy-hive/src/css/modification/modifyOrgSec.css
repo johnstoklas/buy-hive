@@ -9,6 +9,10 @@
     position: absolute;
 }
 
+.hidden {
+    display: none;
+}
+
 .modify-org-sec button {
     width: 60px;
     height: 25px;

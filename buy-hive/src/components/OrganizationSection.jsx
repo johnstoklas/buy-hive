@@ -5,15 +5,13 @@ import ModifyOrgSec from './ModifyOrgSec.jsx';
 function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [sectionHeight, setSectionHeight] = useState('45px');
-    const [expandSectionCount, setExpandSectionCount] = useState(0); // Initialize with a count of 2 for example
+    const [expandSectionCount, setExpandSectionCount] = useState(0); 
     const expandedSectionRef = useRef(null);
     const [modifyOrgSec, setModifyOrgSec] = useState(false);
+    const [modOrgHidden, setModOrgHidden] = useState(false);
     const [sectionTitle, setSectionTitle] = useState(title);
 
-    const expandSectionClick = () => {
-        setIsExpanded(!isExpanded);
-    };
-
+    // Dynamically updates the file name 
     useEffect(() => {
         if(newFileName) {
             setSectionTitle(newFileName);
@@ -21,6 +19,14 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
         }
     }, [newFileName]);
 
+    // Sends modified title so that it can be updated elsewhere in the extension
+    useEffect(() => {
+        if (sectionTitle !== title) {
+            updateSectionTitle(sectionTitle, sectionId); 
+        }
+    }, [sectionTitle, sectionId, updateSectionTitle]); 
+
+    // When a file is opened the file expands to show contents
     useEffect(() => {
         if (expandedSectionRef.current) {
             const expandedDisplayHeight = expandedSectionRef.current.scrollHeight; 
@@ -32,16 +38,16 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
         }
     }, [isExpanded]); 
 
+    const expandSectionClick = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    // Opens modification screen when three circle button is pressed
     const openModifySec = () => {
-        setModifyOrgSec(!modifyOrgSec)
-    }
-
-    useEffect(() => {
-        if (sectionTitle !== title) {
-            updateSectionTitle(sectionTitle, sectionId); // Send section title up to parent
+        if (!modOrgHidden) {
+            setModifyOrgSec(!modifyOrgSec)
         }
-    }, [sectionTitle, sectionId, updateSectionTitle]); // Update title in the parent on change
-
+    };
 
     return (
         <>
@@ -59,13 +65,16 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
                         ▶
                     </button>
                     <h4 className="expand-section-title"> { sectionTitle } </h4>
-                    <h4 className="expand-section-items">{expandSectionCount}</h4> {/* Dynamically set the count */}
+                    <h4 className="expand-section-items">{expandSectionCount}</h4> 
                     <button className="expand-section-share" onClick={openModifySec}> &#8942; </button>
                 </div>
             </section>
             {modifyOrgSec && <ModifyOrgSec 
                 newFileName={sectionTitle}
                 updateFileName={setSectionTitle}
+                setModifyOrgSec={setModifyOrgSec}
+                modOrgHidden={modOrgHidden}
+                setModOrgHidden={setModOrgHidden}
                 />}
             {/*<ModifyOrgSec />*/}
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CSSTransition  } from 'react-transition-group';
 import '../css/base/footer.css';
 import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
@@ -12,23 +13,8 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
 
     const [scrapedData, setScrapedData] = useState(null);
     const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const messageListener = (message) => {
-            if (message.action === 'scrapeComplete') {
-                setOuterHtml(message.textContent);  // Update the state with scraped content
-            }
-        };
     
-        chrome.runtime.onMessage.addListener(messageListener);
-    
-        // Cleanup listener when the component is unmounted
-        return () => {
-            chrome.runtime.onMessage.removeListener(messageListener);
-        };
-    }, []);
-    
-
+    // Add Item Button
     const handleScrapeClick = () => {
         // Send a message to the background script to scrape the page
         chrome.runtime.sendMessage({ action: "scrapePage" }, (response) => {
@@ -39,28 +25,41 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
                 setError(response.error);
             }
         });
-        setAddItemState(!addItemState);  // Toggle the state for rendering AddItem component
+
+        // Updates footer visulization
+        setAddItemState(!addItemState);
         setAddFileState(false);
         setSignInState(false);
     };
 
-    const handleFileClick = () => {
-        setAddFileState((prevState) => {
-            /*
-            // Force a reflow before toggling the state
-            setTimeout(() => {
-                const addFileSection = document.getElementById('add-file-section');
-                addFileSection.offsetHeight; // Trigger reflow
-            }, 0);
-            */
+    // I don't think this needs to be here
+    /*
+    // Handles response from background.js on scrape
+    useEffect(() => {
+        const messageListener = (message) => {
+            if (message.action === 'scrapeComplete') {
+                console.log()
+            }
+        };
+        chrome.runtime.onMessage.addListener(messageListener);
+    
+        return () => {
+            chrome.runtime.onMessage.removeListener(messageListener);
+        };
+    }, []);
+    */
 
-            return !prevState;
-        });
+    // Add File Button
+    const handleFileClick = () => {
+        // Updates footer visulization
+        setAddFileState(!addFileState);
         setAddItemState(false);
         setSignInState(false);
     };
 
+    // Profile Button
     const signInClick = () => {
+        // Updates footer visulization
         setSignInState(!signInState);
         setAddFileState(false);
         setAddItemState(false);
@@ -68,18 +67,43 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
 
     return (
         <>
-            {addItemState && <AddItem  
-                isVisible={addItemState}
-                organizationSections={organizationSections}
-                scrapedData={scrapedData}
-                errorData={error}
-            />}
-            {addFileState && <AddFile 
-                onAddSection={handleAddSection}
-                setFileName={setFileName}
-                fileName={fileName} 
-                isVisible={addFileState}
-            />}
+            <CSSTransition
+                in={addItemState}
+                timeout={300}
+                classNames={{
+                    enter: 'slide-in',
+                    enterActive: 'slide-in-active',
+                    exit: 'slide-out',
+                    exitActive: 'slide-out-active',
+                }}
+                unmountOnExit
+            >
+                <AddItem  
+                    isVisible={addItemState}
+                    organizationSections={organizationSections}
+                    scrapedData={scrapedData}
+                    errorData={error}
+                />
+            </CSSTransition>
+            <CSSTransition
+                in={addFileState}
+                timeout={300}
+                classNames={{
+                    enter: 'slide-in',
+                    enterActive: 'slide-in-active',
+                    exit: 'slide-out',
+                    exitActive: 'slide-out-active',
+                }}
+                unmountOnExit
+            >
+                <AddFile 
+                    onAddSection={handleAddSection}
+                    setFileName={setFileName}
+                    fileName={fileName} 
+                    isVisible={addFileState}
+                />
+            </CSSTransition>
+            
             {signInState && <SignInPage />}
             
             <footer className="extension-footer">
@@ -87,9 +111,6 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
                 <button id="section" onClick={handleFileClick}> 📁 </button>
                 <button id="profile" onClick={signInClick}> 👤 </button>
             </footer>
-
-            {/* Display the scraped content */}
-            {outerHtml && <div>{outerHtml}</div>}
         </>
     );
 }
