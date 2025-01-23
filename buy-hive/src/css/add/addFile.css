@@ -11,14 +11,31 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
     border-radius: 10px;
     display: flex;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -100px;
-    transition: bottom 0.3s ease-in;
+    bottom: 75px;
+    transition: transform 0.3s ease-in;
+    margin-left: 10px;
 }
 
-#add-file-section.visible {
-    bottom: 75px;
+.slide-in {
+    transform: translateY(0%);
+    opacity: 0;
+}
+
+.slide-in-active {
+    transform: translateY(100%);
+    opacity: 1;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.slide-out {
+    transform: translateY(100%);
+    opacity: 1;
+}
+
+.slide-out-active {
+    transform: translateY(0%);
+    opacity: 0;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 #file-title {

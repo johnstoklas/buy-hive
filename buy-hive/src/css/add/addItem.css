@@ -10,14 +10,33 @@
     overflow: hidden;
     display: block;
     position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 0px;
-    transition: bottom 0.3s ease-in-out;
+    transform: translateY(0%);
+    display: block;
+    bottom: 75px;
+    opacity: 1;
+    margin-left: 10px;
 }
 
-#add-item-section.visible {
-    bottom: 75px;
+.slide-in {
+    transform: translateY(0%);
+    opacity: 0;
+}
+
+.slide-in-active {
+    transform: translateY(100%);
+    opacity: 1;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.slide-out {
+    transform: translateY(100%);
+    opacity: 1;
+}
+
+.slide-out-active {
+    transform: translateY(0%);
+    opacity: 0;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .add-item-container {
@@ -139,4 +158,32 @@
     border: none;
     outline: none;
     transform: translateY(1px);
+}
+
+.processing-add-item {
+    margin-top: 70px;
+}
+
+@keyframes slideIn {
+    from { 
+        transform: translateY(100%);
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100%); opacity: 0; }
+}
+
+.slide-in {
+    animation: slideIn 1s forwards;
+}
+
+.slide-out {
+    animation: slideOut 1s forwards;
 }

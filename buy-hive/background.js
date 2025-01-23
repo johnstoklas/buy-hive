@@ -52,6 +52,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // Keep the message channel open for asynchronous response
         return true;
     }
+    else if(message.action === 'sendUserInfo') {
+        const userInfo = message.data;
+        console.log('Received user data:', userInfo);
+
+        fetch("http://127.0.0.1:8000/users/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: user.email,
+              //name: user.name,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.error("Error:", error));
+
+        // Optionally, send a response back to the content script (React)
+        sendResponse({ status: 'success', message: 'User data received' });
+    }
 });
 
 function getTextContent() {
