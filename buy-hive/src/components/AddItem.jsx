@@ -5,7 +5,7 @@ const AddItem = ({ isVisible, organizationSections, scrapedData, errorData }) =>
 
   return(
   <>
-    <section id="add-item-section" className={isVisible ? "visible" : ""}>
+    <section id="add-item-section">
       {errorData
         ? ( <h4 className="processing-add-item"> `Error: ${errorData}` </h4>)
         : scrapedData 

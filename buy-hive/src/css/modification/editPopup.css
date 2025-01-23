@@ -34,15 +34,23 @@
     height: 25px;
 }
 
+#confirm-edit-popup:hover {
+    cursor: pointer;
+}
+
 #close-edit-popup {
-    margin-left: 106px;
+    margin-left: 85px;
     background-color: var(--delete-color);
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
     font-size: 12px;
     height: 25px;
-    width: 25px;
+    width: 50px;
     align-items: center;
     vertical-align: center;
+}
+
+#close-edit-popup:hover {
+    cursor: pointer;
 }
