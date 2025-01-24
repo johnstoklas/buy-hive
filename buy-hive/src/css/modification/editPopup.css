@@ -53,3 +53,18 @@
 #close-edit-popup:hover {
     cursor: pointer;
 }
+
+#edit-popup-header {
+    margin: 0;
+    color: black;
+}
+
+#close-edit-popup-button {
+    font-size: 12px;
+    margin: 0px 0px 0px 225px;
+    color: black;
+}
+
+#close-edit-popup-button:hover {
+    cursor: pointer;
+}

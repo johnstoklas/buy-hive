@@ -27,6 +27,10 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
   return (
   <>
     <section id="edit-popup-section"> 
+      <div>
+        <p id="edit-popup-header"> Edit Folder Name </p>
+        <p id="close-edit-popup-buttons"> &#10005; </p>
+      </div>
         <input 
           type="text" 
           placeholder="Edit Folder Name" 

@@ -9,8 +9,8 @@
     left: 50%;
     transform: translateX(-50%);
     transition: bottom 0.3s ease-in;
+    top: 150px;
     z-index: 1000;
-    top: 185px;
     height: fit-content;
     border-radius: 5px;
     color: rgb(34, 34, 34);
@@ -53,4 +53,16 @@
     color: rgb(34, 34, 34);
 }
 
+#trash-icon {
+    height: 24px;
+}
+
+#close-delete-popup {
+    font-size: 12px;
+    margin: 0px -225px 0px 0px;
+}
+
+#close-delete-popup:hover {
+    cursor:pointer;
+}
 
