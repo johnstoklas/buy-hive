@@ -5,7 +5,7 @@ import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
 import SignInPage from './SignInPage.jsx';
 
-function Footer({ handleAddSection, setFileName, fileName, organizationSections }) {
+function Footer({ handleAddSection, setFileName, fileName, organizationSections, setUserName }) {
     const [addItemState, setAddItemState] = useState(false);
     const [addFileState, setAddFileState] = useState(false);
     const [signInState, setSignInState] = useState(false);
@@ -143,7 +143,9 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
                 />
             </CSSTransition>
             
-            {signInState && <SignInPage />}
+            {signInState && <SignInPage 
+                setUserName={setUserName}
+            />}
             
             <footer className="extension-footer">
                 <button id="scrape" onClick={handleScrapeClick}> 🛒 </button>
