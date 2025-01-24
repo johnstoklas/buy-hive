@@ -15,7 +15,11 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
       setIsVisible(false); 
       setModifyOrgSec(false);
       setModOrgHidden(false);
+
+      //chrome.runtime.sendMessage({ action: "editFileName", data: tempFileName });
     }
+
+    
   };
 
   const handleKeyDown = (e) => {

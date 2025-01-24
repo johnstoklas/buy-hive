@@ -4,6 +4,7 @@ import Header from './Header.jsx';
 import Footer from './Footer.jsx';
 import OrganizationSection from './OrganizationSection.jsx';
 
+
 const Extension = () => {
     
     const [organizationSections, setOrganizationSections] = useState([
@@ -17,10 +18,28 @@ const Extension = () => {
       { id: 7, title: 'Test Section 8' }*/
     ]);
     const [fileName, setFileName] = useState('');
+    const [userName, setUserName] = useState(null);
 
     // Adds new organization section on button click
-    const handleAddSection = (newFileName) => {
+    async function handleAddSection(newFileName) {
       if (newFileName.trim()) {
+        const email = userName.email;
+        const cartName = data.newFileName;
+        const endpoint = `http://127.0.0.1:8000/carts/${email}`
+        
+        fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              "cart_name": cartName,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.error("Error:", error));
+
         setOrganizationSections((prevSections) => [
           ...prevSections,
           { id: prevSections.length, title: newFileName } 
@@ -65,6 +84,7 @@ const Extension = () => {
               setFileName={setFileName}
               handleAddSection={handleAddSection}
               organizationSections={organizationSections}
+              setUserName={setUserName}
             />
         </>
     );
