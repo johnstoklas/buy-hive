@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CSSTransition  } from 'react-transition-group';
+import { useAuth0 } from '@auth0/auth0-react';
 import '../css/base/footer.css';
 import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
@@ -15,6 +16,19 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
     const [currentUrl, setCurrentUrl] = useState(null);
     const [allImages, setAllImages] = useState(null);
     const [error, setError] = useState(null);
+
+    const {user, isAuthenticated} = useAuth0();
+
+    // Sends user information to background.js for database managament
+        useEffect(() => {
+            if (user) {
+                setUserName(user);
+                chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
+                    console.log('Response from background.js:', response);
+                });
+            }
+        }, [user]);
+
     
     // Add Item Button
     const handleScrapeClick = () => {
@@ -145,6 +159,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
             
             {signInState && <SignInPage 
                 setUserName={setUserName}
+                user={user}
             />}
             
             <footer className="extension-footer">

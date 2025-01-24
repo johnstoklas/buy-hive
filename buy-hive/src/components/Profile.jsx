@@ -1,18 +1,16 @@
 import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const Profile = ({ setUserName, }) => {
-    const {user, isAuthenticated} = useAuth0();
+const Profile = ({ user, setUserName }) => {
 
-    // Sends user information to background.js for database managament
+    const { isLoading, isAuthenticated} = useAuth0();
+
     useEffect(() => {
-        if (user) {
-            setUserName(user);
-            chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
-                console.log('Response from background.js:', response);
-            });
+        console.log(user);
+        if (!isLoading && isAuthenticated && user) {
+          setUserName(user);
         }
-    }, [user]);
+      }, [isLoading, isAuthenticated, user]);
 
     return (
         isAuthenticated && (

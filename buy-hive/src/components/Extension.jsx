@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/main.css';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
@@ -20,11 +20,19 @@ const Extension = () => {
     const [fileName, setFileName] = useState('');
     const [userName, setUserName] = useState(null);
 
+    useEffect(() => {
+      const storedUser = localStorage.getItem("userName");
+      if (storedUser) {
+        setUserName(JSON.parse(storedUser));
+      }
+    }, []);
+
     // Adds new organization section on button click
     async function handleAddSection(newFileName) {
+      console.log(userName)
       if (newFileName.trim()) {
         const email = userName.email;
-        const cartName = data.newFileName;
+        const cartName = newFileName;
         const endpoint = `http://127.0.0.1:8000/carts/${email}`
         
         fetch(endpoint, {
@@ -37,7 +45,7 @@ const Extension = () => {
             }),
           })
             .then((response) => response.json())
-            .then((data) => console.log(data))
+            //.then((data) => console.log(data))
             .catch((error) => console.error("Error:", error));
 
         setOrganizationSections((prevSections) => [

@@ -19,6 +19,7 @@ const SignInPage = ({ setUserName }) => {
             
             <Profile 
               setUserName={setUserName}
+              isLoading={isLoading}
             />
             <LogoutButton />
           </>
