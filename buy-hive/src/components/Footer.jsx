@@ -9,14 +9,17 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
     const [addItemState, setAddItemState] = useState(false);
     const [addFileState, setAddFileState] = useState(false);
     const [signInState, setSignInState] = useState(false);
-    const [outerHtml, setOuterHtml] = useState(''); // Store the text content here
+    const [outerHtml, setOuterHtml] = useState('');
 
     const [scrapedData, setScrapedData] = useState(null);
+    const [currentUrl, setCurrentUrl] = useState(null);
+    const [allImages, setAllImages] = useState(null);
     const [error, setError] = useState(null);
     
     // Add Item Button
     const handleScrapeClick = () => {
-        // Send a message to the background script to scrape the page
+        gatherData();
+        
         chrome.runtime.sendMessage({ action: "scrapePage" }, (response) => {
             if(response?.action === 'scrapeComplete') {
                 setScrapedData(response.result);
@@ -31,6 +34,42 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections 
         setAddFileState(false);
         setSignInState(false);
     };
+
+    const gatherData = () => {
+        
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs.length > 0) {
+              // Grabs the current URL
+              const currentTab = tabs[0];
+              const url = currentTab.url
+              setCurrentUrl(url);
+
+              console.log("Current URL:", url);
+
+              const tabId = tabs[0].id;
+
+              chrome.scripting.executeScript(
+                {
+                    target: { tabId: tabId },
+                    func: () => {
+                        return Array.from(document.querySelectorAll("img")).map(img => img.src);
+                    },
+                },
+                (results) => {
+                    if (results && results[0]?.result) {
+                        const imageSources = results[0].result;
+                        setAllImages(imageSources);
+                        console.log("Images found:", imageSources);
+                    } else {
+                        console.error("Failed to get images or no images found.");
+                    }
+                }
+            );
+            } else {
+              console.error("No active tab found.");
+            }
+        });
+    }
 
     // I don't think this needs to be here
     /*

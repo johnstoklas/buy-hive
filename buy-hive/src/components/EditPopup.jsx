@@ -18,6 +18,12 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleConfirmClick();
+    }
+  };
+
   return (
   <>
     <section id="edit-popup-section"> 
@@ -27,6 +33,7 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
           maxLength="22" 
           value={tempFileName}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
         />
         <button id="confirm-edit-popup"
             type="button" 

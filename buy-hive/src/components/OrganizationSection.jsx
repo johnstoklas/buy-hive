@@ -76,7 +76,6 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
                 modOrgHidden={modOrgHidden}
                 setModOrgHidden={setModOrgHidden}
                 />}
-            {/*<ModifyOrgSec />*/}
 
             <div
                 className="expand-section-expanded-display"

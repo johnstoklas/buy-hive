@@ -1,0 +1,56 @@
+#delete-popup-section {
+    position: fixed;
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    width: 250px;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    left: 50%;
+    transform: translateX(-50%);
+    transition: bottom 0.3s ease-in;
+    z-index: 1000;
+    top: 185px;
+    height: fit-content;
+    border-radius: 5px;
+    color: rgb(34, 34, 34);
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+#delete-popup-section button {
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    height: 25px;
+    width: fit-content;
+    align-items: center;
+    display: inline-flex;
+}
+
+#delete-popup-section button:hover {
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+}
+
+#dps-button-section {
+    display: flex;
+    justify-content: center;
+}
+
+#dps-delete-button {
+    border: none;
+    background-color: var(--delete-color);
+    color: white;
+}
+
+#dps-cancel-button {
+    margin-left: 10px;
+    border: 1px solid gray;
+    color: rgb(34, 34, 34);
+}
+
+

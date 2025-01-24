@@ -1,5 +1,5 @@
 .modify-org-sec {
-    width: 60px;
+    width: 70px;
     height: fit-content;
     background-color: var(--secondary-background);
     right: 22px;
@@ -14,7 +14,7 @@
 }
 
 .modify-org-sec button {
-    width: 60px;
+    width: 70px;
     height: 25px;
     padding: 0;
     margin: 0;
@@ -23,6 +23,9 @@
     text-align: left;
     padding-left: 10px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .modify-org-sec button:hover {
