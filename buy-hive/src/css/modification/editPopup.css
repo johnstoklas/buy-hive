@@ -3,7 +3,6 @@
     background-color: var(--secondary-background);
     color: var(--text-color);
     width: 250px;
-    height: 35px;
     align-items: center;
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
@@ -40,7 +39,7 @@
 
 #close-edit-popup {
     margin-left: 85px;
-    background-color: var(--delete-color);
+    background-color: gray;
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
@@ -52,5 +51,20 @@
 }
 
 #close-edit-popup:hover {
+    cursor: pointer;
+}
+
+#edit-popup-header {
+    margin: 0;
+    color: black;
+}
+
+#close-edit-popup-button {
+    font-size: 12px;
+    margin: 0px 0px 0px 225px;
+    color: black;
+}
+
+#close-edit-popup-button:hover {
     cursor: pointer;
 }

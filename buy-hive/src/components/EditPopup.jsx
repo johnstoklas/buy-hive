@@ -18,15 +18,26 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleConfirmClick();
+    }
+  };
+
   return (
   <>
     <section id="edit-popup-section"> 
+      <div>
+        <p id="edit-popup-header"> Edit Folder Name </p>
+        <p id="close-edit-popup-buttons"> &#10005; </p>
+      </div>
         <input 
           type="text" 
           placeholder="Edit Folder Name" 
           maxLength="22" 
           value={tempFileName}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
         />
         <button id="confirm-edit-popup"
             type="button" 
