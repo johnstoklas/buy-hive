@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/main.css';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
@@ -21,6 +21,13 @@ const Extension = () => {
     ]);
     const [fileName, setFileName] = useState('');
     const [userName, setUserName] = useState(null);
+
+    useEffect(() => {
+      const storedUser = localStorage.getItem("userName");
+      if (storedUser) {
+        setUserName(JSON.parse(storedUser));
+      }
+    }, []);
 
     // Adds new organization section on button click
     async function handleAddSection(newFileName) {

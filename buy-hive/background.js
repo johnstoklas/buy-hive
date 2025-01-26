@@ -62,8 +62,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              email: user.email,
-              name: user.name,
+              email: userInfo.email,
+              name: userInfo.name,
             }),
           })
             .then((response) => response.json())
