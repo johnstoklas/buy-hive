@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ExpandSection from './ExpandSection.jsx';
 import ModifyOrgSec from './ModifyOrgSec.jsx';
 
-function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle }) {
+function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle, setIsLocked}) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [sectionHeight, setSectionHeight] = useState('45px');
     const [expandSectionCount, setExpandSectionCount] = useState(0); 
@@ -74,6 +74,7 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
                 setModifyOrgSec={setModifyOrgSec}
                 modOrgHidden={modOrgHidden}
                 setModOrgHidden={setModOrgHidden}
+                setIsLocked={setIsLocked}
                 />}
             </section>
             <div

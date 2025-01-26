@@ -20,14 +20,15 @@
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    font-size: 18px;
+    font-size: 20px;
     text-align: center;
     border:none;
     margin: 0 35px;
     background-color: white;
+    color: black;
 }
 
 .extension-footer button:hover {
     cursor: pointer;
-    background-color: var(--hover-color);
+    color: var(--hover-color);
 }

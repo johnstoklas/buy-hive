@@ -6,6 +6,8 @@ import OrganizationSection from './OrganizationSection.jsx';
 
 
 const Extension = () => {
+
+  const [isLocked, setIsLocked] = useState(false);
     
     const [organizationSections, setOrganizationSections] = useState([
       { id: 0, title: 'Test Section 1' },
@@ -75,6 +77,7 @@ const Extension = () => {
                       title={section.title} 
                       sectionTitle={section.title}
                       updateSectionTitle={updateSectionTitle}
+                      setIsLocked={setIsLocked}
                     />
                 ))
                 )}
@@ -85,6 +88,7 @@ const Extension = () => {
               handleAddSection={handleAddSection}
               organizationSections={organizationSections}
               setUserName={setUserName}
+              isLocked={isLocked}
             />
         </>
     );

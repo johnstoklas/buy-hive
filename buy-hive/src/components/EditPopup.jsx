@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec, setModOrgHidden}) => {
+const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec, setModOrgHiddeN, setIsLocked}) => {
   const [tempFileName, setTempFileName] = useState(newFileName);
   
   // Update local state on input change
@@ -15,6 +15,7 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
       setIsVisible(false); 
       setModifyOrgSec(false);
       setModOrgHidden(false);
+      setIsLocked(true);
 
       //chrome.runtime.sendMessage({ action: "editFileName", data: tempFileName });
     }
@@ -37,6 +38,7 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
           setIsVisible(false);
           setModifyOrgSec(false);
           setModOrgHidden(false);
+          setIsLocked(false);
         }}> &#10005; </p>
       </div>
         <input 
@@ -57,6 +59,7 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
           setIsVisible(false);
           setModifyOrgSec(false);
           setModOrgHidden(false);
+          setIsLocked(false);
         }}> Close </button>
     </section>
   </>

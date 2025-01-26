@@ -12,7 +12,7 @@ const SignInPage = ({ setUserName }) => {
         {error && 
           <LoginButton />
         }
-        {!error && isLoading && <p> Loading... </p>}
+        {!error && isLoading && <div className="spinner-loader"></div> }
         {!error && !isLoading && (
           <>
             <LoginButton />
