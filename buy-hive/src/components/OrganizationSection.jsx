@@ -10,6 +10,10 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
     const [modifyOrgSec, setModifyOrgSec] = useState(false);
     const [modOrgHidden, setModOrgHidden] = useState(false);
     const [sectionTitle, setSectionTitle] = useState(title);
+    const [modifyOrgSecPostion, setModifyOrgSecPosition] = useState('below');
+
+    const modifyOrgSecRef = useRef(null);
+    const folderRef = useRef(null);
 
     // Dynamically updates the file name 
     useEffect(() => {
@@ -45,7 +49,18 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
     // Opens modification screen when three circle button is pressed
     const openModifySec = () => {
         if (!modOrgHidden) {
-            setModifyOrgSec(!modifyOrgSec)
+            setModifyOrgSec(!modifyOrgSec);
+            if (folderRef.current) {
+                const parentRect = folderRef.current.getBoundingClientRect();
+                const spaceBelow = window.innerHeight - parentRect.bottom;
+                const spaceAbove = parentRect.top;
+
+                if (spaceBelow < 150) {
+                    setModifyOrgSecPosition('above');
+                } else {
+                    setModifyOrgSecPosition('below');
+                }
+            }
         }
     };
 
@@ -57,7 +72,7 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
             id={sectionId}
         >
             <section className="expand-section">
-                <div className="expand-section-content">
+                <div className="expand-section-content" ref={folderRef}>
                     <button
                         className={`expand-section-button ${isExpanded && (expandSectionCount > 0) ? 'rotate' : ''}`}
                         onClick={expandSectionClick}
@@ -75,6 +90,8 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
                 modOrgHidden={modOrgHidden}
                 setModOrgHidden={setModOrgHidden}
                 setIsLocked={setIsLocked}
+                position={modifyOrgSecPostion}
+                ref={modifyOrgSecRef}
                 />}
             </section>
             <div

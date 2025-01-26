@@ -31,31 +31,11 @@ const Extension = () => {
 
     // Adds new organization section on button click
     async function handleAddSection(newFileName) {
-      console.log(userName)
-      if (newFileName.trim()) {
-        const email = userName.email;
-        const cartName = newFileName;
-        const endpoint = `http://127.0.0.1:8000/carts/${email}`
-        
-        fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              "cart_name": cartName,
-            }),
-          })
-            .then((response) => response.json())
-            //.then((data) => console.log(data))
-            .catch((error) => console.error("Error:", error));
-
-        setOrganizationSections((prevSections) => [
-          ...prevSections,
-          { id: prevSections.length, title: newFileName } 
-        ]);
+      const data = {
+        email: userName.email, 
+        cartName: newFileName
       }
-      setFileName(''); 
+      chrome.runtime.sendMessage({message: 'addNewFolder', data: data});
     };
 
     // Updates the organization section title

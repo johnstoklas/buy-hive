@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 
-const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidden, setModOrgHidden, setIsLocked }) => {
+const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidden, setModOrgHidden, setIsLocked, position }) => {
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
@@ -60,7 +60,7 @@ const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidd
       setModOrgHidden={setModOrgHidden}
       setIsLocked={setIsLocked}
     />}
-    <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""}`} ref={modifyOrgSec}>
+    <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }`} ref={modifyOrgSec} >
         <button onClick={toggleEditPopup}>
           <FontAwesomeIcon icon={faPenToSquare} />
           <p> Edit </p>

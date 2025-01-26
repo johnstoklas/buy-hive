@@ -13,6 +13,10 @@
     display: none;
 }
 
+.above {
+    margin-top: -131px;
+}
+
 .modify-org-sec button {
     width: 70px;
     height: 25px;
