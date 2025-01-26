@@ -6,16 +6,18 @@ import OrganizationSection from './OrganizationSection.jsx';
 
 
 const Extension = () => {
+
+  const [isLocked, setIsLocked] = useState(false);
     
     const [organizationSections, setOrganizationSections] = useState([
       { id: 0, title: 'Test Section 1' },
-      /*{ id: 1, title: 'Test Section 2' },
+      { id: 1, title: 'Test Section 2' },
       { id: 2, title: 'Test Section 3' },
       { id: 3, title: 'Test Section 4' },
       { id: 4, title: 'Test Section 5' },
       { id: 5, title: 'Test Section 6' },
       { id: 6, title: 'Test Section 7' },
-      { id: 7, title: 'Test Section 8' }*/
+      { id: 7, title: 'Test Section 8' }
     ]);
     const [fileName, setFileName] = useState('');
     const [userName, setUserName] = useState(null);
@@ -83,6 +85,7 @@ const Extension = () => {
                       title={section.title} 
                       sectionTitle={section.title}
                       updateSectionTitle={updateSectionTitle}
+                      setIsLocked={setIsLocked}
                     />
                 ))
                 )}
@@ -93,6 +96,7 @@ const Extension = () => {
               handleAddSection={handleAddSection}
               organizationSections={organizationSections}
               setUserName={setUserName}
+              isLocked={isLocked}
             />
         </>
     );

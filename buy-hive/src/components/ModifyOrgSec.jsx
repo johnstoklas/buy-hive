@@ -1,23 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import EditPopup from './EditPopup.jsx';
 import DeletePopup from './DeletePopup.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 
-const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidden, setModOrgHidden }) => {
+const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidden, setModOrgHidden, setIsLocked }) => {
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
 
+  const modifyOrgSec = useRef(null);
+
+  // If the user clicks out of the modification pop-up it disappears
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modifyOrgSec.current && !modifyOrgSec.current.contains(event.target) && !editPopupVisible && !deletePopupVisible) {
+        setModifyOrgSec(false); 
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [setModifyOrgSec, editPopupVisible, deletePopupVisible]);
+
   // toggles edit title popup
   const toggleEditPopup = () => {
     setEditPopupVisible(!editPopupVisible);
+    setIsLocked(editPopupVisible);
   }
 
   // toggles delete folder popup
   const toggleDeletePopup = () => {
     setDeletePopupVisible(!deletePopupVisible);
+    setIsLocked(deletePopupVisible);
   }
 
   // Updates if modification screen should be visible when another popup appears
@@ -33,13 +52,15 @@ const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidd
       setIsVisible={setEditPopupVisible}
       setModifyOrgSec={setModifyOrgSec}
       setModOrgHidden={setModOrgHidden}
+      setIsLocked={setIsLocked}
     />}
     {deletePopupVisible && <DeletePopup 
       setIsVisible={setDeletePopupVisible}
       setModifyOrgSec={setModifyOrgSec}
       setModOrgHidden={setModOrgHidden}
+      setIsLocked={setIsLocked}
     />}
-    <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""}`}>
+    <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""}`} ref={modifyOrgSec}>
         <button onClick={toggleEditPopup}>
           <FontAwesomeIcon icon={faPenToSquare} />
           <p> Edit </p>

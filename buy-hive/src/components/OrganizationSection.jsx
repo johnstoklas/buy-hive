@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ExpandSection from './ExpandSection.jsx';
 import ModifyOrgSec from './ModifyOrgSec.jsx';
 
-function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle }) {
+function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle, setIsLocked}) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [sectionHeight, setSectionHeight] = useState('45px');
     const [expandSectionCount, setExpandSectionCount] = useState(0); 
@@ -68,15 +68,15 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
                     <h4 className="expand-section-items">{expandSectionCount}</h4> 
                     <button className="expand-section-share" onClick={openModifySec}> &#8942; </button>
                 </div>
-            </section>
-            {modifyOrgSec && <ModifyOrgSec 
+                {modifyOrgSec && <ModifyOrgSec 
                 newFileName={sectionTitle}
                 updateFileName={setSectionTitle}
                 setModifyOrgSec={setModifyOrgSec}
                 modOrgHidden={modOrgHidden}
                 setModOrgHidden={setModOrgHidden}
+                setIsLocked={setIsLocked}
                 />}
-
+            </section>
             <div
                 className="expand-section-expanded-display"
                 ref={expandedSectionRef}

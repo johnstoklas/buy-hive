@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 
-const DeletePopup = ({ setIsVisible, setModifyOrgSec, setModOrgHidden}) => {
+const DeletePopup = ({ setIsVisible, setModifyOrgSec, setModOrgHidden, setIsLocked}) => {
+
   const deleteFolder = () => {
     setIsVisible(false);
     setModifyOrgSec(false);
     setModOrgHidden(false);
+    setIsLocked(false);
   }
+  
   return (
   <>
     <section id="delete-popup-section"> 
@@ -16,6 +19,7 @@ const DeletePopup = ({ setIsVisible, setModifyOrgSec, setModOrgHidden}) => {
           setIsVisible(false);
           setModifyOrgSec(false);
           setModOrgHidden(false);
+          setIsLocked(false);
         }}> &#10005; </p>
         <FontAwesomeIcon icon={faTrashCan} id="trash-icon" />
         <p> Are you sure you want to delete this folder? </p>
@@ -25,6 +29,7 @@ const DeletePopup = ({ setIsVisible, setModifyOrgSec, setModOrgHidden}) => {
             setIsVisible(false);
             setModifyOrgSec(false);
             setModOrgHidden(false);
+            setIsLocked(false);
           }}> No, cancel </button>
         </div>
     </section>

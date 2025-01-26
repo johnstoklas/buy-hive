@@ -2,14 +2,14 @@
 
 #sign-in-page {
     background-color: white;
-    height: 290px;
+    height: 340px;
     width: 300px;
     position: fixed;
     justify-content: center;
     align-items: center;
     display: flex;
     flex-direction: column;
-    margin-top: -290px;
+    margin-top: -340px;
     left: 50%;
     transform: translateX(-50%);
 }

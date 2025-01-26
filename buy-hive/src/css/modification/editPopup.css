@@ -39,8 +39,7 @@
 
 #close-edit-popup {
     margin-left: 85px;
-    background-color: gray;
-    border: none;
+    border: 1px solid gray;
     border-radius: 5px;
     padding: 5px 10px;
     font-size: 12px;
@@ -54,15 +53,23 @@
     cursor: pointer;
 }
 
-#edit-popup-header {
-    margin: 0;
+#edit-popup-header-section * {
+    display: inline-flex;
+    font-size: 14px;
+    margin: 0 0 10px 0;
     color: black;
+    vertical-align: center;
+}
+
+#edit-popup-header {
+    width: 225px;
+    font-weight: 500;
 }
 
 #close-edit-popup-button {
+    width: 16px;
     font-size: 12px;
-    margin: 0px 0px 0px 200px;
-    color: black;
+    font-size: 15px;
 }
 
 #close-edit-popup-button:hover {
