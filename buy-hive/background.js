@@ -73,27 +73,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // Optionally, send a response back to the content script (React)
         sendResponse({ status: 'success', message: 'User data received' });
     }
-    else if(message === 'newFileAdded') {
-        const fileName = data.newFileName;
-        
-        fetch("http://127.0.0.1:8000/users/add", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: user.email,
-              //name: user.name,
-            }),
-          })
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-            .catch((error) => console.error("Error:", error));
-
-        // Optionally, send a response back to the content script (React)
-        sendResponse({ status: 'success', message: 'User data received' });
-        
-    }
+    else if(message === 'addNewFolder') {
+        if (newFileName.trim()) {
+            const email = data.email;
+            const cartName = data.cartName;
+            const endpoint = `http://127.0.0.1:8000/carts/${email}`
+            
+            fetch(endpoint, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  "cart_name": cartName,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => console.log(data))
+                .catch((error) => console.error("Error:", error));
+    
+            setOrganizationSections((prevSections) => [
+              ...prevSections,
+              { id: prevSections.length, title: newFileName } 
+            ]);
+          }
+          setFileName(''); 
+        }
 });
 
 function getTextContent() {
