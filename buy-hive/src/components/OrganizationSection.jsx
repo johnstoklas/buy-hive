@@ -68,15 +68,14 @@ function OrganizationSection({ sectionId, title, newFileName, updateSectionTitle
                     <h4 className="expand-section-items">{expandSectionCount}</h4> 
                     <button className="expand-section-share" onClick={openModifySec}> &#8942; </button>
                 </div>
-            </section>
-            {modifyOrgSec && <ModifyOrgSec 
+                {modifyOrgSec && <ModifyOrgSec 
                 newFileName={sectionTitle}
                 updateFileName={setSectionTitle}
                 setModifyOrgSec={setModifyOrgSec}
                 modOrgHidden={modOrgHidden}
                 setModOrgHidden={setModOrgHidden}
                 />}
-
+            </section>
             <div
                 className="expand-section-expanded-display"
                 ref={expandedSectionRef}

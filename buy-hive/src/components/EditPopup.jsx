@@ -31,9 +31,13 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
   return (
   <>
     <section id="edit-popup-section"> 
-      <div>
+      <div id="edit-popup-header-section">
         <p id="edit-popup-header"> Edit Folder Name </p>
-        <p id="close-edit-popup-buttons"> &#10005; </p>
+        <p id="close-edit-popup-button" onClick={() => {
+          setIsVisible(false);
+          setModifyOrgSec(false);
+          setModOrgHidden(false);
+        }}> &#10005; </p>
       </div>
         <input 
           type="text" 
