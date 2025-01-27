@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import '../css/main.css';
-import Header from './Header.jsx';
-import Footer from './Footer.jsx';
-import OrganizationSection from './OrganizationSection.jsx';
+import React, { useState, useEffect } from "react";
+import "../css/main.css";
+import Header from "./Header.jsx";
+import Footer from "./Footer.jsx";
+import OrganizationSection from "./OrganizationSection.jsx";
 
 const Extension = () => {
   const [isLocked, setIsLocked] = useState(false);
-  const [organizationSections, setOrganizationSections] = useState([]);
-  const [fileName, setFileName] = useState('');
-  const [userName, setUserName] = useState(null);
+  const [organizationSections, setOrganizationSections] = useState([]); // Store fetched sections
+  const [fileName, setFileName] = useState(""); // Input for new folder
+  const [userName, setUserName] = useState(null); // Store user info
+  const [isLoading, setIsLoading] = useState(true); // Show loading state until data is fetched
 
+  useEffect(() => {
+    console.log("organizationSections updated:", organizationSections);
+    console.log("os length: " + organizationSections.length);
+    // Perform any additional logic here
+  }, [organizationSections]);  
+
+  // Fetch user data from localStorage on initial load
   useEffect(() => {
     const storedUser = localStorage.getItem("userName");
     if (storedUser) {
@@ -17,37 +25,36 @@ const Extension = () => {
     }
   }, []);
 
+  // Fetch organization sections when user data is available
   useEffect(() => {
     if (userName?.email) {
+      setIsLoading(true); // Set loading state before fetching
       chrome.runtime.sendMessage(
         { action: "fetchData", data: { email: userName.email } },
         (response) => {
-          console.log("Fetching data...");
           if (chrome.runtime.lastError) {
-            console.error("Error sending message:", chrome.runtime.lastError.message);
+            console.error(
+              "Error communicating with background script:",
+              chrome.runtime.lastError.message
+            );
+            setIsLoading(false);
             return;
           }
 
           if (response?.status === "success") {
             console.log("Data fetched successfully:", response.data);
-
-            // Transform data into an array if it's not already
-            const transformedData = Array.isArray(response.data)
-              ? response.data
-              : Object.entries(response.data).map(([key, value]) => ({
-                  ...value, // Spread section data
-                  id: key, // Add a unique key if needed
-                }));
-
-            setOrganizationSections(transformedData); // Populate state with transformed data
+            const cartsArray = response.data.carts;
+            setOrganizationSections(cartsArray || []); // Update state with fetched data
           } else {
             console.error("Error fetching data:", response?.message);
           }
+          setIsLoading(false); // Stop loading once the fetch is complete
         }
       );
     }
   }, [userName]);
 
+  // Add a new folder to the database and update the UI immediately
   const handleAddSection = (newFileName) => {
     if (!userName) {
       console.error("User is not logged in.");
@@ -60,15 +67,16 @@ const Extension = () => {
     };
 
     if (newFileName.trim()) {
-      chrome.runtime.sendMessage({ action: "addNewFolder", data: data }, (response) => {
+      chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error("Error sending message:", chrome.runtime.lastError.message);
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
           return;
         }
 
-        if (response?.success) {
+        if (response?.status === "success") {
           console.log("Folder added successfully:", response.data);
-          // Refresh data or add the new folder to state manually
+
+          // Add new folder to state directly
           setOrganizationSections((prev) => [
             ...prev,
             { cart_name: newFileName, item_count: 0, items: [], created_at: new Date().toISOString() },
@@ -84,7 +92,9 @@ const Extension = () => {
     <>
       <Header />
       <section id="organization-section">
-        {organizationSections.length > 0 ? (
+        {isLoading ? (
+          <div className="spinner-loader"></div>
+        ) : organizationSections.length > 0 ? (
           organizationSections.map((section, index) => (
             <OrganizationSection
               key={index}
