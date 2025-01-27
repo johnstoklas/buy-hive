@@ -5,7 +5,7 @@ import ModifyOrgSec from "./ModifyOrgSec.jsx";
 function OrganizationSection({
   sectionId,
   title,
-  items = [],
+  items,
   updateSectionTitle,
   setIsLocked,
 }) {
@@ -46,6 +46,7 @@ function OrganizationSection({
   // Handle expanding/collapsing the section
   const handleExpandClick = () => {
     setIsExpanded((prev) => !prev);
+    console.log(items);
   };
 
   // Handle opening the modification screen
@@ -108,9 +109,6 @@ function OrganizationSection({
           items.map((item, index) => (
             <ExpandSection key={index} item={item} />
           ))}
-        {isExpanded && items.length === 0 && (
-          <p className="no-items-text">No items available in this section.</p>
-        )}
       </div>
     </div>
   );
