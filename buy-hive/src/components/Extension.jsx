@@ -5,19 +5,14 @@ import Footer from "./Footer.jsx";
 import OrganizationSection from "./OrganizationSection.jsx";
 
 const Extension = () => {
-  const [isLocked, setIsLocked] = useState(false);
+  const [isLocked, setIsLocked] = useState(false); // Locks the bottom buttons
   const [organizationSections, setOrganizationSections] = useState([]); // Store fetched sections
   const [fileName, setFileName] = useState(""); // Input for new folder
   const [userName, setUserName] = useState(null); // Store user info
   const [isLoading, setIsLoading] = useState(true); // Show loading state until data is fetched
 
-  useEffect(() => {
-    console.log("organizationSections updated:", organizationSections);
-    console.log("os length: " + organizationSections.length);
-    // Perform any additional logic here
-  }, [organizationSections]);  
-
   // Fetch user data from localStorage on initial load
+  // I don't know if this function does anything
   useEffect(() => {
     const storedUser = localStorage.getItem("userName");
     if (storedUser) {
@@ -28,10 +23,8 @@ const Extension = () => {
   // Fetch organization sections when user data is available
   useEffect(() => {
     if (userName?.email) {
-      setIsLoading(true); // Set loading state before fetching
-      chrome.runtime.sendMessage(
-        { action: "fetchData", data: { email: userName.email } },
-        (response) => {
+      setIsLoading(true); 
+      chrome.runtime.sendMessage({ action: "fetchData", data: { email: userName.email } }, (response) => {
           if (chrome.runtime.lastError) {
             console.error(
               "Error communicating with background script:",
@@ -44,17 +37,17 @@ const Extension = () => {
           if (response?.status === "success") {
             console.log("Data fetched successfully:", response.data);
             const cartsArray = response.data.carts;
-            setOrganizationSections(cartsArray || []); // Update state with fetched data
+            setOrganizationSections(cartsArray || []);
           } else {
             console.error("Error fetching data:", response?.message);
           }
-          setIsLoading(false); // Stop loading once the fetch is complete
+          setIsLoading(false); 
         }
       );
     }
   }, [userName]);
 
-  // Add a new folder to the database and update the UI immediately
+  // Adds a new folder to the database and updates the UI immediately
   const handleAddSection = (newFileName) => {
     if (!userName) {
       console.error("User is not logged in.");
@@ -77,6 +70,7 @@ const Extension = () => {
           console.log("Folder added successfully:", response.data);
 
           // Add new folder to state directly
+          // I need to make sure that you can't add duplicates and that the date is not new but the original date from the database
           setOrganizationSections((prev) => [
             ...prev,
             { cart_name: newFileName, item_count: 0, items: [], created_at: new Date().toISOString() },

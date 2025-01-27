@@ -15,10 +15,11 @@ chrome.runtime.onInstalled.addListener(() => {
       default:
         console.warn(`Unknown action: ${message.action}`);
         sendResponse({ status: "error", message: "Unknown action" });
-        return false; // Explicitly return false for unknown actions
+        return false; 
     }
   });
   
+  // Fetches user data when extension is opened
   async function handleFetchData(message, sender, sendResponse) {
     const { email } = message.data;
     if (!email) {
@@ -45,6 +46,7 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   }
   
+  // Adds a new folder to the database
   async function handleAddNewFolder(message, sender, sendResponse) {
     const { email, cartName } = message.data;
     if (!email || !cartName) {
