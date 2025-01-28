@@ -4,6 +4,10 @@ chrome.runtime.onInstalled.addListener(() => {
   
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     switch (message.action) {
+      case "scrapePage":
+        handleScrapePage(message, sender, sendResponse);
+        return true;
+
       case "fetchData":
         handleFetchData(message, sender, sendResponse);
         return true;
@@ -26,6 +30,51 @@ chrome.runtime.onInstalled.addListener(() => {
         return false; 
     }
   });
+
+  async function handleScrapePage(message, sender, sendResponse) { 
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => { 
+      if (tabs.length > 0) { 
+        const tab = tabs[0]; 
+    
+        chrome.scripting.executeScript(
+          { 
+            target: { tabId: tab.id }, 
+            func: getTextContent 
+          }, 
+          async (injectionResults) => { 
+            if (chrome.runtime.lastError) { 
+              console.error("Error executing script:", chrome.runtime.lastError.message); 
+              sendResponse({ status: 'error', message: chrome.runtime.lastError.message }); 
+              return; 
+            } 
+    
+            const endpoint = "http://127.0.0.1:8000/extract";
+            const textContent = injectionResults[0]?.result || "";
+    
+            try {
+              const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: textContent,
+              });
+    
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+    
+              const data = await response.json();
+              sendResponse({ status: "success", data });
+            } catch (error) {
+              console.error("Error processing the request:", error);
+              sendResponse({ status: "error", message: error.message });
+            }
+          }
+        );
+      } else {
+        sendResponse({ status: "error", message: "No active tabs found." });
+      }
+    });    
+  }
   
   // Fetches user data when extension is opened
   async function handleFetchData(message, sender, sendResponse) {
