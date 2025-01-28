@@ -18,19 +18,24 @@ const EditPopup = ({
 
   // Confirm changes and update the main file name
   const handleConfirmClick = () => {
-    if(tempFileName.trim() && tempFileName !== currFileName) {
-      console.log("success!")
-      handleEditSection(tempFileName, cartId);
-      setIsVisible(false); 
-      setModifyOrgSec(false);
-      setModOrgHidden(false);
-      setIsLocked(true);
-
-      //chrome.runtime.sendMessage({ action: "editFolder", data: tempFileName });
+    if (tempFileName.trim() && tempFileName !== currFileName) {
+      handleEditSection(tempFileName, cartId)
+        .then(() => {
+          setIsVisible(false);
+          setModifyOrgSec(false);
+          setModOrgHidden(false);
+          setIsLocked(true);
+        })
+        .catch(() => {
+          console.error("error editing folder");
+        });
+    } else if (!tempFileName.trim()) {
+      alert("Folder name cannot be empty.");
+    } else {
+      alert("Folder name is unchanged.");
     }
-
-    
   };
+  
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {

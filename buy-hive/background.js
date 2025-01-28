@@ -75,6 +75,10 @@ chrome.runtime.onInstalled.addListener(() => {
       }
     });    
   }
+
+  function getTextContent() { 
+    return document.body.innerText || document.body.textContent; 
+  }   
   
   // Fetches user data when extension is opened
   async function handleFetchData(message, sender, sendResponse) {

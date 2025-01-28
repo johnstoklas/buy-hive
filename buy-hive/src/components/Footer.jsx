@@ -22,7 +22,6 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
 
     // Sends user information to background.js for database managament
         useEffect(() => {
-            console.log("local", user);
             if (user) {
                 setUserName(user);
                 chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
@@ -35,13 +34,17 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
     // Add Item Button
     const handleScrapeClick = () => {
         if(!isLocked) {
-            gatherData();
+            gatherImageData();
             
             chrome.runtime.sendMessage({ action: "scrapePage" }, (response) => {
-                if(response?.action === 'scrapeComplete') {
+                console.log("result of scrape: " + response?.result);
+
+                if(response?.action === 'success') {
+                    console.log("result of scrape: " + response.result);
+                    console.log("result of scrape (data): " + data);
                     setScrapedData(response.result);
                 }
-                else if (response?.action === 'scrapeFailed') {
+                else if (response?.action === 'error') {
                     setError(response.error);
                 }
             });
@@ -53,7 +56,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
         }
     };
 
-    const gatherData = () => {
+    const gatherImageData = () => {
         
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length > 0) {

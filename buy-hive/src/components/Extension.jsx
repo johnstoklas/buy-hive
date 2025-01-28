@@ -35,9 +35,7 @@ const Extension = () => {
           }
 
           if (response?.status === "success") {
-            console.log("Data fetched successfully:", response.data);
             const cartsArray = response.data.carts;
-            console.log("array? ", cartsArray)
             setOrganizationSections(cartsArray || []);
           } else {
             console.error("Error fetching data:", response?.message);
@@ -57,10 +55,14 @@ const Extension = () => {
 
     const data = {
       email: userName.email,
-      cartName: fileName,
+      cartName: fileName.trim(),
     };
 
-    if (fileName.trim()) {
+    const isDuplicate = organizationSections.some(
+      (section) => section.cart_name === fileName.trim(),
+    );
+
+    if (fileName.trim() && !isDuplicate) {
       chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
         if (chrome.runtime.lastError) {
           console.error("Error communicating with background script:", chrome.runtime.lastError.message);
@@ -68,7 +70,6 @@ const Extension = () => {
         }
 
         if (response?.status === "success") {
-          console.log("Folder added successfully:", response.data);
 
           // Add new folder to state directly
           // I need to make sure that you can't add duplicates and that the date is not new but the original date from the database
@@ -85,38 +86,52 @@ const Extension = () => {
 
   // Edits an existing folder and crashes for now
   const handleEditSection = (newFileName, cartId) => {
-    if (!userName) {
-      console.error("User is not logged in.");
-      return;
-    }
+    return new Promise((resolve, reject) => {
+      if (!userName) {
+        console.error("User is not logged in.");
+        reject();
+        return;
+      }
 
-    const data = {
-      email: userName.email,
-      newCartName: newFileName,
-      cartId: cartId,
-    };
+      const data = {
+        email: userName.email,
+        newCartName: newFileName,
+        cartId: cartId,
+      };
 
-    if (newFileName.trim()) {
-      chrome.runtime.sendMessage({ action: "editFolder", data }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-          return;
-        }
+      const isDuplicate = organizationSections.some(
+        (section) => section.cart_name === newFileName.trim(),
+      );
 
-        if (response?.status === "success") {
-          console.log("Folder updated successfully:", response.data);
+      if (newFileName.trim() && !isDuplicate) {
+        chrome.runtime.sendMessage({ action: "editFolder", data }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+            reject();
+            return;
+          }
 
-          // Add new folder to state directly
-          // I need to make sure that you can't add duplicates and that the date is not new but the original date from the database
-          setOrganizationSections((prev) => [
-            ...prev,
-            { cart_name: fileName }, 
-          ]);
-        } else {
-          console.error("Error updating folder:", response?.error);
-        }
-      });
-    }
+          if (response?.status === "success") {
+
+            // Add new folder to state directly
+            setOrganizationSections((prev) =>
+              prev.map((section) =>
+                section.cart_id === cartId
+                  ? { ...section, cart_name: newFileName } // Update only the name
+                  : section // Keep other sections unchanged
+              )
+            );
+            resolve();
+          } else {
+            console.error("Error updating folder:", response?.error);
+            reject();
+          }
+        });
+      }
+      else {
+        reject();
+      }
+    });
   };
 
   // Edits an existing folder and crashes for now
@@ -125,33 +140,29 @@ const Extension = () => {
       console.error("User is not logged in.");
       return;
     }
-
+  
     const data = {
       email: userName.email,
       cartId: cartId,
     };
-
+  
     chrome.runtime.sendMessage({ action: "deleteFolder", data }, (response) => {
       if (chrome.runtime.lastError) {
         console.error("Error communicating with background script:", chrome.runtime.lastError.message);
         return;
       }
-
+  
       if (response?.status === "success") {
-        console.log("Folder deleted successfully:", response.data);
-
-        // Add new folder to state directly
-        // I need to make sure that you can't add duplicates and that the date is not new but the original date from the database
-        setOrganizationSections((prev) => [
-          ...prev,
-          { cart_name: fileName }, 
-        ]);
+        // Remove the deleted section from state
+        setOrganizationSections((prev) =>
+          prev.filter((section) => section.cart_id !== cartId)
+        );
       } else {
         console.error("Error deleting folder:", response?.error);
       }
     });
   };
-
+  
   return (
     <>
       <Header />

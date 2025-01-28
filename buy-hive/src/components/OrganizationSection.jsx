@@ -6,7 +6,6 @@ function OrganizationSection({
   sectionId,
   title,
   items,
-  updateSectionTitle,
   setIsLocked,
   handleEditSection,
   handleDeleteSection,
@@ -37,13 +36,6 @@ function OrganizationSection({
       );
     }
   }, [isExpanded, items]);
-
-  // Send updated title to the parent component
-  useEffect(() => {
-    if (sectionTitle !== title) {
-      updateSectionTitle(sectionTitle, sectionId);
-    }
-  }, [sectionTitle, sectionId, title, updateSectionTitle]);
 
   // Handle expanding/collapsing the section
   const handleExpandClick = () => {
@@ -85,7 +77,9 @@ function OrganizationSection({
             ▶
           </button>
           <h4 className="expand-section-title">{sectionTitle}</h4>
-          <h4 className="expand-section-items">{items.length}</h4>
+          <h4 className="expand-section-items">
+            {items ? (items.length) : (0)} 
+          </h4>
           <button className="expand-section-share" onClick={handleModifyClick}>
             &#8942;
           </button>
