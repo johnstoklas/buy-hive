@@ -11,6 +11,14 @@ chrome.runtime.onInstalled.addListener(() => {
       case "addNewFolder":
         handleAddNewFolder(message, sender, sendResponse);
         return true;
+
+      case "editFolder":
+        handleEditFolder(message, sender, sendResponse);
+        return true;
+
+      case "deleteFolder":
+        handleDeleteFolder(message, sender, sendResponse);
+        return true;
   
       default:
         console.warn(`Unknown action: ${message.action}`);
@@ -73,4 +81,57 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "error", message: error.message });
     }
   }
+
+  // Edits an existing folder in the database 
+  async function handleEditFolder(message, sender, sendResponse) {
+    const { email, cartId, newCartName } = message.data;
+    if (!email || !newCartName) {
+      sendResponse({ status: "error", message: "Invalid folder data" });
+      return;
+    }
   
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/edit-name`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ new_name: newCartName }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error updating folder:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+  
+  // Deletes an existing folder in the database 
+  async function handleDeleteFolder(message, sender, sendResponse) {
+    const { email, cartId } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid folder data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error deleting folder:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }

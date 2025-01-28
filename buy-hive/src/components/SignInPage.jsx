@@ -4,7 +4,7 @@ import Profile from './Profile.jsx';
 import LogoutButton from './LogoutButton.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const SignInPage = ({ setUserName }) => {
+const SignInPage = ({ user, setUserName }) => {
   const { isLoading, error } = useAuth0();
   return (
   <>
@@ -18,8 +18,8 @@ const SignInPage = ({ setUserName }) => {
             <LoginButton />
             
             <Profile 
+              user={user}
               setUserName={setUserName}
-              isLoading={isLoading}
             />
             <LogoutButton />
           </>

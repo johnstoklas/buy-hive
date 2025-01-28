@@ -5,7 +5,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 
-const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidden, setModOrgHidden, setIsLocked, position }) => {
+const ModifyOrgSec = ({ 
+  newFileName, 
+  setModifyOrgSec, 
+  modOrgHidden, 
+  setModOrgHidden, 
+  setIsLocked, 
+  position, 
+  handleEditSection, 
+  handleDeleteSection,
+  cartId 
+}) => {
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
@@ -47,18 +57,21 @@ const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidd
   return (
   <>
     {editPopupVisible && <EditPopup 
-      newFileName={newFileName}
-      updateFileName={updateFileName}
+      currFileName={newFileName}
       setIsVisible={setEditPopupVisible}
       setModifyOrgSec={setModifyOrgSec}
       setModOrgHidden={setModOrgHidden}
       setIsLocked={setIsLocked}
+      handleEditSection={handleEditSection}
+      cartId={cartId}
     />}
     {deletePopupVisible && <DeletePopup 
       setIsVisible={setDeletePopupVisible}
       setModifyOrgSec={setModifyOrgSec}
       setModOrgHidden={setModOrgHidden}
       setIsLocked={setIsLocked}
+      handleDeleteSection={handleDeleteSection}
+      cartId={cartId}
     />}
     <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }`} ref={modifyOrgSec} >
         <button onClick={toggleEditPopup}>

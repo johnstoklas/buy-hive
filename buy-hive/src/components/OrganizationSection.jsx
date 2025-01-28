@@ -8,6 +8,8 @@ function OrganizationSection({
   items,
   updateSectionTitle,
   setIsLocked,
+  handleEditSection,
+  handleDeleteSection,
 }) {
   const [isExpanded, setIsExpanded] = useState(false); // OrgSec showing items or not
   const [sectionHeight, setSectionHeight] = useState("45px"); // How tall the OrgSec needs to be
@@ -72,7 +74,7 @@ function OrganizationSection({
       }}
       id={sectionId}
     >
-      <section className="expand-section">
+      <section className="expand-section" key={sectionId}>
         <div className="expand-section-content" ref={folderRef}>
           <button
             className={`expand-section-button ${
@@ -91,13 +93,15 @@ function OrganizationSection({
         {modifyOrgSec && (
           <ModifyOrgSec
             newFileName={sectionTitle}
-            updateFileName={setSectionTitle}
             setModifyOrgSec={setModifyOrgSec}
             modOrgHidden={modOrgHidden}
             setModOrgHidden={setModOrgHidden}
             setIsLocked={setIsLocked}
             position={modifyOrgSecPosition}
             ref={folderRef}
+            handleEditSection={handleEditSection}
+            handleDeleteSection={handleDeleteSection}
+            cartId={sectionId}
           />
         )}
       </section>

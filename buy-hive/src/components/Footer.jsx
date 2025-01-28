@@ -7,7 +7,7 @@ import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
 import SignInPage from './SignInPage.jsx';
 
-function Footer({ handleAddSection, setFileName, fileName, organizationSections, setUserName, isLocked }) {
+function Footer({ handleAddSection, setFileName, fileName, organizationSections, setUserName, isLocked, cartsArray }) {
     const [addItemState, setAddItemState] = useState(false);
     const [addFileState, setAddFileState] = useState(false);
     const [signInState, setSignInState] = useState(false);
@@ -22,6 +22,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
 
     // Sends user information to background.js for database managament
         useEffect(() => {
+            console.log("local", user);
             if (user) {
                 setUserName(user);
                 chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
@@ -145,6 +146,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
                     scrapedData={scrapedData}
                     errorData={error}
                     setIsVisible={setAddItemState}
+                    cartsArray={cartsArray}
                 />
             </CSSTransition>
             <CSSTransition

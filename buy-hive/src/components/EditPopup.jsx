@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 
-const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec, setModOrgHiddeN, setIsLocked}) => {
-  const [tempFileName, setTempFileName] = useState(newFileName);
+const EditPopup = ({ 
+  setIsVisible, 
+  currFileName, 
+  setModifyOrgSec, 
+  setModOrgHidden, 
+  setIsLocked, 
+  handleEditSection,
+  cartId
+ }) => {
+  const [tempFileName, setTempFileName] = useState(currFileName);
   
   // Update local state on input change
   const handleInputChange = (e) => {
@@ -10,14 +18,15 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
 
   // Confirm changes and update the main file name
   const handleConfirmClick = () => {
-    if(tempFileName.trim() && tempFileName !== newFileName) {
-      updateFileName(tempFileName);
+    if(tempFileName.trim() && tempFileName !== currFileName) {
+      console.log("success!")
+      handleEditSection(tempFileName, cartId);
       setIsVisible(false); 
       setModifyOrgSec(false);
       setModOrgHidden(false);
       setIsLocked(true);
 
-      //chrome.runtime.sendMessage({ action: "editFileName", data: tempFileName });
+      //chrome.runtime.sendMessage({ action: "editFolder", data: tempFileName });
     }
 
     

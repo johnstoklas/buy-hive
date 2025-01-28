@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 
-const DeletePopup = ({ setIsVisible, setModifyOrgSec, setModOrgHidden, setIsLocked}) => {
+const DeletePopup = ({ setIsVisible, setModifyOrgSec, setModOrgHidden, setIsLocked, cartId, handleDeleteSection }) => {
 
   const deleteFolder = () => {
+    handleDeleteSection(cartId);
+    
     setIsVisible(false);
     setModifyOrgSec(false);
     setModOrgHidden(false);

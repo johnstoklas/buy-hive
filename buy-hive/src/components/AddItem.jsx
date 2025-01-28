@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ClipLoader } from "react-spinners";
 import SelectFolders from './SelectFolders.jsx';
 
-const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setIsVisible }) => {
+const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setIsVisible, cartsArray }) => {
   
   const addItem = useRef(null);
   {/*
@@ -52,7 +52,9 @@ const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setI
         : ( <div className="spinner-loader"></div> ) }
         </div>
         <div class="add-item-organization-container">
-          <SelectFolders />
+          <SelectFolders 
+            cartsArray={cartsArray}
+          />
         </div> 
         <button id="add-item"> Add Item </button>
         </> 
