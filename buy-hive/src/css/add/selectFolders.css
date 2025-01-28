@@ -1,11 +1,15 @@
 #select-folders-container {
     display: flex;
     flex-direction: column;
+    background-color: #eaeaea;
+    border-radius: 5px;
+    padding-top: 10px;
 }
 
 #select-folders-header {
     vertical-align: center;
     margin-bottom: 5px;
+    padding: 0 10px;
 }
 
 #select-folders-header * {
@@ -15,9 +19,8 @@
 
 #select-folders-header p {
     margin: 0;
-    font-weight: 500;
-    width: 185px;
-    margin-left: 5px;
+    font-weight: 400;
+    width: 175px;
 }
 
 #select-folders-header button {
@@ -42,12 +45,17 @@
     outline: none;
 }
 
+#sf-line-break {
+  color: black;
+  width: 245px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 #select-folders-section {
     width: 250px;
     height: 80px;
-    background-color: #eaeaea;
     padding: 5px;
-    border-radius: 5px;
   }
   
   #sf-dropdown {

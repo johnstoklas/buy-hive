@@ -9,12 +9,12 @@ function OrganizationSection({
   updateSectionTitle,
   setIsLocked,
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [sectionHeight, setSectionHeight] = useState("45px");
-  const [sectionTitle, setSectionTitle] = useState(title);
-  const [modifyOrgSec, setModifyOrgSec] = useState(false);
-  const [modOrgHidden, setModOrgHidden] = useState(false);
-  const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
+  const [isExpanded, setIsExpanded] = useState(false); // OrgSec showing items or not
+  const [sectionHeight, setSectionHeight] = useState("45px"); // How tall the OrgSec needs to be
+  const [sectionTitle, setSectionTitle] = useState(title); // Title of OrgSec
+  const [modifyOrgSec, setModifyOrgSec] = useState(false); // Visibility of OrgSec
+  const [modOrgHidden, setModOrgHidden] = useState(false); // Hides OrgSec on popup
+  const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below"); // Depending on OrgSec position on UI
 
   const expandedSectionRef = useRef(null);
   const folderRef = useRef(null);

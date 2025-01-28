@@ -16,9 +16,10 @@ const SelectFolders = () => {
   return (
     <section id="select-folders-container">
         <div id="select-folders-header">
-            <p> Select Folders</p>
+            <p> Select Folders </p>
             <button> New Folder </button>
         </div>
+        <hr id="sf-line-break"></hr>
         <div id="select-folders-section">
         <div id="sf-dropdown">
             <ul style={{ listStyle: "none", padding: 0 }}>
