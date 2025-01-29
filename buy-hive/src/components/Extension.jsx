@@ -12,7 +12,6 @@ const Extension = () => {
   const [isLoading, setIsLoading] = useState(true); // Show loading state until data is fetched
 
   // Fetch user data from localStorage on initial load
-  // I don't know if this function does anything
   useEffect(() => {
     const storedUser = localStorage.getItem("userName");
     if (storedUser) {
@@ -21,29 +20,31 @@ const Extension = () => {
   }, []);
 
   // Fetch organization sections when user data is available
-  useEffect(() => {
+  const fetchOrganizationSections = () => {
     if (userName?.email) {
-      setIsLoading(true); 
-      chrome.runtime.sendMessage({ action: "fetchData", data: { email: userName.email } }, (response) => {
+      setIsLoading(true);
+      chrome.runtime.sendMessage(
+        { action: "fetchData", data: { email: userName.email } },
+        (response) => {
           if (chrome.runtime.lastError) {
-            console.error(
-              "Error communicating with background script:",
-              chrome.runtime.lastError.message
-            );
+            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
             setIsLoading(false);
             return;
           }
 
           if (response?.status === "success") {
-            const cartsArray = response.data.carts;
-            setOrganizationSections(cartsArray || []);
+            setOrganizationSections(response.data.carts || []);
           } else {
             console.error("Error fetching data:", response?.message);
           }
-          setIsLoading(false); 
+          setIsLoading(false);
         }
       );
     }
+  };
+
+  useEffect(() => {
+    fetchOrganizationSections();
   }, [userName]);
 
   // Adds a new folder to the database and updates the UI immediately
@@ -53,116 +54,129 @@ const Extension = () => {
       return;
     }
 
+    const trimmedFileName = fileName.trim();
+    if (!trimmedFileName) return;
+
+    const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
+    if (isDuplicate) {
+      console.error("A folder with this name already exists.");
+      return;
+    }
+
     const data = {
       email: userName.email,
-      cartName: fileName.trim(),
+      cartName: trimmedFileName,
     };
 
-    const isDuplicate = organizationSections.some(
-      (section) => section.cart_name === fileName.trim(),
-    );
-
-    if (fileName.trim() && !isDuplicate) {
-      chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-          return;
-        }
-
-        if (response?.status === "success") {
-
-          // Add new folder to state directly
-          // I need to make sure that you can't add duplicates and that the date is not new but the original date from the database
-          setOrganizationSections((prev) => [
-            ...prev,
-            { cart_name: fileName, item_count: 0, items: [], created_at: new Date().toISOString() },
-          ]);
-        } else {
-          console.error("Error adding folder:", response?.error);
-        }
-      });
-    }
-  };
-
-  // Edits an existing folder and crashes for now
-  const handleEditSection = (newFileName, cartId) => {
-    return new Promise((resolve, reject) => {
-      if (!userName) {
-        console.error("User is not logged in.");
-        reject();
+    chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
         return;
       }
 
-      const data = {
-        email: userName.email,
-        newCartName: newFileName,
-        cartId: cartId,
-      };
-
-      const isDuplicate = organizationSections.some(
-        (section) => section.cart_name === newFileName.trim(),
-      );
-
-      if (newFileName.trim() && !isDuplicate) {
-        chrome.runtime.sendMessage({ action: "editFolder", data }, (response) => {
-          if (chrome.runtime.lastError) {
-            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-            reject();
-            return;
-          }
-
-          if (response?.status === "success") {
-
-            // Add new folder to state directly
-            setOrganizationSections((prev) =>
-              prev.map((section) =>
-                section.cart_id === cartId
-                  ? { ...section, cart_name: newFileName } // Update only the name
-                  : section // Keep other sections unchanged
-              )
-            );
-            resolve();
-          } else {
-            console.error("Error updating folder:", response?.error);
-            reject();
-          }
-        });
-      }
-      else {
-        reject();
+      if (response?.status === "success" && response?.data) {
+        // Ensure we use the backend response, which contains the correct cart_id
+        console.log("added file: ", response.data);
+        setOrganizationSections((prev) => [...prev, response.data]); 
+      } else {
+        console.error("Error adding folder:", response?.error);
       }
     });
   };
 
-  // Edits an existing folder and crashes for now
+  // Edits an existing folder
+  const handleEditSection = (newFileName, cartId) => {
+    return new Promise((resolve, reject) => {
+      if (!userName) {
+        console.error("User is not logged in.");
+        reject("User is not logged in.");
+        return;
+      }
+  
+      if (!cartId) {
+        console.error("Invalid cart ID.");
+        reject("Invalid cart ID.");
+        return;
+      }
+  
+      if (!newFileName.trim()) {
+        console.error("New folder name is empty.");
+        reject("New folder name is empty.");
+        return;
+      }
+  
+      const isDuplicate = organizationSections.some(
+        (section) => section.cart_name === newFileName.trim() && section.cart_id !== cartId
+      );
+  
+      if (isDuplicate) {
+        console.error("A folder with this name already exists.");
+        reject("A folder with this name already exists.");
+        return;
+      }
+  
+      const data = {
+        email: userName.email,
+        newCartName: newFileName.trim(),
+        cartId: cartId,
+      };
+  
+      chrome.runtime.sendMessage({ action: "editFolder", data }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          reject(chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          setOrganizationSections((prev) =>
+            prev.map((section) =>
+              section.cart_id === cartId ? { ...section, cart_name: newFileName.trim() } : section
+            )
+          );
+          resolve();
+        } else {
+          console.error("Error updating folder:", response?.error);
+          reject(response?.error);
+        }
+      });
+    });
+  };
+
+  // Deletes a folder
   const handleDeleteSection = (cartId) => {
     if (!userName) {
       console.error("User is not logged in.");
       return;
     }
-  
+
+    console.log("Attempting to delete cart with ID:", cartId); // Debugging step
+
+    if (!cartId) {
+      console.error("Invalid cart ID.");
+      return;
+    }
+
     const data = {
       email: userName.email,
       cartId: cartId,
     };
-  
+
     chrome.runtime.sendMessage({ action: "deleteFolder", data }, (response) => {
       if (chrome.runtime.lastError) {
         console.error("Error communicating with background script:", chrome.runtime.lastError.message);
         return;
       }
-  
+
       if (response?.status === "success") {
-        // Remove the deleted section from state
-        setOrganizationSections((prev) =>
-          prev.filter((section) => section.cart_id !== cartId)
-        );
+        // Fetch the latest list after deletion
+        fetchOrganizationSections();
       } else {
         console.error("Error deleting folder:", response?.error);
       }
     });
   };
-  
+
   return (
     <>
       <Header />
@@ -172,6 +186,7 @@ const Extension = () => {
         ) : organizationSections.length > 0 ? (
           organizationSections.map((section) => (
             <OrganizationSection
+              key={section.cart_id}
               sectionId={section.cart_id}
               title={section.cart_name}
               itemCount={section.item_count}
