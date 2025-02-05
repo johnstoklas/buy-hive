@@ -40,14 +40,17 @@ const ModifyOrgSec = ({
   // toggles edit title popup
   const toggleEditPopup = () => {
     setEditPopupVisible(!editPopupVisible);
-    setIsLocked(editPopupVisible);
   }
 
   // toggles delete folder popup
   const toggleDeletePopup = () => {
     setDeletePopupVisible(!deletePopupVisible);
-    setIsLocked(deletePopupVisible);
   }
+
+  useEffect(() => {
+    setIsLocked(editPopupVisible || deletePopupVisible);
+  }, [editPopupVisible, deletePopupVisible]);
+  
 
   // Updates if modification screen should be visible when another popup appears
   useEffect(() => {

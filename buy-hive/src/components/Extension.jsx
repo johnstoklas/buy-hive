@@ -11,6 +11,10 @@ const Extension = () => {
   const [userName, setUserName] = useState(null); // Store user info
   const [isLoading, setIsLoading] = useState(true); // Show loading state until data is fetched
 
+  useEffect(() => {
+    console.log("isLocked: ", isLocked);
+  }, [isLocked]);
+
   // Fetch user data from localStorage on initial load
   useEffect(() => {
     const storedUser = localStorage.getItem("userName");
@@ -177,6 +181,38 @@ const Extension = () => {
     });
   };
 
+  // Edit item notes
+  const handleEditNotes = (notes, cartId, itemId) => {
+    return new Promise((resolve, reject) => {
+      if(notes.trim()) {
+        const data = {
+          email: userName.email,
+          notes: notes,
+          cartId: cartId,
+          itemId: itemId,
+        };
+
+        console.log(data);
+
+        chrome.runtime.sendMessage({action: "editNotes", data: data}, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+            return;
+          }
+    
+          if (response?.status === "success") {
+            // Fetch the latest list after deletion
+            //fetchOrganizationSections();
+            resolve();
+
+          } else {
+            console.error("Error editing notes:", response?.error);
+          }
+        });
+      }
+    });
+  }
+
   return (
     <>
       <Header />
@@ -195,6 +231,7 @@ const Extension = () => {
               setIsLocked={setIsLocked}
               handleEditSection={handleEditSection}
               handleDeleteSection={handleDeleteSection}
+              handleEditNotes={handleEditNotes}
             />
           ))
         ) : (

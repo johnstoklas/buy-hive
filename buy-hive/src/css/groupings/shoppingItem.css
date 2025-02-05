@@ -48,6 +48,24 @@
     margin: 0;
 }
 
+.shopping-item-header {
+    display: inline-flex;
+    align-items: center;
+    width: 142px;
+}
+
+.shopping-item-header button {
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.shopping-item-header button:hover {
+    cursor: pointer;
+    background-color: #cfcfcf;
+}
+
 .shopping-item-price {
     font-weight: 400;
 }

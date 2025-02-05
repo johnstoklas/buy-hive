@@ -9,6 +9,10 @@
     z-index: 1000;
 }
 
+.modify-item-sec {
+    margin-left: 70px;
+}
+
 .hidden {
     display: none;
 }
@@ -35,4 +39,8 @@
 .modify-org-sec button:hover {
     background-color: rgb(191, 191, 191);
     cursor: pointer;
+}
+
+.shopping-item-header-text {
+    width: 90%;
 }

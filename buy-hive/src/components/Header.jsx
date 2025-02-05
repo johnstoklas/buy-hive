@@ -2,6 +2,8 @@ import React from 'react';
 import '../css/base/header.css'
 
 function Header() {
+
+    // Handles closing the extension
     const handleCloseClick = () => {
         window.close(); // Close the extension window
     };

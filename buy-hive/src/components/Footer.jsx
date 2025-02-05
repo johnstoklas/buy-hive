@@ -37,11 +37,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
             gatherImageData();
             
             chrome.runtime.sendMessage({ action: "scrapePage" }, (response) => {
-                console.log("result of scrape: " + response?.result);
-
                 if(response?.action === 'success') {
-                    console.log("result of scrape: " + response.result);
-                    console.log("result of scrape (data): " + data);
                     setScrapedData(response.result);
                 }
                 else if (response?.action === 'error') {
@@ -79,8 +75,14 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
                 (results) => {
                     if (results && results[0]?.result) {
                         const imageSources = results[0].result;
-                        setAllImages(imageSources);
                         console.log("Images found:", imageSources);
+                        let imagePlainText = "";
+                        imageSources.map((element) => {
+                            imagePlainText += element;
+                            imagePlainText += ", ";
+                        });
+                        console.log("plain text: " + imagePlainText);
+                        //chrome.sendMessage({message: sendImageData, data:  })
                     } else {
                         console.error("Failed to get images or no images found.");
                     }
