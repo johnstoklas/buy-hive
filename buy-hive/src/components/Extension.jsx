@@ -213,6 +213,35 @@ const Extension = () => {
     });
   }
 
+  // Delete an item
+  const handleDeleteItem = (cartId, itemId) => {
+    return new Promise((resolve, reject) => {
+      const data = {
+        email: userName.email,
+        cartId: cartId,
+        itemId: itemId,
+      };
+
+      console.log(data);
+
+      chrome.runtime.sendMessage({action: "deleteItem", data: data}, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          // Fetch the latest list after deletion
+          fetchOrganizationSections();
+          resolve();
+
+        } else {
+          console.error("Error deleting item:", response?.error);
+        }
+      });
+    });
+  }
+
   return (
     <>
       <Header />
@@ -232,6 +261,7 @@ const Extension = () => {
               handleEditSection={handleEditSection}
               handleDeleteSection={handleDeleteSection}
               handleEditNotes={handleEditNotes}
+              handleDeleteItem={handleDeleteItem}
             />
           ))
         ) : (

@@ -27,6 +27,10 @@ chrome.runtime.onInstalled.addListener(() => {
       case "editNotes":
         handleEditNotes(message, sender, sendResponse);
         return true;
+      
+      case "deleteItem":
+        handleDeleteItem(message, sender, sendResponse);
+        return true;
   
       default:
         console.warn(`Unknown action: ${message.action}`);
@@ -196,10 +200,9 @@ chrome.runtime.onInstalled.addListener(() => {
 
   // Edits the notes of an item
   async function handleEditNotes(message, sender, sendResponse) {
-    console.log("did we get here");
     const { email, notes, cartId, itemId } = message.data;
     if (!email) {
-      sendResponse({ status: "error", message: "Invalid folder data" });
+      sendResponse({ status: "error", message: "Invalid item data" });
       return;
     }
   
@@ -219,6 +222,32 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "success", data });
     } catch (error) {
       console.error("Error editing notes:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  async function handleDeleteItem(message, sender, sendResponse) {
+    const { email, cartId, itemId } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid item data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/items/${itemId}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        body: JSON.stringify({ item_id: itemId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error deleting item:", error);
       sendResponse({ status: "error", message: error.message });
     }
   }

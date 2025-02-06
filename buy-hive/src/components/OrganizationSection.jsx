@@ -9,7 +9,8 @@ function OrganizationSection({
   setIsLocked,
   handleEditSection,
   handleDeleteSection,
-  handleEditNotes
+  handleEditNotes,
+  handleDeleteItem
 }) {
   const [isExpanded, setIsExpanded] = useState(false); // OrgSec showing items or not
   const [sectionHeight, setSectionHeight] = useState("45px"); // How tall the OrgSec needs to be
@@ -109,6 +110,7 @@ function OrganizationSection({
             <ExpandSection 
               item={item}
               handleEditNotes={handleEditNotes}
+              handleDeleteItem={handleDeleteItem}
               cartId={sectionId}
               itemId={item.item_id}
             />

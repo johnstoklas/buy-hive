@@ -75,6 +75,7 @@ const ModifyOrgSec = ({
       setIsLocked={setIsLocked}
       handleDeleteSection={handleDeleteSection}
       cartId={cartId}
+      type={"folder"}
     />}
     <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }`} ref={modifyOrgSec} >
         <button onClick={toggleEditPopup}>

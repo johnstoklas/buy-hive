@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import ModifyItemSec from './ModifyItemSec.jsx';
 
-const ExpandSection = ({ item, handleEditNotes, cartId, itemId }) => {
+const ExpandSection = ({ 
+  item, 
+  handleEditNotes, 
+  handleDeleteItem,
+  cartId, 
+  itemId,
+}) => {
 
   const [modifyVisible, setModifyVisible] = useState(false);
   const [notes, setNotes] = useState(item.notes);
@@ -31,6 +37,7 @@ const ExpandSection = ({ item, handleEditNotes, cartId, itemId }) => {
                   notesContent={notes}
                   setNotes={setNotes}
                   handleEditNotes={handleEditNotes}
+                  handleDeleteItem={handleDeleteItem}
                   cartId={cartId}
                   itemId={itemId}
                 />} 
