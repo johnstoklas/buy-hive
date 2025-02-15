@@ -9,6 +9,10 @@
     z-index: 1000;
 }
 
+.modify-item-sec {
+    margin-left: 70px;
+}
+
 .hidden {
     display: none;
 }

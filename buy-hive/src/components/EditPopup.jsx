@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 
-const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec, setModOrgHiddeN, setIsLocked}) => {
-  const [tempFileName, setTempFileName] = useState(newFileName);
+const EditPopup = ({ 
+  setIsVisible, 
+  currFileName, 
+  setModifyOrgSec, 
+  setModOrgHidden, 
+  setIsLocked, 
+  handleEditSection,
+  cartId
+ }) => {
+  const [tempFileName, setTempFileName] = useState(currFileName);
   
   // Update local state on input change
   const handleInputChange = (e) => {
@@ -9,19 +17,25 @@ const EditPopup = ({ setIsVisible, newFileName, updateFileName, setModifyOrgSec,
   };
 
   // Confirm changes and update the main file name
-  const handleConfirmClick = () => {
-    if(tempFileName.trim() && tempFileName !== newFileName) {
-      updateFileName(tempFileName);
-      setIsVisible(false); 
-      setModifyOrgSec(false);
-      setModOrgHidden(false);
-      setIsLocked(true);
-
-      //chrome.runtime.sendMessage({ action: "editFileName", data: tempFileName });
+  const handleConfirmClick = async () => {
+    if (tempFileName.trim() && tempFileName !== currFileName) {
+      try {
+        await handleEditSection(tempFileName, cartId);
+        setIsVisible(false);
+        setModifyOrgSec(false);
+        setModOrgHidden(false);
+        setIsLocked(true);
+      } catch (error) {
+        alert("Error updating folder. Please try again.");
+      }
+    } else if (!tempFileName.trim()) {
+      alert("Folder name cannot be empty.");
+    } else {
+      alert("Folder name is unchanged.");
     }
-
-    
   };
+  
+  
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {

@@ -37,3 +37,8 @@ input[type="text"]:focus {
       transform: rotate(360deg);
     }
   }
+
+.main-page-sl {
+  margin-top: 145px;
+  margin-left: 135px;
+}

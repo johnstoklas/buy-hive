@@ -5,7 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 
-const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidden, setModOrgHidden, setIsLocked, position }) => {
+const ModifyOrgSec = ({ 
+  setModifyOrgSec, 
+  modOrgHidden, 
+  setModOrgHidden, 
+  setIsLocked, 
+  position, 
+  handleDeleteSection,
+  cartId,
+  handleTitleClick
+}) => {
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
@@ -29,15 +38,18 @@ const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidd
 
   // toggles edit title popup
   const toggleEditPopup = () => {
-    setEditPopupVisible(!editPopupVisible);
-    setIsLocked(editPopupVisible);
+    handleTitleClick();
   }
 
   // toggles delete folder popup
   const toggleDeletePopup = () => {
     setDeletePopupVisible(!deletePopupVisible);
-    setIsLocked(deletePopupVisible);
   }
+
+  useEffect(() => {
+    setIsLocked(editPopupVisible || deletePopupVisible);
+  }, [editPopupVisible, deletePopupVisible]);
+  
 
   // Updates if modification screen should be visible when another popup appears
   useEffect(() => {
@@ -46,19 +58,14 @@ const ModifyOrgSec = ({ updateFileName, newFileName, setModifyOrgSec, modOrgHidd
 
   return (
   <>
-    {editPopupVisible && <EditPopup 
-      newFileName={newFileName}
-      updateFileName={updateFileName}
-      setIsVisible={setEditPopupVisible}
-      setModifyOrgSec={setModifyOrgSec}
-      setModOrgHidden={setModOrgHidden}
-      setIsLocked={setIsLocked}
-    />}
     {deletePopupVisible && <DeletePopup 
       setIsVisible={setDeletePopupVisible}
       setModifyOrgSec={setModifyOrgSec}
       setModOrgHidden={setModOrgHidden}
       setIsLocked={setIsLocked}
+      handleDeleteSection={handleDeleteSection}
+      cartId={cartId}
+      type={"folder"}
     />}
     <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }`} ref={modifyOrgSec} >
         <button onClick={toggleEditPopup}>

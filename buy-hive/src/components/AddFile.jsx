@@ -5,21 +5,26 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons'
 const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible }) => {
 
   const addFile = useRef(null);
-    {/*
-    // If the user clicks out of the add item pop-up it disappears
-    useEffect(() => {
-      const handleClickOutside = (event) => {
-        if (addFile.current && !addFile.current.contains(event.target)) {
-          setIsVisible(false); 
-        }
-      };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isVisible && addFile.current && !addFile.current.contains(event.target)) {
+        setTimeout(() => {
+          if (isVisible) {
+            setIsVisible(false);
+          }
+        }, 300); // Delay matches your CSS animation time
+      }
+    };
   
-      document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isVisible, setIsVisible]);
   
-      return () => {
-        document.removeEventListener('click', handleClickOutside);
-      };
-    }, [setIsVisible]);*/}
+
     
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {

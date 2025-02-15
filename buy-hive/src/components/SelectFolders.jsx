@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const SelectFolders = () => {
+const SelectFolders = ({ cartsArray }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [organizationSections, setOrganizationSections] = useState([]);
 
-  const options = ["Option 1", "Option 2", "Option 3", "Option 4", "5", "6", "7", "8"];
+  useEffect(() => {
+    const array = [];
+    cartsArray.forEach((section) => {
+      array.push(section.cart_name); // Use push instead of add
+    });
+    setOrganizationSections(array); // Use the new array here, not cartsArray
+  }, [cartsArray]);
+  
 
-  const handleCheckboxChange = (option) => {
-    if (selectedOptions.includes(option)) {
+  //const options = ["Option 1", "Option 2", "Option 3", "Option 4", "5", "6", "7", "8"];
+
+  const handleCheckboxChange = (organizationSections) => {
+    if (selectedOptions.includes(organizationSections)) {
       setSelectedOptions(selectedOptions.filter((item) => item !== option));
     } else {
-      setSelectedOptions([...selectedOptions, option]);
+      setSelectedOptions([...selectedOptions, organizationSections]);
     }
   };
 
@@ -23,14 +33,14 @@ const SelectFolders = () => {
         <div id="select-folders-section">
         <div id="sf-dropdown">
             <ul style={{ listStyle: "none", padding: 0 }}>
-            {options.map((option) => (
+            {organizationSections.map((option) => (
                 <li key={option}>
                 <label className="custom-checkbox">
                     <input
                     type="checkbox"
                     value={option}
-                    checked={selectedOptions.includes(option)}
-                    onChange={() => handleCheckboxChange(option)}
+                    checked={selectedOptions.includes(organizationSections)}
+                    onChange={() => handleCheckboxChange(organizationSections)}
                     />
                     <span className="checkmark"></span>
                     {option}

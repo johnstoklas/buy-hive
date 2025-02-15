@@ -6,7 +6,7 @@ const Profile = ({ user, setUserName }) => {
     const { isLoading, isAuthenticated} = useAuth0();
 
     useEffect(() => {
-        console.log(user);
+        console.log("user: ", user);
         if (!isLoading && isAuthenticated && user) {
           setUserName(user);
         }
