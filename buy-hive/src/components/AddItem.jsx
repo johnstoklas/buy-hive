@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ClipLoader } from "react-spinners";
 import SelectFolders from './SelectFolders.jsx';
 
-const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setIsVisible, cartsArray }) => {
+const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setIsVisible, cartsArray, scrapedImage }) => {
   
   const addItem = useRef(null);
   {/*
@@ -35,15 +35,14 @@ const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setI
           { scrapedData ? (
             <>
           <div class="add-item-image-container">
-              <img src="images/spider_man.png"></img>
-          </div>
+            <img src={scrapedImage || "images/spider_man.png"}></img>       </div>
           <div class="add-item-information-container">
               <h4 class="add-item-name"> 
-                Spider Man Pillow
+                {/*Spider Man Pillow*/}
                 {scrapedData?.product_name}
               </h4>
               <h4 class="add-item-price">
-                $20.99
+                {/*$20.99*/}
                 {scrapedData?.price}  
               </h4>
               <textarea id="add-item-notes" placeholder="Notes"></textarea> 

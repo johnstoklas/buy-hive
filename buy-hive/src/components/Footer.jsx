@@ -14,6 +14,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
     const [outerHtml, setOuterHtml] = useState('');
 
     const [scrapedData, setScrapedData] = useState(null);
+    const [scrapedImage, setScrapedImage] = useState(null);
     const [currentUrl, setCurrentUrl] = useState(null);
     const [allImages, setAllImages] = useState(null);
     const [error, setError] = useState(null);
@@ -35,16 +36,8 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
     const handleScrapeClick = () => {
         if(!isLocked) {
             gatherImageData();
-            
-            chrome.runtime.sendMessage({ action: "scrapePage" }, (response) => {
-                if(response?.action === 'success') {
-                    setScrapedData(response.result);
-                }
-                else if (response?.action === 'error') {
-                    setError(response.error);
-                }
-            });
-
+            gatherPriceTitleData();
+                   
             // Updates footer visulization
             setAddItemState(!addItemState);
             setAddFileState(false);
@@ -52,8 +45,36 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
         }
     };
 
+    const gatherPriceTitleData = () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.scripting.executeScript({
+              target: { tabId: tabs[0].id },
+              func: getInnerText
+            }, (results) => {
+                const data = {
+                    innerText: results[0].result,
+                }
+                console.log(data);
+                chrome.runtime.sendMessage({ action: "scrapePage", data:data }, (response) => {
+                    console.log("did we get here?");
+                    if(response?.status === 'success') {
+                        console.log("title/price: (status)", response.data.cart_items);
+                        setScrapedData(response.data.cart_items);
+                    }
+                    else if (response?.status === 'error') {
+                        setError(response.error);
+                    }
+                });
+            });
+          });
+          
+          function getInnerText() {
+            console.log(document.body.innerText)
+            return document.body.innerText;
+          }       
+    }
+
     const gatherImageData = () => {
-        
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length > 0) {
               // Grabs the current URL
@@ -81,8 +102,19 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
                             imagePlainText += element;
                             imagePlainText += ", ";
                         });
-                        console.log("plain text: " + imagePlainText);
-                        //chrome.sendMessage({message: sendImageData, data:  })
+                        console.log(imagePlainText);
+                        const data = {
+                            imageData: imagePlainText,
+                        }
+                        chrome.runtime.sendMessage({action: "sendImageData", data:data }, (response) => {
+                            if(response?.status === 'success') {
+                                console.log("image data: ", response.data);
+                                setScrapedImage(response.data);
+                            }
+                            else if (response?.status === 'error') {
+                                setError(response.error);
+                            }
+                        })
                     } else {
                         console.error("Failed to get images or no images found.");
                     }
@@ -150,6 +182,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
                     organizationSections={organizationSections}
                     scrapedData={scrapedData}
                     errorData={error}
+                    scrapedImage={scrapedImage}
                     setIsVisible={setAddItemState}
                     cartsArray={cartsArray}
                 />

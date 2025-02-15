@@ -6,15 +6,14 @@ import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/fr
 
 
 const ModifyOrgSec = ({ 
-  newFileName, 
   setModifyOrgSec, 
   modOrgHidden, 
   setModOrgHidden, 
   setIsLocked, 
   position, 
-  handleEditSection, 
   handleDeleteSection,
-  cartId 
+  cartId,
+  handleTitleClick
 }) => {
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
@@ -39,7 +38,7 @@ const ModifyOrgSec = ({
 
   // toggles edit title popup
   const toggleEditPopup = () => {
-    setEditPopupVisible(!editPopupVisible);
+    handleTitleClick();
   }
 
   // toggles delete folder popup
@@ -59,15 +58,6 @@ const ModifyOrgSec = ({
 
   return (
   <>
-    {editPopupVisible && <EditPopup 
-      currFileName={newFileName}
-      setIsVisible={setEditPopupVisible}
-      setModifyOrgSec={setModifyOrgSec}
-      setModOrgHidden={setModOrgHidden}
-      setIsLocked={setIsLocked}
-      handleEditSection={handleEditSection}
-      cartId={cartId}
-    />}
     {deletePopupVisible && <DeletePopup 
       setIsVisible={setDeletePopupVisible}
       setModifyOrgSec={setModifyOrgSec}

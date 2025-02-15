@@ -10,14 +10,16 @@ const ModifyItemSec = ({
     cartId, 
     itemId, 
     setNotes,
-    handleDeleteItem
+    handleDeleteItem,
+    handleNoteClick
  }) => {  
     
     const [editNotesVisible, setEditNotesVisible] = useState(false);
     const [deleteItemVisible, setDeleteItemVisible] = useState(false);
     
     const changeEditNotesVisible = () => {
-        setEditNotesVisible(!editNotesVisible);
+        handleNoteClick();
+        //setEditNotesVisible(!editNotesVisible);
     }
 
     const changeDeleteItemVisible = () => {

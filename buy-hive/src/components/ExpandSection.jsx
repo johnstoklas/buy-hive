@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ModifyItemSec from './ModifyItemSec.jsx';
 
 const ExpandSection = ({ 
@@ -11,10 +11,54 @@ const ExpandSection = ({
 
   const [modifyVisible, setModifyVisible] = useState(false);
   const [notes, setNotes] = useState(item.notes);
+  const [isEditing, setIsEditing] = useState(false); // Track if editing
 
+  const inputRef = useRef(null);
+  const noteRef = useRef(notes);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+  
   const openModifyItem = () => {
     setModifyVisible(!modifyVisible);
   }
+
+  const handleNoteClick = () => {
+    setIsEditing(true);
+    setModifyVisible(false);
+  };
+
+  const handleNoteChange = (e) => {
+    setNotes(e.target.value);
+  };
+
+  const handleNoteBlur = () => {
+    //setIsEditing(false);
+      if(notes) {
+        noteRef.current = notes;
+        handleEditNotes(notes, cartId, cartId);
+      }
+      /*
+      else {
+        setNotes(noteRef.current);
+      }*/
+  };
+
+  const handleNoteKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setIsEditing(false);
+      if(notes) {
+        noteRef.current = notes;
+        handleEditNotes(notes, cartId, cartId);
+      }
+      else {
+        setNotes(noteRef.current);
+      }
+    }
+  };
 
   return (
   <>
@@ -40,9 +84,22 @@ const ExpandSection = ({
                   handleDeleteItem={handleDeleteItem}
                   cartId={cartId}
                   itemId={itemId}
+                  handleNoteClick={handleNoteClick}
                 />} 
 
-                <div class="shopping-item-notes"> {notes ? notes : "There are no notes"} </div>
+                {isEditing ? (
+                  <input 
+                    ref={inputRef}
+                    type="textarea"
+                    className="shopping-item-notes"
+                    value={notes}
+                    onChange={handleNoteChange}
+                    onBlur={handleNoteBlur}
+                    onKeyDown={handleNoteKeyDown}
+                  />
+                ) : (
+                  <div class="shopping-item-notes"> {notes ? notes : "There are no notes"} </div>
+                )}
             </div>
         </div>
     </section>

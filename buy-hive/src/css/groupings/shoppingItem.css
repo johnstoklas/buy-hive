@@ -66,6 +66,10 @@
     background-color: #cfcfcf;
 }
 
+.shopping-item-header-text {
+    width: 200px;
+}
+
 .shopping-item-price {
     font-weight: 400;
 }
@@ -81,4 +85,9 @@
     margin-top: 5px;
     color: black;
     padding: 2px;
+    border: none;
+    outline: none;
+    display: flex;
+    text-align: initial;
+    font-size: 12px;
 }

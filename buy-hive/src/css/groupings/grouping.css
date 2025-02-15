@@ -97,6 +97,18 @@
     cursor: pointer;
 }
 
+.expand-section-title-input {
+    width: 140px;
+    display: inline-flex;
+    font-size: 14px;
+    margin: 0 auto;
+    padding: .5em 0;
+    font-weight: 400;
+    color: black;
+    border-radius: 5px;
+    border: none;
+}
+ 
 /*
 ::-webkit-scrollbar {
     width: 10px; 

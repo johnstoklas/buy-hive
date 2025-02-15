@@ -12,22 +12,23 @@ function OrganizationSection({
   handleEditNotes,
   handleDeleteItem
 }) {
-  const [isExpanded, setIsExpanded] = useState(false); // OrgSec showing items or not
-  const [sectionHeight, setSectionHeight] = useState("45px"); // How tall the OrgSec needs to be
-  const [sectionTitle, setSectionTitle] = useState(title); // Title of OrgSec
-  const [modifyOrgSec, setModifyOrgSec] = useState(false); // Visibility of OrgSec
-  const [modOrgHidden, setModOrgHidden] = useState(false); // Hides OrgSec on popup
-  const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below"); // Depending on OrgSec position on UI
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [sectionHeight, setSectionHeight] = useState("45px");
+  const [sectionTitle, setSectionTitle] = useState(title);
+  const [isEditing, setIsEditing] = useState(false); // Track if editing
+  const [modifyOrgSec, setModifyOrgSec] = useState(false);
+  const [modOrgHidden, setModOrgHidden] = useState(false);
+  const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
 
   const expandedSectionRef = useRef(null);
   const folderRef = useRef(null);
+  const inputRef = useRef(null);
+  const folderTitleRef = useRef(title)
 
-  // Sync section title with props
   useEffect(() => {
     setSectionTitle(title);
   }, [title]);
 
-  // Dynamically adjust height when expanded
   useEffect(() => {
     if (expandedSectionRef.current) {
       const expandedDisplayHeight = expandedSectionRef.current.scrollHeight;
@@ -39,13 +40,16 @@ function OrganizationSection({
     }
   }, [isExpanded, items]);
 
-  // Handle expanding/collapsing the section
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
   const handleExpandClick = () => {
     setIsExpanded((prev) => !prev);
-    console.log(items);
   };
 
-  // Handle opening the modification screen
   const handleModifyClick = () => {
     if (!modOrgHidden) {
       setModifyOrgSec((prev) => !prev);
@@ -54,6 +58,40 @@ function OrganizationSection({
         const spaceBelow = window.innerHeight - parentRect.bottom;
 
         setModifyOrgSecPosition(spaceBelow < 150 ? "above" : "below");
+      }
+    }
+  };
+
+  //handles editing name of a folder
+  const handleTitleClick = () => {
+    setIsEditing(true);
+    setModifyOrgSec(false);
+  };
+
+  const handleTitleChange = (e) => {
+    setSectionTitle(e.target.value);
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditing(false);
+    if(sectionTitle) {
+      folderTitleRef.current = sectionTitle;
+      handleEditSection(sectionTitle, sectionId);
+    }
+    else {
+      setSectionTitle(folderTitleRef.current);
+    }
+  };
+
+  const handleTitleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setIsEditing(false);
+      if(sectionTitle) {
+        folderTitleRef.current = sectionTitle;
+        handleEditSection(sectionTitle, sectionId);
+      }
+      else {
+        setSectionTitle(folderTitleRef.current);
       }
     }
   };
@@ -78,10 +116,24 @@ function OrganizationSection({
           >
             ▶
           </button>
-          <h4 className="expand-section-title">{sectionTitle}</h4>
-          <h4 className="expand-section-items">
-            {items ? (items.length) : (0)} 
-          </h4>
+
+          {isEditing ? (
+            <input
+              ref={inputRef}
+              type="text"
+              className="expand-section-title-input"
+              value={sectionTitle}
+              onChange={handleTitleChange}
+              onBlur={handleTitleBlur}
+              onKeyDown={handleTitleKeyDown}
+            />
+          ) : (
+            <h4 className="expand-section-title">
+              {sectionTitle}
+            </h4>
+          )}
+
+          <h4 className="expand-section-items">{items ? items.length : 0}</h4>
           <button className="expand-section-share" onClick={handleModifyClick}>
             &#8942;
           </button>
@@ -98,16 +150,15 @@ function OrganizationSection({
             handleEditSection={handleEditSection}
             handleDeleteSection={handleDeleteSection}
             cartId={sectionId}
+            handleTitleClick={handleTitleClick}
           />
         )}
       </section>
-      <div
-        className="expand-section-expanded-display"
-        ref={expandedSectionRef}
-      >
+      <div className="expand-section-expanded-display" ref={expandedSectionRef}>
         {isExpanded &&
           items.map((item) => (
-            <ExpandSection 
+            <ExpandSection
+              key={item.item_id}
               item={item}
               handleEditNotes={handleEditNotes}
               handleDeleteItem={handleDeleteItem}

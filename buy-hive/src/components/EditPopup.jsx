@@ -17,24 +17,24 @@ const EditPopup = ({
   };
 
   // Confirm changes and update the main file name
-  const handleConfirmClick = () => {
+  const handleConfirmClick = async () => {
     if (tempFileName.trim() && tempFileName !== currFileName) {
-      handleEditSection(tempFileName, cartId)
-        .then(() => {
-          setIsVisible(false);
-          setModifyOrgSec(false);
-          setModOrgHidden(false);
-          setIsLocked(true);
-        })
-        .catch(() => {
-          console.error("error editing folder");
-        });
+      try {
+        await handleEditSection(tempFileName, cartId);
+        setIsVisible(false);
+        setModifyOrgSec(false);
+        setModOrgHidden(false);
+        setIsLocked(true);
+      } catch (error) {
+        alert("Error updating folder. Please try again.");
+      }
     } else if (!tempFileName.trim()) {
       alert("Folder name cannot be empty.");
     } else {
       alert("Folder name is unchanged.");
     }
   };
+  
   
 
   const handleKeyDown = (e) => {
