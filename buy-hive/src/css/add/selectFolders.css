@@ -1,0 +1,127 @@
+#select-folders-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #eaeaea;
+    border-radius: 5px;
+    padding-top: 10px;
+}
+
+#select-folders-header {
+    vertical-align: center;
+    margin-bottom: 5px;
+    padding: 0 10px;
+}
+
+#select-folders-header * {
+    display: inline-flex;
+    font-size: 12px;
+}
+
+#select-folders-header p {
+    margin: 0;
+    font-weight: 400;
+    width: 175px;
+}
+
+#select-folders-header button {
+    background-color: var(--accent-color);
+    border-style: none;
+    padding: 5px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    font-size: 11px;
+    color: black;
+    height: 26px;
+    width: fit-content;
+    align-items: center;
+}
+
+#select-folders-header button:hover {
+    cursor: pointer;
+}
+
+#select-folders-header button:active {
+    border: none;
+    outline: none;
+}
+
+#sf-line-break {
+  color: black;
+  width: 245px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#select-folders-section {
+    width: 250px;
+    height: 80px;
+    padding: 5px;
+  }
+  
+  #sf-dropdown {
+    width: 250px;
+    height: 80px;
+    overflow-y: scroll;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #sf-dropdown ul {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #sf-dropdown li {
+    margin: 5px 0;
+  }
+  
+  .custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .custom-checkbox:hover {
+    background-color: #f0f0f0;
+    border-radius: 4px; 
+  }
+  
+  .custom-checkbox input[type="checkbox"] {
+    appearance: none; 
+    -webkit-appearance: none;
+    width: 16px; 
+    height: 16px;
+    background-color: #fff;
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    display: inline-block;
+    position: relative;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .custom-checkbox input[type="checkbox"]:hover {
+    border-color: #888;
+  }
+  
+  .custom-checkbox input[type="checkbox"]:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+  }
+  
+  .custom-checkbox input[type="checkbox"]:checked::after {
+    content: "✔"; 
+    font-size: 12px; 
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .custom-checkbox span {
+    margin-left: 4px;
+  }
+  

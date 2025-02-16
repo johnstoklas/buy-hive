@@ -4,7 +4,7 @@ import Profile from './Profile.jsx';
 import LogoutButton from './LogoutButton.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const SignInPage = () => {
+const SignInPage = ({ user, setUserName }) => {
   const { isLoading, error } = useAuth0();
   return (
   <>
@@ -12,12 +12,15 @@ const SignInPage = () => {
         {error && 
           <LoginButton />
         }
-        {!error && isLoading && <p> Loading... </p>}
+        {!error && isLoading && <div className="spinner-loader"></div> }
         {!error && !isLoading && (
           <>
             <LoginButton />
             
-            <Profile />
+            <Profile 
+              user={user}
+              setUserName={setUserName}
+            />
             <LogoutButton />
           </>
         )}

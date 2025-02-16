@@ -1,80 +1,298 @@
 chrome.runtime.onInstalled.addListener(() => {
     console.log("Background script installed");
-});
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    //console.log("Message received in background:", message);
-
-    if (message.action === "scrapePage") {
-        // Get the current tab information
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs.length > 0) {
-                const tab = tabs[0]; // Get the active tab in the current window
-
-                // Now execute the script on the current active tab
-                chrome.scripting.executeScript(
-                    {
-                        target: { tabId: tab.id },
-                        func: getTextContent
-                    },
-                    (injectionResults) => {
-                        const textContent = injectionResults[0].result; // Extracted content
-                        console.log("Scraped content:", textContent);
-
-                        // Make a POST request to your backend
-                        fetch("http://127.0.0.1:8000/extract", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "text/plain",
-                            },
-                            body: textContent, // Send the extracted textContent
-                        })
-                            .then((response) => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-                                return response.json();
-                            })
-                            .then((data) => {
-                                console.log("Response from backend:", data);
-                                // Send response back to the frontend
-                                sendResponse({ action: "scrapeComplete", result: data });
-                            })
-                            .catch((error) => {
-                                console.error("Error sending request to backend:", error);
-                                sendResponse({ action: "scrapeFailed", error: error.message });
-                            });
-                    }
-                );
-            }
-        });
-
-        // Keep the message channel open for asynchronous response
+  });
+  
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    switch (message.action) {
+      case "scrapePage":
+        handleScrapePage(message, sender, sendResponse);
         return true;
+
+      case "sendImageData":
+        handleScrapeImage(message, sender, sendResponse);
+        return true;
+
+      case "fetchData":
+        handleFetchData(message, sender, sendResponse);
+        return true;
+  
+      case "addNewFolder":
+        handleAddNewFolder(message, sender, sendResponse);
+        return true;
+
+      case "editFolder":
+        handleEditFolder(message, sender, sendResponse);
+        return true;
+
+      case "deleteFolder":
+        handleDeleteFolder(message, sender, sendResponse);
+        return true;
+
+      case "editNotes":
+        handleEditNotes(message, sender, sendResponse);
+        return true;
+      
+      case "deleteItem":
+        handleDeleteItem(message, sender, sendResponse);
+        return true;
+
+      case "addItem":
+        handleAddItem(message, sender, sendResponse);
+        return true;
+  
+      default:
+        console.warn(`Unknown action: ${message.action}`);
+        sendResponse({ status: "error", message: "Unknown action" });
+        return false; 
     }
-    else if(message.action === 'sendUserInfo') {
-        const userInfo = message.data;
-        console.log('Received user data:', userInfo);
+  });
 
-        fetch("http://127.0.0.1:8000/users/add", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: user.email,
-              //name: user.name,
-            }),
-          })
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-            .catch((error) => console.error("Error:", error));
-
-        // Optionally, send a response back to the content script (React)
-        sendResponse({ status: 'success', message: 'User data received' });
+  // Gets title and pricing from current webpage
+  async function handleScrapePage(message, sender, sendResponse) { 
+    const { innerText } = message.data;
+    
+    const endpoint = `http://127.0.0.1:8000/extract`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: innerText,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error scraping page: ", error);
+      sendResponse({ status: "error", message: error.message });
     }
-});
+  }
 
-function getTextContent() {
-    return document.body.innerText || document.body.textContent; // Extract plain text
-}
+  // Gets image from current webpage
+  async function handleScrapeImage(message, sender, sendResponse) { 
+    console.log("dud we get  here?")
+    const { imageData } = message.data;
+    
+    const endpoint = `http://127.0.0.1:8000/analyze-images`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: imageData,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error getting image data: ", error);
+      console.error("you a bitch groq: ", message);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+  
+  // Fetches user data when extension is opened
+  async function handleFetchData(message, sender, sendResponse) {
+    const { email } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Email is required to fetch data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data }); // Send fetched data back to React
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+  
+  // Adds a new folder to the database
+  async function handleAddNewFolder(message, sender, sendResponse) {
+    const { email, cartName } = message.data;
+    if (!email || !cartName) {
+      sendResponse({ status: "error", message: "Invalid folder data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart_name: cartName }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error adding folder:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  // Edits an existing folder in the database 
+  async function handleEditFolder(message, sender, sendResponse) {
+    const { email, cartId, newCartName } = message.data;
+    if (!email || !newCartName) {
+      sendResponse({ status: "error", message: "Invalid folder data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/edit-name`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ new_name: newCartName }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error updating folder:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+  
+  // Deletes an existing folder in the database 
+  async function handleDeleteFolder(message, sender, sendResponse) {
+    const { email, cartId } = message.data;
+    console.log("dud we get here")
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid folder data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error deleting folder:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  // Edits the notes of an item
+  async function handleEditNotes(message, sender, sendResponse) {
+    const { email, notes, cartId, itemId } = message.data;
+    console.log(notes);
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid item data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/edit-note`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ new_note: notes }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error editing notes:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  async function handleDeleteItem(message, sender, sendResponse) {
+    const { email, cartId, itemId } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid item data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/items/${itemId}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        body: JSON.stringify({ item_id: itemId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  async function handleAddItem(message, sender, sendResponse) {
+    const { email, itemData } = message.data;
+    console.log(itemData);
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid item data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${itemData.cartId}/items/add-new`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          name: itemData.itemTitle,
+          price: itemData.itemPrice,
+          image: itemData.itemImage,
+          url: itemData.itemUrl,
+          notes: itemData.itemNotes,
+          selected_cart_ids: itemData.selectedCarts
+         }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error adding item:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }

@@ -1,6 +1,6 @@
 :root { 
     --background-color: hsl(0,0,95%,100%)/* rgb(3, 77, 150)*/;
-    --secondary-background: hsl(0, 0%, 95%, 90%);
+    --secondary-background: hsl(0, 0%, 95%);
     --accent-color: hsl(42,95%,66%,100%);
     --hover-color: rgb(236, 236, 236);
     --text-color: white; 
