@@ -242,6 +242,31 @@ const Extension = () => {
     });
   }
 
+  // Add item to cart
+  const handleAddItem = (data) => {
+    return new Promise((resolve, reject) => {
+      const newData = {
+        email: userName.email,
+        itemData: data,
+      }
+
+      console.log(data);
+
+      chrome.runtime.sendMessage({action: "addItem", data: newData}, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          resolve();
+        } else {
+          console.error("Error adding item:", response?.error);
+        }
+      });
+    });
+  }
+
   return (
     <>
       <Header />
@@ -279,6 +304,7 @@ const Extension = () => {
         setUserName={setUserName}
         isLocked={isLocked}
         cartsArray={organizationSections}
+        handleAddItem={handleAddItem}
       />
     </>
   );

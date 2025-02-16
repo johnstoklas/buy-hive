@@ -1,55 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React from "react";
 
-const SelectFolders = ({ cartsArray }) => {
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [organizationSections, setOrganizationSections] = useState([]);
+const SelectFolders = ({ cartsArray, selectedCarts, setSelectedCarts }) => {
 
-  useEffect(() => {
-    const array = [];
-    cartsArray.forEach((section) => {
-      array.push(section.cart_name); // Use push instead of add
-    });
-    setOrganizationSections(array); // Use the new array here, not cartsArray
-  }, [cartsArray]);
-  
-
-  //const options = ["Option 1", "Option 2", "Option 3", "Option 4", "5", "6", "7", "8"];
-
-  const handleCheckboxChange = (organizationSections) => {
-    if (selectedOptions.includes(organizationSections)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, organizationSections]);
-    }
+  const handleCheckboxChange = (cartId) => {
+    setSelectedCarts((prevSelected) =>
+      prevSelected.includes(cartId)
+        ? prevSelected.filter((id) => id !== cartId) // ✅ Remove if unchecked
+        : [...prevSelected, cartId] // ✅ Add if checked
+    );
   };
 
   return (
     <section id="select-folders-container">
-        <div id="select-folders-header">
-            <p> Select Folders </p>
-            <button> New Folder </button>
-        </div>
-        <hr id="sf-line-break"></hr>
-        <div id="select-folders-section">
+      <div id="select-folders-header">
+        <p>Select Folders</p>
+        <button>New Folder</button>
+      </div>
+      <hr id="sf-line-break"></hr>
+      <div id="select-folders-section">
         <div id="sf-dropdown">
-            <ul style={{ listStyle: "none", padding: 0 }}>
-            {organizationSections.map((option) => (
-                <li key={option}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            {cartsArray.map((cart) => (
+              <li key={cart.cart_id}>
                 <label className="custom-checkbox">
-                    <input
+                  <input
                     type="checkbox"
-                    value={option}
-                    checked={selectedOptions.includes(organizationSections)}
-                    onChange={() => handleCheckboxChange(organizationSections)}
-                    />
-                    <span className="checkmark"></span>
-                    {option}
+                    value={cart.cart_id}
+                    checked={selectedCarts.includes(cart.cart_id)}
+                    onChange={() => handleCheckboxChange(cart.cart_id)}
+                  />
+                  <span className="checkmark"></span>
+                  {cart.cart_name}
                 </label>
-                </li>
+              </li>
             ))}
-            </ul>
+          </ul>
         </div>
-        </div>
+      </div>
     </section>
   );
 };
