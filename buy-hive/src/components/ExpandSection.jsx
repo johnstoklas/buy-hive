@@ -39,7 +39,7 @@ const ExpandSection = ({
     //setIsEditing(false);
       if(notes) {
         noteRef.current = notes;
-        handleEditNotes(notes, cartId, cartId);
+        handleEditNotes(notes, cartId, itemId);
       }
       /*
       else {
@@ -52,7 +52,7 @@ const ExpandSection = ({
       setIsEditing(false);
       if(notes) {
         noteRef.current = notes;
-        handleEditNotes(notes, cartId, cartId);
+        handleEditNotes(notes, cartId, itemId);
       }
       else {
         setNotes(noteRef.current);

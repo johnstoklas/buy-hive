@@ -5,7 +5,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons'
 const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible }) => {
 
   const addFile = useRef(null);
-
+/*
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isVisible && addFile.current && !addFile.current.contains(event.target)) {
@@ -22,7 +22,7 @@ const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible 
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [isVisible, setIsVisible]);
+  }, [isVisible, setIsVisible]);*/
   
 
     

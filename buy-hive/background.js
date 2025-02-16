@@ -178,6 +178,7 @@ chrome.runtime.onInstalled.addListener(() => {
   // Deletes an existing folder in the database 
   async function handleDeleteFolder(message, sender, sendResponse) {
     const { email, cartId } = message.data;
+    console.log("dud we get here")
     if (!email) {
       sendResponse({ status: "error", message: "Invalid folder data" });
       return;
@@ -187,7 +188,6 @@ chrome.runtime.onInstalled.addListener(() => {
     try {
       const response = await fetch(endpoint, {
         method: "DELETE",
-        body: JSON.stringify({ new_name: newCartName }),
       });
   
       if (!response.ok) {
