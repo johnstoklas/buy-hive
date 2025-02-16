@@ -88,6 +88,7 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "success", data });
     } catch (error) {
       console.error("Error getting image data: ", error);
+      console.error("you a bitch groq: ", message);
       sendResponse({ status: "error", message: error.message });
     }
   }
