@@ -7,7 +7,16 @@ import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
 import SignInPage from './SignInPage.jsx';
 
-function Footer({ handleAddSection, setFileName, fileName, organizationSections, setUserName, isLocked, cartsArray }) {
+function Footer({ 
+    handleAddSection, 
+    setFileName, 
+    fileName, 
+    organizationSections, 
+    setUserName, 
+    isLocked, 
+    cartsArray,
+    handleAddItem,
+ }) {
     const [addItemState, setAddItemState] = useState(false);
     const [addFileState, setAddFileState] = useState(false);
     const [signInState, setSignInState] = useState(false);
@@ -22,21 +31,23 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
     const {user, isAuthenticated} = useAuth0();
 
     // Sends user information to background.js for database managament
-        useEffect(() => {
-            if (user) {
-                setUserName(user);
-                chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
-                    console.log('Response from background.js:', response);
-                });
-            }
-        }, [user]);
+    useEffect(() => {
+        if (user) {
+            setUserName(user);
+            chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
+                console.log('Response from background.js:', response);
+            });
+        }
+    }, [user]);
 
     
     // Add Item Button
     const handleScrapeClick = () => {
         if(!isLocked) {
-            gatherImageData();
-            gatherPriceTitleData();
+            if(!addItemState) {
+                gatherImageData();
+                gatherPriceTitleData();
+            }
                    
             // Updates footer visulization
             setAddItemState(!addItemState);
@@ -185,6 +196,7 @@ function Footer({ handleAddSection, setFileName, fileName, organizationSections,
                     scrapedImage={scrapedImage}
                     setIsVisible={setAddItemState}
                     cartsArray={cartsArray}
+                    handleAddItem={handleAddItem}
                 />
             </CSSTransition>
             <CSSTransition

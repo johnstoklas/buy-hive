@@ -1,8 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ClipLoader } from "react-spinners";
 import SelectFolders from './SelectFolders.jsx';
 
-const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setIsVisible, cartsArray, scrapedImage }) => {
+const AddItem = ({ 
+  isVisible, 
+  organizationSections, 
+  scrapedData, 
+  errorData, 
+  setIsVisible, 
+  cartsArray, 
+  scrapedImage,
+  handleAddItem,
+}) => {
+
+  const [itemTitle, setItemTitle] = useState(null);
+  const [itemPrice, setItemPrice] = useState(null);
+  const [itemNotes, setItemNotes] = useState(""); 
+  const [itemUrl, setItemUrl] = useState(null);
+  const [selectedCarts, setSelectedCarts] = useState(null);
   
   const addItem = useRef(null);
   {/*
@@ -23,6 +37,37 @@ const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setI
     };
   }, [setIsVisible]);*/}
 
+  const submitAdd = () => {
+    if(scrapedData && scrapedImage && itemUrl && selectedCarts) {
+      const data = {
+        itemTitle: itemTitle,
+        itemPrice: itemPrice,
+        itemImage: scrapedImage,
+        itemNotes: itemNotes,
+        itemUrl: itemUrl,
+        selectedCarts: selectedCarts,
+      }
+      handleAddItem(data);
+      setIsVisible(false);
+    }
+  }
+
+  useEffect(() => {
+    if (scrapedData) {
+      setItemTitle(scrapedData?.product_name);
+      setItemPrice(scrapedData?.price);
+    }
+  }, [scrapedData]);
+
+  document.addEventListener("DOMContentLoaded", function () {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      if (tabs.length > 0) {
+        const url = tabs[0].url;
+        setItemUrl(url);
+      }
+    });
+  });
+  
   return(
   <>
     <section id="add-item-section" ref={addItem}>
@@ -39,13 +84,18 @@ const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setI
           <div class="add-item-information-container">
               <h4 class="add-item-name"> 
                 {/*Spider Man Pillow*/}
-                {scrapedData?.product_name}
+                {itemTitle}
               </h4>
               <h4 class="add-item-price">
                 {/*$20.99*/}
-                {scrapedData?.price}  
+                {itemPrice}  
               </h4>
-              <textarea id="add-item-notes" placeholder="Notes"></textarea> 
+              <textarea 
+                id="add-item-notes" 
+                placeholder="Notes"
+                value={notes} 
+                onChange={(e) => setNotes(e.target.value)} // <-- Update state
+              />
         </div> 
         </> ) 
         : ( <div className="spinner-loader"></div> ) }
@@ -53,9 +103,11 @@ const AddItem = ({ isVisible, organizationSections, scrapedData, errorData, setI
         <div class="add-item-organization-container">
           <SelectFolders 
             cartsArray={cartsArray}
+            selectedOptions={selectedCarts}
+            setSelectedOptions={setSelectedCarts}
           />
         </div> 
-        <button id="add-item"> Add Item </button>
+        <button id="add-item" onclick={submitAdd}> Add Item </button>
         </> 
         )       
       }

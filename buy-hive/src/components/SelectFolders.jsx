@@ -5,51 +5,45 @@ const SelectFolders = ({ cartsArray }) => {
   const [organizationSections, setOrganizationSections] = useState([]);
 
   useEffect(() => {
-    const array = [];
-    cartsArray.forEach((section) => {
-      array.push(section.cart_name); // Use push instead of add
-    });
-    setOrganizationSections(array); // Use the new array here, not cartsArray
+    const array = cartsArray.map((section) => section.cart_name);
+    setOrganizationSections(array);
   }, [cartsArray]);
-  
 
-  //const options = ["Option 1", "Option 2", "Option 3", "Option 4", "5", "6", "7", "8"];
-
-  const handleCheckboxChange = (organizationSections) => {
-    if (selectedOptions.includes(organizationSections)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, organizationSections]);
-    }
+  const handleCheckboxChange = (option) => {
+    setSelectedOptions((prevSelected) =>
+      prevSelected.includes(option)
+        ? prevSelected.filter((item) => item !== option)
+        : [...prevSelected, option]
+    );
   };
 
   return (
     <section id="select-folders-container">
-        <div id="select-folders-header">
-            <p> Select Folders </p>
-            <button> New Folder </button>
-        </div>
-        <hr id="sf-line-break"></hr>
-        <div id="select-folders-section">
+      <div id="select-folders-header">
+        <p>Select Folders</p>
+        <button>New Folder</button>
+      </div>
+      <hr id="sf-line-break"></hr>
+      <div id="select-folders-section">
         <div id="sf-dropdown">
-            <ul style={{ listStyle: "none", padding: 0 }}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {organizationSections.map((option) => (
-                <li key={option}>
+              <li key={option}>
                 <label className="custom-checkbox">
-                    <input
+                  <input
                     type="checkbox"
                     value={option}
-                    checked={selectedOptions.includes(organizationSections)}
-                    onChange={() => handleCheckboxChange(organizationSections)}
-                    />
-                    <span className="checkmark"></span>
-                    {option}
+                    checked={selectedOptions.includes(option)}
+                    onChange={() => handleCheckboxChange(option)}
+                  />
+                  <span className="checkmark"></span>
+                  {option}
                 </label>
-                </li>
+              </li>
             ))}
-            </ul>
+          </ul>
         </div>
-        </div>
+      </div>
     </section>
   );
 };

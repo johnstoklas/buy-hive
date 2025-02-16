@@ -35,6 +35,10 @@ chrome.runtime.onInstalled.addListener(() => {
       case "deleteItem":
         handleDeleteItem(message, sender, sendResponse);
         return true;
+
+      case "addItem":
+        handleAddItem(message, sender, sendResponse);
+        return true;
   
       default:
         console.warn(`Unknown action: ${message.action}`);
@@ -253,6 +257,33 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "success", data });
     } catch (error) {
       console.error("Error deleting item:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  async function handleAddItem(message, sender, sendResponse) {
+    const { email, itemData } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid item data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/items/add-new`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemData }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error adding item:", error);
       sendResponse({ status: "error", message: error.message });
     }
   }
