@@ -264,25 +264,32 @@ chrome.runtime.onInstalled.addListener(() => {
 
   async function handleAddItem(message, sender, sendResponse) {
     const { email, itemData } = message.data;
-    console.log(itemData);
+
+    const priceString = itemData.itemPrice.replace(/[^0-9.-]+/g, ''); // Removes everything except numbers, dot, and minus
+    const priceInt = parseFloat(priceString);
+
+    const requestBody = {
+      name: itemData.itemTitle,
+      price: priceInt,
+      image: itemData.itemImage,
+      url: itemData.itemUrl,
+      notes: itemData.itemNotes,
+      selected_cart_ids: itemData.selectedCarts,
+    };
+  
+    console.log("Request Body:", JSON.stringify(requestBody));
+
     if (!email) {
       sendResponse({ status: "error", message: "Invalid item data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/${itemData.cartId}/items/add-new`;
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/add-new`;
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          name: itemData.itemTitle,
-          price: itemData.itemPrice,
-          image: itemData.itemImage,
-          url: itemData.itemUrl,
-          notes: itemData.itemNotes,
-          selected_cart_ids: itemData.selectedCarts
-         }),
+        body: JSON.stringify(requestBody),
       });
   
       if (!response.ok) {
@@ -293,6 +300,6 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "success", data });
     } catch (error) {
       console.error("Error adding item:", error);
-      sendResponse({ status: "error", message: error.message });
+      sendResponse({ status: "error", error });
     }
   }

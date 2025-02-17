@@ -65,7 +65,7 @@ const ExpandSection = ({
     <section class="expand-section-expanded-display">
         <div class="shopping-item-container">
             <div class="shopping-item-image-container">
-                <img src="images/spider_man.png"></img>
+                <img src={item.image}></img>
             </div>
             <div class="shopping-item-information-container">
                 <div className="shopping-item-header">

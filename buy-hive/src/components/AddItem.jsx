@@ -16,7 +16,9 @@ const AddItem = ({
   const [itemPrice, setItemPrice] = useState(null);
   const [itemNotes, setItemNotes] = useState(""); 
   const [itemUrl, setItemUrl] = useState(null);
-  const [selectedCarts, setSelectedCarts] = useState(cartsArray);
+  const [allCarts, setAllCarts] = useState(cartsArray);
+  const [selectedCarts, setSelectedCarts] = useState([]);
+  
   
   const addItem = useRef(null);
   {/*
@@ -38,7 +40,7 @@ const AddItem = ({
   }, [setIsVisible]);*/}
 
   const submitAdd = () => {
-    console.log("information: ", scrapedData, scrapedImage, itemUrl, selectedCarts)
+    console.log("information: ", scrapedData, scrapedImage, itemUrl, allCarts)
     if(scrapedData && scrapedImage && itemUrl && selectedCarts) {
       const data = {
         itemTitle: itemTitle,
@@ -106,6 +108,8 @@ const AddItem = ({
         <div class="add-item-organization-container">
           <SelectFolders 
             cartsArray={cartsArray}
+            allCarts={allCarts}
+            setAllCarts={setAllCarts}
             selectedCarts={selectedCarts}
             setSelectedCarts={setSelectedCarts}
           />
