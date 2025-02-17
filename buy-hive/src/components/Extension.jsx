@@ -259,6 +259,7 @@ const Extension = () => {
         }
   
         if (response?.status === "success") {
+          fetchOrganizationSections();
           resolve();
         } else {
           console.error("Error adding item:", response?.error);

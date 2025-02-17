@@ -49,8 +49,8 @@ function Footer({
             setAddFileState(false);
             setSignInState(false);
             if(!addItemState) {
-                gatherImageData();
                 gatherPriceTitleData();
+                gatherImageData();
             }
             // Updates footer visulization
         }
