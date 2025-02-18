@@ -74,15 +74,24 @@ chrome.runtime.onInstalled.addListener(() => {
   // Gets image from current webpage
   async function handleScrapeImage(message, sender, sendResponse) { 
     console.log("dud we get  here?")
-    const { imageData } = message.data;
+    const { imageData, url } = message.data;
     
     const endpoint = `http://127.0.0.1:8000/analyze-images`;
     try {
+      
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: imageData,
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          page_url: url,
+          image_urls: imageUrl,
+        })
+      });/*
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "plain/text" },
+        body: imageData
+      })*/
   
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

@@ -67,7 +67,6 @@ function Footer({
                 }
                 console.log(data);
                 chrome.runtime.sendMessage({ action: "scrapePage", data:data }, (response) => {
-                    console.log("did we get here?");
                     if(response?.status === 'success') {
                         console.log("title/price: (status)", response.data.cart_items);
                         setScrapedData(response.data.cart_items);
@@ -93,29 +92,55 @@ function Footer({
               const url = currentTab.url
               setCurrentUrl(url);
 
-              console.log("Current URL:", url);
-
               const tabId = tabs[0].id;
 
               chrome.scripting.executeScript(
                 {
                     target: { tabId: tabId },
                     func: () => {
-                        return Array.from(document.querySelectorAll("img")).map(img => img.src);
+                        return Array.from(document.querySelectorAll("img")).map(img => ({
+                            src: img.src,
+                            width: img.naturalWidth,
+                            height: img.naturalHeight
+                        }));
                     },
                 },
                 (results) => {
                     if (results && results[0]?.result) {
                         const imageSources = results[0].result;
-                        console.log("Images found:", imageSources);
+                        console.log("Images found, length of: ", imageSources.length, " , ", imageSources);
+
+                        const imageSourcesLarge = [];
+
+                        imageSources.forEach(img => {
+                            console.log(img.width);
+                            if (img.width > 20 && img.height > 20) {  // Adjust threshold as needed
+                                imageSourcesLarge.push(img);
+                            }
+                        });
+
+                        console.log("filtered for size, length of:", imageSourcesLarge.length, " , ", imageSourcesLarge)
+
+                        /*const imageSourcesPos = [];
+
+                        imageSources.forEach(img => {
+                            let rect = img.src.getBoundingClientRect();
+                            if (rect.width > 200 && rect.height > 200 && rect.top > 100) { // Adjust as needed
+                                imageSourcesPos.push(img);
+                            }
+                        });
+
+                        console.log("filtered for size, length of:", imageSourcesPos.length, " , ", imageSourcesPos)
+*/
+
                         let imagePlainText = "";
-                        imageSources.map((element) => {
-                            imagePlainText += element;
+                        imageSourcesLarge.map((img) => {
+                            imagePlainText += img.src;
                             imagePlainText += ", ";
                         });
-                        console.log(imagePlainText);
                         const data = {
                             imageData: imagePlainText,
+                            url: url,
                         }
                         chrome.runtime.sendMessage({action: "sendImageData", data:data }, (response) => {
                             if(response?.status === 'success') {
