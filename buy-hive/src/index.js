@@ -5,13 +5,14 @@ import { Auth0Provider } from '@auth0/auth0-react';
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+const redirectUri = process.env.REACT_APP_REDIRECT_URI;
 
 ReactDOM.render(
   <React.StrictMode>
     <Auth0Provider
     domain={domain}
     clientId={clientId}
-    authorizationParams={{ redirect_uri: 'chrome-extension:fiaphfdnbiionioelgfekfhbcllhalai/popup.html' }}
+    authorizationParams={{redirect_uri: "chrome-extension:hjghanbkkiojmhokpohlfgchmbjopdoc/popup.html"}}
     >
     <Extension />
     </Auth0Provider>

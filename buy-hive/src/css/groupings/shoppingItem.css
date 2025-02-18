@@ -67,14 +67,22 @@
 }
 
 .shopping-item-header-text {
-    width: 200px;
+    display: flex;
+    flex-direction: column;
 }
 
 .shopping-item-price {
     font-weight: 400;
+    margin-top: -5px;
 }
+
 .shopping-item-name {
     font-weight: 600;
+    width: 120px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    overflow: hidden;
 }
 
 .shopping-item-notes {

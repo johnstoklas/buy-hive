@@ -74,15 +74,24 @@ chrome.runtime.onInstalled.addListener(() => {
   // Gets image from current webpage
   async function handleScrapeImage(message, sender, sendResponse) { 
     console.log("dud we get  here?")
-    const { imageData } = message.data;
+    const { imageData, url } = message.data;
     
     const endpoint = `http://127.0.0.1:8000/analyze-images`;
     try {
+      
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: imageData,
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          page_url: url,
+          image_urls: imageUrl,
+        })
+      });/*
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "plain/text" },
+        body: imageData
+      })*/
   
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -264,25 +273,32 @@ chrome.runtime.onInstalled.addListener(() => {
 
   async function handleAddItem(message, sender, sendResponse) {
     const { email, itemData } = message.data;
-    console.log(itemData);
+
+    const priceString = itemData.itemPrice.replace(/[^0-9.-]+/g, ''); // Removes everything except numbers, dot, and minus
+    const priceInt = parseFloat(priceString);
+
+    const requestBody = {
+      name: itemData.itemTitle,
+      price: priceInt,
+      image: itemData.itemImage,
+      url: itemData.itemUrl,
+      notes: itemData.itemNotes,
+      selected_cart_ids: itemData.selectedCarts,
+    };
+  
+    console.log("Request Body:", JSON.stringify(requestBody));
+
     if (!email) {
       sendResponse({ status: "error", message: "Invalid item data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/${itemData.cartId}/items/add-new`;
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/add-new`;
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          name: itemData.itemTitle,
-          price: itemData.itemPrice,
-          image: itemData.itemImage,
-          url: itemData.itemUrl,
-          notes: itemData.itemNotes,
-          selected_cart_ids: itemData.selectedCarts
-         }),
+        body: JSON.stringify(requestBody),
       });
   
       if (!response.ok) {
@@ -293,6 +309,6 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "success", data });
     } catch (error) {
       console.error("Error adding item:", error);
-      sendResponse({ status: "error", message: error.message });
+      sendResponse({ status: "error", error });
     }
   }

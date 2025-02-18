@@ -16,7 +16,9 @@ const AddItem = ({
   const [itemPrice, setItemPrice] = useState(null);
   const [itemNotes, setItemNotes] = useState(""); 
   const [itemUrl, setItemUrl] = useState(null);
-  const [selectedCarts, setSelectedCarts] = useState(cartsArray);
+  const [allCarts, setAllCarts] = useState(cartsArray);
+  const [selectedCarts, setSelectedCarts] = useState([]);
+  
   
   const addItem = useRef(null);
   {/*
@@ -38,7 +40,7 @@ const AddItem = ({
   }, [setIsVisible]);*/}
 
   const submitAdd = () => {
-    console.log("information: ", scrapedData, scrapedImage, itemUrl, selectedCarts)
+    console.log("information: ", scrapedData, scrapedImage, itemUrl, allCarts)
     if(scrapedData && scrapedImage && itemUrl && selectedCarts) {
       const data = {
         itemTitle: itemTitle,
@@ -79,33 +81,44 @@ const AddItem = ({
         <>
         <h1 id="add-item-title"> Add Item </h1>
         <div class="add-item-container">
-          { scrapedData ? (
-            <>
           <div class="add-item-image-container">
-            <img src={scrapedImage || "images/spider_man.png"}></img>       
+            {scrapedImage ? 
+              (<img src={scrapedImage}></img>) 
+              : (<div className="add-image-loading"></div>)}    
           </div>
           <div class="add-item-information-container">
-              <h4 class="add-item-name"> 
-                {/*Spider Man Pillow*/}
+              {itemTitle ? 
+              (<h4 class="add-item-name"> 
                 {itemTitle}
               </h4>
-              <h4 class="add-item-price">
-                {/*$20.99*/}
+              ) 
+              : (
+                <h4 class="add-item-name"> 
+                  <div className="add-item-loading"></div>
+                </h4>
+              )}
+              {itemPrice ? 
+              (<h4 class="add-item-price">
                 {itemPrice}  
-              </h4>
+              </h4>) 
+              : (
+                <h4 class="add-item-price"> 
+                  <div className="add-item-loading"></div>
+                </h4>
+              )}
               <textarea 
                 id="add-item-notes" 
                 placeholder="Notes"
                 value={itemNotes} 
                 onChange={(e) => setItemNotes(e.target.value)} // <-- Update state
               />
-        </div> 
-        </> ) 
-        : ( <div className="spinner-loader"></div> ) }
+          </div> 
         </div>
         <div class="add-item-organization-container">
           <SelectFolders 
             cartsArray={cartsArray}
+            allCarts={allCarts}
+            setAllCarts={setAllCarts}
             selectedCarts={selectedCarts}
             setSelectedCarts={setSelectedCarts}
           />
