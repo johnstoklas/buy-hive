@@ -31,10 +31,10 @@
 
 .shopping-item-image-container img {
     width: 100%;
-    height: 100%;
+    height: auto;
     max-height: 100%;
     max-width: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 10px;
 }
 
@@ -91,11 +91,11 @@
     height: 45px;
     border-radius: 10px;
     margin-top: 5px;
-    color: black;
-    padding: 2px;
+    padding: 5px;
     border: none;
     outline: none;
     display: flex;
     text-align: initial;
     font-size: 12px;
+    box-sizing: border-box;
 }

@@ -1,12 +1,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { cloneElement, useState } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 
 const DeletePopup = ({ 
   setIsVisible, 
-  setModifyOrgSec, 
-  setModOrgHidden, 
+  setSec, 
+  setSecHidden, 
   setIsLocked, 
   cartId, 
   handleDeleteSection, 
@@ -16,31 +16,20 @@ const DeletePopup = ({
 }) => {
 
   const closePopup = () => {
-    if(type === "folder") {
-      setIsVisible(false);
-      setModifyOrgSec(false);
-      setModOrgHidden(false);
-      setIsLocked(false);
-    }
-    else if(type === "item") {
-      setIsVisible(false);
-    }
+    setIsVisible(false);
+    setSec(false);
+    setSecHidden(false);
+    setIsLocked(false);
   }
 
   const submitDelete = () => {
     if(type === "folder") {
       handleDeleteSection(cartId);
-    
-      setIsVisible(false);
-      setModifyOrgSec(false);
-      setModOrgHidden(false);
-      setIsLocked(false);
     }
     else if(type === "item") {
       handleDeleteItem(cartId, itemId);
-
-      setIsVisible(false);
     }
+    closePopup();
   }
   
   return (

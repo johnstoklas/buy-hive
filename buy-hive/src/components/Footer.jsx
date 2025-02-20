@@ -134,10 +134,12 @@ function Footer({
 */
 
                         let imagePlainText = "";
-                        imageSourcesLarge.map((img) => {
+                        imageSources.map((img) => {
                             imagePlainText += img.src;
                             imagePlainText += ", ";
                         });
+
+                        console.log(imagePlainText)
                         const data = {
                             imageData: imagePlainText,
                             url: url,
@@ -161,23 +163,6 @@ function Footer({
             }
         });
     }
-
-    // I don't think this needs to be here
-    /*
-    // Handles response from background.js on scrape
-    useEffect(() => {
-        const messageListener = (message) => {
-            if (message.action === 'scrapeComplete') {
-                console.log()
-            }
-        };
-        chrome.runtime.onMessage.addListener(messageListener);
-    
-        return () => {
-            chrome.runtime.onMessage.removeListener(messageListener);
-        };
-    }, []);
-    */
 
     // Add File Button
     const handleFileClick = () => {

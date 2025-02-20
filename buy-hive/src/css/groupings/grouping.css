@@ -70,6 +70,7 @@
 
 .expand-section-title {
     width: 140px;
+    user-select: none;
 }
 
 .expand-section-items {
@@ -103,6 +104,7 @@
     font-size: 14px;
     margin: 0 auto;
     padding: .5em 0;
+    box-sizing: border-box;
     font-weight: 400;
     color: black;
     border-radius: 5px;

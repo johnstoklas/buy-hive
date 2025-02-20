@@ -84,7 +84,7 @@ chrome.runtime.onInstalled.addListener(() => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           page_url: url,
-          image_urls: imageUrl,
+          image_urls: imageData,
         })
       });/*
       const response = await fetch(endpoint, {

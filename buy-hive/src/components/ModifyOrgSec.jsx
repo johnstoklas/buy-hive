@@ -60,8 +60,8 @@ const ModifyOrgSec = ({
   <>
     {deletePopupVisible && <DeletePopup 
       setIsVisible={setDeletePopupVisible}
-      setModifyOrgSec={setModifyOrgSec}
-      setModOrgHidden={setModOrgHidden}
+      setSec={setModifyOrgSec}
+      setSecHidden={setModOrgHidden}
       setIsLocked={setIsLocked}
       handleDeleteSection={handleDeleteSection}
       cartId={cartId}

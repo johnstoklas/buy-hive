@@ -277,7 +277,6 @@ const Extension = () => {
         ) : organizationSections.length > 0 ? (
           organizationSections.map((section) => (
             <OrganizationSection
-              key={section.cart_id}
               sectionId={section.cart_id}
               title={section.cart_name}
               itemCount={section.item_count}
@@ -288,6 +287,7 @@ const Extension = () => {
               handleDeleteSection={handleDeleteSection}
               handleEditNotes={handleEditNotes}
               handleDeleteItem={handleDeleteItem}
+              cartsArray={organizationSections}
             />
           ))
         ) : (
