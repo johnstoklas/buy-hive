@@ -11,7 +11,8 @@ function OrganizationSection({
   handleDeleteSection,
   handleEditNotes,
   handleDeleteItem,
-  cartsArray
+  cartsArray,
+  handleMoveItem,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [sectionHeight, setSectionHeight] = useState("45px");
@@ -166,6 +167,7 @@ function OrganizationSection({
               cartId={sectionId}
               itemId={item.item_id}
               cartsArray={cartsArray}
+              handleMoveItem={handleMoveItem}
             />
           ))}
       </div>

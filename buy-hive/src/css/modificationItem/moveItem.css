@@ -3,7 +3,7 @@
     z-index: 1001;
     left: 50%;
     transform: translateX(-50%);
-    top: 100px;
+    top: 70px;
     background-color: var(--secondary-background);
     padding: 10px;
     box-sizing: border-box;
@@ -15,6 +15,11 @@
     display: flex;
     flex-direction: row;
     align-items: center
+}
+
+#move-item-header > p{
+    position: absolute;
+    right: 20px;
 }
 
 .move-item-container {

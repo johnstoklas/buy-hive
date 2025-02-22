@@ -8,38 +8,28 @@
     height: 35px;
     align-items: center;
     padding: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     display: flex;
     bottom: 75px;
-    transition: transform 0.3s ease-in;
     margin-left: 10px;
+    pointer-events: auto; /* Disable interactions initially */
 }
 
-.slide-in {
-    transform: translateY(0%);
-    opacity: 0;
-    pointer-events: auto;
-}
-
-.slide-in-active {
-    transform: translateY(100%);
-    opacity: 1;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    pointer-events: auto;
-}
-
-.slide-out {
-    transform: translateY(100%);
-    opacity: 1;
-    pointer-events: none;
-}
-
-.slide-out-active {
-    transform: translateY(0%);
-    opacity: 0;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    pointer-events: none;
+#add-file-initial-state {
+    position: fixed;
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    width: 250px;
+    height: 35px;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: flex;
+    bottom: 0px;
+    margin-left: 10px;
+    opacity: 0; /* Start hidden */
 }
 
 #file-title {
@@ -48,7 +38,7 @@
     border-radius: 25px;
     padding: 7px 0 7px 10px;
     font-size: 13px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     background-color: #eaeaea;
     color: black;
 }
@@ -64,7 +54,7 @@
     background-color:var(--accent-color);
     font-size: 10px;
     margin-left: 5px;
-    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
 }
 
 #submit-file:hover {
@@ -72,5 +62,23 @@
 }
 
 #submit-file:active {
-    transform: translateY(1px);  /* Move the button down to simulate pressing */
+    transform: translateY(1px);
+}
+
+@keyframes slideInAddFile {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1;}
+}
+
+@keyframes slideOutAddFile {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100%); opacity: 0; }
+}
+
+.slide-in-add-file {
+    animation: slideInAddFile 0.5s forwards;
+}
+
+.slide-out-add-file {
+    animation: slideOutAddFile 0.5s forwards;
 }

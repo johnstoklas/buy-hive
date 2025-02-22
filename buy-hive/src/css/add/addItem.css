@@ -17,12 +17,13 @@
     margin-left: 10px;
 }
 
+
 #add-item-title {
     margin: 10px 0 0 -200px;
     font-weight: 500;
     font-size: 14px;
 }
-
+/*
 .slide-in {
     transform: translateY(0%);
     opacity: 0;
@@ -44,6 +45,7 @@
     opacity: 0;
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
+*/
 
 .add-item-container {
     border-radius: 10px;
@@ -225,11 +227,11 @@
     to { transform: translateY(100%); opacity: 0; }
 }
 
-.slide-in {
-    animation: slideIn 1s forwards;
+.slide-in-add-item {
+    animation: slideIn 0.5s forwards;
 }
 
-.slide-out {
-    animation: slideOut 1s forwards;
+.slide-out-add-item {
+    animation: slideOut 0.5s forwards;
 }
 

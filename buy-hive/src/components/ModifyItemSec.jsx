@@ -15,7 +15,8 @@ const ModifyItemSec = ({
     handleNoteClick,
     modifyItemSec,
     cartsArray,
-    item
+    item,
+    handleMoveItem
  }) => {  
     
     const [editNotesVisible, setEditNotesVisible] = useState(false);
@@ -56,6 +57,10 @@ const ModifyItemSec = ({
                 cartId={cartId}
                 itemId={itemId}
                 item={item}
+                setMoveItemVisible={setMoveItemVisible}
+                setSec={modifyItemSec}
+                setSecHidden={setModItemHidden}
+                handleMoveItem={handleMoveItem}
             />}
             {deleteItemVisible && <DeletePopup 
                 type="item"

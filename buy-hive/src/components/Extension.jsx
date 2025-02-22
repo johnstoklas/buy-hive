@@ -268,6 +268,35 @@ const Extension = () => {
     });
   }
 
+  // Moves item to carts
+  const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
+    return new Promise((resolve, reject) => {
+      console.log("item id: ", itemId);
+      const data = {
+        email: userName.email,
+        itemId: itemId,
+        selectedCarts: selectedCarts,
+        unselectedCarts: unselectedCarts,
+      }
+
+      console.log(data);
+
+      chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          //fetchOrganizationSections();
+          resolve();
+        } else {
+          console.error("Error moving item:", response?.error);
+        }
+      });
+    });
+  }
+
   return (
     <>
       <Header />
@@ -287,6 +316,7 @@ const Extension = () => {
               handleDeleteSection={handleDeleteSection}
               handleEditNotes={handleEditNotes}
               handleDeleteItem={handleDeleteItem}
+              handleMoveItem={handleMoveItem}
               cartsArray={organizationSections}
             />
           ))

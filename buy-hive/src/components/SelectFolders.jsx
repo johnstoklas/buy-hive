@@ -24,6 +24,7 @@ const SelectFolders = ({
 
   const initializeSelectedFolders = () => {
     const selectedFolders = [];
+    const selectedFolderIds = [];
     
     cartsArray.forEach(cart => {
       if (cart.cart_id === cartId) {
@@ -33,6 +34,7 @@ const SelectFolders = ({
               const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
               if (selectedCart) {
                 selectedFolders.push(selectedCart.cart_name);
+                selectedFolderIds.push(selectedCart.cart_id);
               }
             });
           }
@@ -41,6 +43,7 @@ const SelectFolders = ({
     });
 
     setAllOptions(selectedFolders);
+    setSelectedCarts(selectedFolderIds);
   };
 
   const handleCheckboxChange = (option) => {

@@ -5,14 +5,54 @@ const MoveItem = ({
     cartsArray,
     cartId,
     itemId,
-    item
+    item,
+    setMoveItemVisible,
+    setSec,
+    setSecHidden,
+    handleMoveItem
 }) => {
+
+    const[selectedFolders, setSelectedFolders] = useState([]);
+
+    const closeMoveItemPopup = () => {
+        setMoveItemVisible(false);
+        setSec(false);
+        setSecHidden(false);
+    }
+
+    const submitMoveItem = () => {
+        if(selectedFolders) {
+            
+            const unselectedFolders = [];
+            console.log(cartsArray);
+
+            cartsArray.forEach(cart => {
+                if (cart.cart_id === cartId) {
+                    cart.items.forEach(item => {
+                        if (item.item_id === itemId) {
+                            // Get all selected cart IDs where the item is present
+                            const selectedCartIds = new Set(item.selected_cart_ids);
+                            
+                            // Collect carts where the item is NOT present
+                            cartsArray.forEach(c => {
+                                if (!selectedCartIds.has(c.cart_id)) {
+                                    unselectedFolders.push(c.cart_id);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            
+            handleMoveItem(itemId, selectedFolders, unselectedFolders);
+        }
+    }
     
     return (
         <section id="move-item-container">
             <div id="move-item-header">
                 <h4> Move Item </h4>
-                <p> &#10005; </p>
+                <p onClick={closeMoveItemPopup}> &#10005; </p>
             </div>
             <section class="expand-section-expanded-display move-item-container">
             <div class="shopping-item-container">
@@ -36,9 +76,10 @@ const MoveItem = ({
             cartsArray={cartsArray}
             cartId={cartId}
             itemId={itemId}
+            setSelectedCarts={setSelectedFolders}
         />
         <div id="move-button-container">
-            <button id="move-item-button"> Confirm Move </button>
+            <button id="move-item-button" onClick={submitMoveItem}> Confirm Move </button>
         </div>
     </section>
     )

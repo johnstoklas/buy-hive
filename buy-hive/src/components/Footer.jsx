@@ -187,47 +187,23 @@ function Footer({
 
     return (
         <>
-            <CSSTransition
-                in={addItemState}
-                timeout={300}
-                classNames={{
-                    enter: 'slide-in',
-                    enterActive: 'slide-in-active',
-                    exit: 'slide-out',
-                    exitActive: 'slide-out-active',
-                }}
-                unmountOnExit
-            >
-                <AddItem  
-                    isVisible={addItemState}
-                    organizationSections={organizationSections}
-                    scrapedData={scrapedData}
-                    errorData={error}
-                    scrapedImage={scrapedImage}
-                    setIsVisible={setAddItemState}
-                    cartsArray={cartsArray}
-                    handleAddItem={handleAddItem}
-                />
-            </CSSTransition>
-            <CSSTransition
-                in={addFileState}
-                timeout={300}
-                classNames={{
-                    enter: 'slide-in',
-                    enterActive: 'slide-in-active',
-                    exit: 'slide-out',
-                    exitActive: 'slide-out-active',
-                }}
-                unmountOnExit
-            >
-                <AddFile 
-                    onAddSection={handleAddSection}
-                    setFileName={setFileName}
-                    fileName={fileName} 
-                    isVisible={addFileState}
-                    setIsVisible={setAddFileState}
-                />
-            </CSSTransition>
+            <AddItem  
+                isVisible={addItemState}
+                organizationSections={organizationSections}
+                scrapedData={scrapedData}
+                errorData={error}
+                scrapedImage={scrapedImage}
+                setIsVisible={setAddItemState}
+                cartsArray={cartsArray}
+                handleAddItem={handleAddItem}
+            />
+            <AddFile 
+                onAddSection={handleAddSection}
+                setFileName={setFileName}
+                fileName={fileName} 
+                isVisible={addFileState}
+                setIsVisible={setAddFileState}
+            />
             
             {signInState && <SignInPage 
                 setUserName={setUserName}
