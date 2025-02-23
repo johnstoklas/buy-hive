@@ -3,13 +3,12 @@ import EditPopup from './EditPopup.jsx';
 import DeletePopup from './DeletePopup.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-
+import { useLocked } from './LockedProvider.jsx';
 
 const ModifyOrgSec = ({ 
   setModifyOrgSec, 
   modOrgHidden, 
   setModOrgHidden, 
-  setIsLocked, 
   position, 
   handleDeleteSection,
   cartId,
@@ -18,6 +17,8 @@ const ModifyOrgSec = ({
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
+
+  const { setIsLocked } = useLocked();
 
   const modifyOrgSec = useRef(null);
 
@@ -62,7 +63,6 @@ const ModifyOrgSec = ({
       setIsVisible={setDeletePopupVisible}
       setSec={setModifyOrgSec}
       setSecHidden={setModOrgHidden}
-      setIsLocked={setIsLocked}
       handleDeleteSection={handleDeleteSection}
       cartId={cartId}
       type={"folder"}

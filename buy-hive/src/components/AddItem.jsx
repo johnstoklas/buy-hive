@@ -87,7 +87,7 @@ const AddItem = ({
           <div className="add-item-container">
             <div className="add-item-image-container">
               {scrapedImage ? (
-                <img src={scrapedImage} alt="Scraped" />
+                <img src={scrapedImage} />
               ) : (
                 <div className="add-image-loading"></div>
               )}

@@ -6,6 +6,7 @@ import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-ic
 import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
 import SignInPage from './SignInPage.jsx';
+import { useLocked } from './LockedProvider.jsx'
 
 function Footer({ 
     handleAddSection, 
@@ -13,7 +14,6 @@ function Footer({
     fileName, 
     organizationSections, 
     setUserName, 
-    isLocked, 
     cartsArray,
     handleAddItem,
  }) {
@@ -27,6 +27,8 @@ function Footer({
     const [currentUrl, setCurrentUrl] = useState(null);
     const [allImages, setAllImages] = useState(null);
     const [error, setError] = useState(null);
+
+    const { isLocked } = useLocked();
 
     const {user, isAuthenticated} = useAuth0();
 
@@ -166,7 +168,7 @@ function Footer({
 
     // Add File Button
     const handleFileClick = () => {
-        console.log(isLocked)
+        console.log("isLocked: ", isLocked);
         if(!isLocked) {
             // Updates footer visulization
             setAddFileState(!addFileState);
@@ -211,13 +213,13 @@ function Footer({
             />}
             
             <footer className="extension-footer">
-                <button id="scrape" onClick={handleScrapeClick}> 
+                <button id="scrape" className={addItemState ? "extension-footer-active-button" : ""} onClick={handleScrapeClick}> 
                     <FontAwesomeIcon icon={faCartShopping} />    
                 </button>
-                <button id="section" onClick={handleFileClick}> 
+                <button id="section" className={addFileState ? "extension-footer-active-button" : ""} onClick={handleFileClick}> 
                     <FontAwesomeIcon icon={faFolder} />
                 </button>
-                <button id="profile" onClick={signInClick}> 
+                <button id="profile" className={signInState ? "extension-footer-active-button" : ""} onClick={signInClick}> 
                     <FontAwesomeIcon icon={faUser} />
                 </button>
             </footer>

@@ -4,30 +4,49 @@ import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-
 import EditNotes from './EditNotes.jsx';
 import DeletePopup from './DeletePopup.jsx';
 import MoveItem from './MoveItem.jsx';
+import { useLocked } from './LockedProvider.jsx';
 
 const ModifyItemSec = ({ 
-    notesContent, 
-    handleEditNotes, 
     cartId, 
     itemId, 
-    setNotes,
     handleDeleteItem,
     handleNoteClick,
-    modifyItemSec,
+    setModifyItemSec,
     cartsArray,
     item,
-    handleMoveItem
+    handleMoveItem,
  }) => {  
     
-    const [editNotesVisible, setEditNotesVisible] = useState(false);
     const [deleteItemVisible, setDeleteItemVisible] = useState(false);
     const [moveItemVisible, setMoveItemVisible] = useState(false);
 
     const [modItemHidden, setModItemHidden] = useState(false);
+
+    const { setIsLocked } = useLocked();
+
+    const modifyItemSec = useRef(null);
+    
+    // If the user clicks out of the modification pop-up it disappears
+    useEffect(() => {
+    const handleClickOutside = (event) => {
+        if (modifyItemSec.current && !modifyItemSec.current.contains(event.target) && !deleteItemVisible && !moveItemVisible) {
+        setModifyItemSec(false); 
+        }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+        document.removeEventListener('click', handleClickOutside);
+    };
+    }, [setModifyItemSec, deleteItemVisible, moveItemVisible]);
+
+    useEffect(() => {
+        setIsLocked(deleteItemVisible || moveItemVisible);
+      }, [deleteItemVisible, moveItemVisible]);
     
     const changeEditNotesVisible = () => {
         handleNoteClick();
-        //setEditNotesVisible(!editNotesVisible);
     }
 
     const changeMoveItemVisible = () => {
@@ -44,21 +63,13 @@ const ModifyItemSec = ({
 
     return (
         <>
-            {editNotesVisible && <EditNotes 
-                notesContent={notesContent}
-                handleEditNotes={handleEditNotes}
-                cartId={cartId}
-                itemId={itemId}
-                setNotesContent={setNotes}
-                setEditNotesVisible={setEditNotesVisible}
-            />}
             {moveItemVisible && <MoveItem
                 cartsArray={cartsArray}
                 cartId={cartId}
                 itemId={itemId}
                 item={item}
                 setMoveItemVisible={setMoveItemVisible}
-                setSec={modifyItemSec}
+                setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
                 handleMoveItem={handleMoveItem}
             />}
@@ -68,10 +79,13 @@ const ModifyItemSec = ({
                 itemId={itemId}
                 handleDeleteItem={handleDeleteItem}
                 setIsVisible={setDeleteItemVisible}
-                setSec={modifyItemSec}
+                setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
             />}
-            <div className={`modify-org-sec modify-item-sec ${modItemHidden ? "hidden" : ""}`}>
+            <div 
+            className={`modify-org-sec modify-item-sec ${modItemHidden ? "hidden" : ""}`}
+            ref={modifyItemSec}
+            >
                 <button onClick={changeEditNotesVisible}>
                     <FontAwesomeIcon icon={faPenToSquare} />
                     <p> Edit </p>

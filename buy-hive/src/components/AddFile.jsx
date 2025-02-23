@@ -44,7 +44,6 @@ const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible 
         type="text" 
         id="file-title" 
         placeholder="Folder Name" 
-        maxLength="22" 
         value={fileName} 
         onChange={(e) => setFileName(e.target.value)}
         onKeyDown={handleKeyDown}

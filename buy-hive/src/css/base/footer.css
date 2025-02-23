@@ -25,10 +25,14 @@
     border:none;
     margin: 0 35px;
     background-color: white;
-    color: black;
+    color: #888888;
 }
 
 .extension-footer button:hover {
     cursor: pointer;
-    color: var(--hover-color);
+    color: rgb(32, 32, 32);
+}
+
+.extension-footer-active-button {
+    color: rgb(32, 32, 32) !important;
 }

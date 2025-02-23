@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SelectFolders from './SelectFolders.jsx';
+import { useLocked } from './LockedProvider.jsx';
 
 const MoveItem = ({
     cartsArray,
@@ -14,10 +15,13 @@ const MoveItem = ({
 
     const[selectedFolders, setSelectedFolders] = useState([]);
 
+    const { setIsLocked } = useLocked();
+
     const closeMoveItemPopup = () => {
         setMoveItemVisible(false);
         setSec(false);
         setSecHidden(false);
+        setIsLocked(false);
     }
 
     const submitMoveItem = () => {
@@ -45,6 +49,7 @@ const MoveItem = ({
             });
             
             handleMoveItem(itemId, selectedFolders, unselectedFolders);
+            closeMoveItemPopup();
         }
     }
     

@@ -3,17 +3,13 @@ import "../css/main.css";
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
 import OrganizationSection from "./OrganizationSection.jsx";
+import { LockedProvider } from "./LockedProvider.jsx"
 
 const Extension = () => {
-  const [isLocked, setIsLocked] = useState(false); // Locks the bottom buttons
   const [organizationSections, setOrganizationSections] = useState([]); // Store fetched sections
   const [fileName, setFileName] = useState(""); // Input for new folder
   const [userName, setUserName] = useState(null); // Store user info
   const [isLoading, setIsLoading] = useState(true); // Show loading state until data is fetched
-
-  useEffect(() => {
-    console.log("isLocked: ", isLocked);
-  }, [isLocked]);
 
   // Fetch user data from localStorage on initial load
   useEffect(() => {
@@ -298,7 +294,7 @@ const Extension = () => {
   }
 
   return (
-    <>
+    <LockedProvider>
       <Header />
       <section id="organization-section">
         {isLoading ? (
@@ -311,7 +307,6 @@ const Extension = () => {
               itemCount={section.item_count}
               items={section.items}
               createdAt={section.created_at}
-              setIsLocked={setIsLocked}
               handleEditSection={handleEditSection}
               handleDeleteSection={handleDeleteSection}
               handleEditNotes={handleEditNotes}
@@ -333,11 +328,10 @@ const Extension = () => {
         handleAddSection={handleAddSection}
         organizationSections={organizationSections}
         setUserName={setUserName}
-        isLocked={isLocked}
         cartsArray={organizationSections}
         handleAddItem={handleAddItem}
       />
-    </>
+    </LockedProvider>
   );
 };
 

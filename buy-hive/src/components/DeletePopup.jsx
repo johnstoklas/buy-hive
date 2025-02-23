@@ -1,19 +1,21 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { cloneElement, useState } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { useLocked } from './LockedProvider.jsx';
 
 
 const DeletePopup = ({ 
   setIsVisible, 
   setSec, 
   setSecHidden, 
-  setIsLocked, 
   cartId, 
   handleDeleteSection, 
   handleDeleteItem,
   type,
   itemId,
 }) => {
+
+  const { setIsLocked } = useLocked();
 
   const closePopup = () => {
     setIsVisible(false);

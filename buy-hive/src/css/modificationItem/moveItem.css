@@ -17,9 +17,13 @@
     align-items: center
 }
 
-#move-item-header > p{
+#move-item-header > p {
     position: absolute;
     right: 20px;
+}
+
+#move-item-header > p:hover {
+    cursor: pointer;
 }
 
 .move-item-container {

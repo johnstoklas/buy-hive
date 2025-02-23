@@ -6,7 +6,6 @@ function OrganizationSection({
   sectionId,
   title,
   items,
-  setIsLocked,
   handleEditSection,
   handleDeleteSection,
   handleEditNotes,
@@ -146,7 +145,6 @@ function OrganizationSection({
             setModifyOrgSec={setModifyOrgSec}
             modOrgHidden={modOrgHidden}
             setModOrgHidden={setModOrgHidden}
-            setIsLocked={setIsLocked}
             position={modifyOrgSecPosition}
             ref={folderRef}
             handleEditSection={handleEditSection}
