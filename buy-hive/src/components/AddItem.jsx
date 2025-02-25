@@ -11,125 +11,118 @@ const AddItem = ({
   scrapedImage,
   handleAddItem,
 }) => {
-
   const [itemTitle, setItemTitle] = useState(null);
   const [itemPrice, setItemPrice] = useState(null);
   const [itemNotes, setItemNotes] = useState(""); 
   const [itemUrl, setItemUrl] = useState(null);
   const [allCarts, setAllCarts] = useState(cartsArray);
   const [selectedCarts, setSelectedCarts] = useState([]);
-  
-  
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const addItem = useRef(null);
-  {/*
-  // If the user clicks out of the add item pop-up it disappears
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      setTimeout(() => {
-        if (addItem.current && !addItem.current.contains(event.target)) {
-            setIsVisible(false);
-        }
-      }, 1000); 
-    };
+    if (isVisible) {
+      setIsAnimating(true);
+    }
+  }, [isVisible]);
 
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [setIsVisible]);*/}
-
-  const submitAdd = () => {
-    console.log("information: ", scrapedData, scrapedImage, itemUrl, allCarts)
-    if(scrapedData && scrapedImage && itemUrl && selectedCarts) {
-      const data = {
-        itemTitle: itemTitle,
-        itemPrice: itemPrice,
-        itemImage: scrapedImage,
-        itemNotes: itemNotes,
-        itemUrl: itemUrl,
-        selectedCarts: selectedCarts,
-      }
-      handleAddItem(data);
+  const handleClickOutside = (event) => {
+    if (isVisible && addItem.current && !addItem.current.contains(event.target)) {
       setIsVisible(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isVisible]);
 
   useEffect(() => {
     if (scrapedData) {
-      setItemTitle(scrapedData?.product_name);
-      setItemPrice(scrapedData?.price);
+      setItemTitle(scrapedData?.product_name || "");
+      setItemPrice(scrapedData?.price || "");
     }
   }, [scrapedData]);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       if (tabs.length > 0) {
-        const url = tabs[0].url;
-        setItemUrl(url);
+        setItemUrl(tabs[0].url);
       }
     });
-  }, []); // Empty dependency array ensures it runs only once when the component mounts
-  
-  
-  return(
-  <>
-    <section id="add-item-section" ref={addItem}>
-      {errorData
-        ? ( <h4 className="processing-add-item"> `Error: ${errorData}` </h4>)
-        : (
+  }, []);
+
+  const submitAdd = () => {
+    if (scrapedData && scrapedImage && itemUrl && selectedCarts.length > 0) {
+      const data = {
+        itemTitle,
+        itemPrice,
+        itemImage: scrapedImage,
+        itemNotes,
+        itemUrl,
+        selectedCarts,
+      };
+      handleAddItem(data);
+      setIsVisible(false);
+    }
+  };
+
+  return (isVisible || isAnimating) ? (
+    <section
+      id="add-item-section"
+      ref={addItem}
+      className={isVisible ? "slide-in-add-item" : "slide-out-add-item"}
+      onAnimationEnd={() => {
+        if (!isVisible) setIsAnimating(false);
+      }}
+    >
+      {errorData ? (
+        <h4 className="processing-add-item">{`Error: ${errorData}`}</h4>
+      ) : (
         <>
-        <h1 id="add-item-title"> Add Item </h1>
-        <div class="add-item-container">
-          <div class="add-item-image-container">
-            {scrapedImage ? 
-              (<img src={scrapedImage}></img>) 
-              : (<div className="add-image-loading"></div>)}    
-          </div>
-          <div class="add-item-information-container">
-              {itemTitle ? 
-              (<h4 class="add-item-name"> 
-                {itemTitle}
+          <h1 id="add-item-title">Add Item</h1>
+          <div className="add-item-container">
+            <div className="add-item-image-container">
+              {scrapedImage ? (
+                <img src={scrapedImage} />
+              ) : (
+                <div className="add-image-loading"></div>
+              )}
+            </div>
+            <div className="add-item-information-container">
+              <h4 className="add-item-name">
+                {itemTitle || <div className="add-item-loading"></div>}
               </h4>
-              ) 
-              : (
-                <h4 class="add-item-name"> 
-                  <div className="add-item-loading"></div>
-                </h4>
-              )}
-              {itemPrice ? 
-              (<h4 class="add-item-price">
-                {itemPrice}  
-              </h4>) 
-              : (
-                <h4 class="add-item-price"> 
-                  <div className="add-item-loading"></div>
-                </h4>
-              )}
-              <textarea 
-                id="add-item-notes" 
+              <h4 className="add-item-price">
+                {itemPrice || <div className="add-item-loading"></div>}
+              </h4>
+              <textarea
+                id="add-item-notes"
                 placeholder="Notes"
-                value={itemNotes} 
-                onChange={(e) => setItemNotes(e.target.value)} // <-- Update state
+                value={itemNotes}
+                onChange={(e) => setItemNotes(e.target.value)}
               />
-          </div> 
-        </div>
-        <div class="add-item-organization-container">
-          <SelectFolders 
-            cartsArray={cartsArray}
-            allCarts={allCarts}
-            setAllCarts={setAllCarts}
-            selectedCarts={selectedCarts}
-            setSelectedCarts={setSelectedCarts}
-          />
-        </div> 
-        <button id="add-item" onClick={submitAdd}> Add Item </button>
-        </> 
-        )       
-      }
+            </div>
+          </div>
+          <div className="add-item-organization-container">
+            <SelectFolders
+              cartsArray={cartsArray}
+              allCarts={allCarts}
+              setAllCarts={setAllCarts}
+              selectedCarts={selectedCarts}
+              setSelectedCarts={setSelectedCarts}
+            />
+          </div>
+          <button id="add-item" onClick={submitAdd}>
+            Add Item
+          </button>
+        </>
+      )}
     </section>
-  </>
-  )
+  ) : null;
 };
 
 export default AddItem;

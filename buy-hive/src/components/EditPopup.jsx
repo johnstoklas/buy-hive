@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useLocked } from './LockedProvider.jsx';
 
 const EditPopup = ({ 
   setIsVisible, 
   currFileName, 
   setModifyOrgSec, 
   setModOrgHidden, 
-  setIsLocked, 
   handleEditSection,
   cartId
  }) => {
   const [tempFileName, setTempFileName] = useState(currFileName);
+
+  const { isLocked, setIsLocked } = useLocked();
   
   // Update local state on input change
   const handleInputChange = (e) => {

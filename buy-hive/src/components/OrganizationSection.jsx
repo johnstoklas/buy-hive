@@ -6,11 +6,12 @@ function OrganizationSection({
   sectionId,
   title,
   items,
-  setIsLocked,
   handleEditSection,
   handleDeleteSection,
   handleEditNotes,
-  handleDeleteItem
+  handleDeleteItem,
+  cartsArray,
+  handleMoveItem,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [sectionHeight, setSectionHeight] = useState("45px");
@@ -128,7 +129,7 @@ function OrganizationSection({
               onKeyDown={handleTitleKeyDown}
             />
           ) : (
-            <h4 className="expand-section-title">
+            <h4 className="expand-section-title" onDoubleClick={handleTitleClick}>
               {sectionTitle}
             </h4>
           )}
@@ -144,7 +145,6 @@ function OrganizationSection({
             setModifyOrgSec={setModifyOrgSec}
             modOrgHidden={modOrgHidden}
             setModOrgHidden={setModOrgHidden}
-            setIsLocked={setIsLocked}
             position={modifyOrgSecPosition}
             ref={folderRef}
             handleEditSection={handleEditSection}
@@ -164,6 +164,8 @@ function OrganizationSection({
               handleDeleteItem={handleDeleteItem}
               cartId={sectionId}
               itemId={item.item_id}
+              cartsArray={cartsArray}
+              handleMoveItem={handleMoveItem}
             />
           ))}
       </div>

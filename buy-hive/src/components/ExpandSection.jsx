@@ -7,6 +7,8 @@ const ExpandSection = ({
   handleDeleteItem,
   cartId, 
   itemId,
+  cartsArray,
+  handleMoveItem
 }) => {
 
   const [modifyVisible, setModifyVisible] = useState(false);
@@ -64,19 +66,21 @@ const ExpandSection = ({
   <>
     <section class="expand-section-expanded-display">
         <div class="shopping-item-container">
+          <a href={item.url} target="_blank" rel="noopener noreferrer">
             <div class="shopping-item-image-container">
                 <img src={item.image}></img>
             </div>
-            <div class="shopping-item-information-container">
-                <div className="shopping-item-header">
-                  <div className="shopping-item-header-text">
-                    <h4 class="shopping-item-name"> {item.name} </h4>
-                    <h4 class="shopping-item-price">  ${item.price} </h4>
-                  </div>
-                  <div className="shopping-item-button-container">
-                    <button onClick={openModifyItem}> &#8942; </button>
-                  </div>
-                </div>
+          </a>
+          <div class="shopping-item-information-container">
+            <div className="shopping-item-header">
+              <div className="shopping-item-header-text">
+                <h4 class="shopping-item-name"> {item.name} </h4>
+                <h4 class="shopping-item-price">  ${item.price} </h4>
+              </div>
+              <div className="shopping-item-button-container">
+                <button onClick={openModifyItem}> &#8942; </button>
+              </div>
+            </div>
                 {modifyVisible && <ModifyItemSec 
                   notesContent={notes}
                   setNotes={setNotes}
@@ -85,6 +89,10 @@ const ExpandSection = ({
                   cartId={cartId}
                   itemId={itemId}
                   handleNoteClick={handleNoteClick}
+                  setModifyItemSec={setModifyVisible}
+                  cartsArray={cartsArray}
+                  item={item}
+                  handleMoveItem={handleMoveItem}
                 />} 
 
                 {isEditing ? (
@@ -98,7 +106,7 @@ const ExpandSection = ({
                     onKeyDown={handleNoteKeyDown}
                   />
                 ) : (
-                  <div class="shopping-item-notes"> {notes ? notes : "There are no notes"} </div>
+                  <div class="shopping-item-notes" style={{color: notes ? "black" : "gray"}}> {notes ? notes : "None"} </div>
                 )}
             </div>
         </div>

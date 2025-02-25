@@ -39,6 +39,10 @@ chrome.runtime.onInstalled.addListener(() => {
       case "addItem":
         handleAddItem(message, sender, sendResponse);
         return true;
+
+      case "moveItem":
+        handleMoveItem(message, sender, sendResponse);
+        return true;
   
       default:
         console.warn(`Unknown action: ${message.action}`);
@@ -84,7 +88,7 @@ chrome.runtime.onInstalled.addListener(() => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           page_url: url,
-          image_urls: imageUrl,
+          image_urls: imageData,
         })
       });/*
       const response = await fetch(endpoint, {
@@ -245,6 +249,7 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   }
 
+  // Deletes an item from a folder
   async function handleDeleteItem(message, sender, sendResponse) {
     const { email, cartId, itemId } = message.data;
     if (!email) {
@@ -271,6 +276,7 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   }
 
+  // Adds an item to specified folders
   async function handleAddItem(message, sender, sendResponse) {
     const { email, itemData } = message.data;
 
@@ -312,3 +318,44 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "error", error });
     }
   }
+
+ // Moves an item between folders
+async function handleMoveItem(message, sender, sendResponse) {
+  const { email, itemId, selectedCarts, unselectedCarts } = message.data;
+
+  if (!email || !itemId) {
+      sendResponse({ status: "error", message: "Invalid request: missing email or item ID" });
+      return;
+  }
+
+  const body = JSON.stringify({
+      add_to_cart_ids: selectedCarts,
+      remove_from_cart_ids: unselectedCarts
+  });
+
+  const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/modify`;
+
+  try {
+      const response = await fetch(endpoint, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: body,
+      });
+
+      let data;
+      try {
+          data = await response.json(); // Try to parse JSON
+      } catch (jsonError) {
+          throw new Error(`Invalid JSON response: ${jsonError.message}`);
+      }
+
+      if (!response.ok) {
+          throw new Error(data.detail || data.message || `HTTP error! Status: ${response.status}`);
+      }
+
+      sendResponse({ status: "success", data });
+  } catch (error) {
+      console.error("Error modifying item:", error);
+      sendResponse({ status: "error", message: error.message || "An unknown error occurred" });
+  }
+}

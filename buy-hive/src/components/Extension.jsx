@@ -3,17 +3,13 @@ import "../css/main.css";
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
 import OrganizationSection from "./OrganizationSection.jsx";
+import { LockedProvider } from "./LockedProvider.jsx"
 
 const Extension = () => {
-  const [isLocked, setIsLocked] = useState(false); // Locks the bottom buttons
   const [organizationSections, setOrganizationSections] = useState([]); // Store fetched sections
   const [fileName, setFileName] = useState(""); // Input for new folder
   const [userName, setUserName] = useState(null); // Store user info
   const [isLoading, setIsLoading] = useState(true); // Show loading state until data is fetched
-
-  useEffect(() => {
-    console.log("isLocked: ", isLocked);
-  }, [isLocked]);
 
   // Fetch user data from localStorage on initial load
   useEffect(() => {
@@ -268,8 +264,37 @@ const Extension = () => {
     });
   }
 
+  // Moves item to carts
+  const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
+    return new Promise((resolve, reject) => {
+      console.log("item id: ", itemId);
+      const data = {
+        email: userName.email,
+        itemId: itemId,
+        selectedCarts: selectedCarts,
+        unselectedCarts: unselectedCarts,
+      }
+
+      console.log(data);
+
+      chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          //fetchOrganizationSections();
+          resolve();
+        } else {
+          console.error("Error moving item:", response?.error);
+        }
+      });
+    });
+  }
+
   return (
-    <>
+    <LockedProvider>
       <Header />
       <section id="organization-section">
         {isLoading ? (
@@ -277,17 +302,17 @@ const Extension = () => {
         ) : organizationSections.length > 0 ? (
           organizationSections.map((section) => (
             <OrganizationSection
-              key={section.cart_id}
               sectionId={section.cart_id}
               title={section.cart_name}
               itemCount={section.item_count}
               items={section.items}
               createdAt={section.created_at}
-              setIsLocked={setIsLocked}
               handleEditSection={handleEditSection}
               handleDeleteSection={handleDeleteSection}
               handleEditNotes={handleEditNotes}
               handleDeleteItem={handleDeleteItem}
+              handleMoveItem={handleMoveItem}
+              cartsArray={organizationSections}
             />
           ))
         ) : (
@@ -303,11 +328,10 @@ const Extension = () => {
         handleAddSection={handleAddSection}
         organizationSections={organizationSections}
         setUserName={setUserName}
-        isLocked={isLocked}
         cartsArray={organizationSections}
         handleAddItem={handleAddItem}
       />
-    </>
+    </LockedProvider>
   );
 };
 

@@ -6,6 +6,7 @@ import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-ic
 import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
 import SignInPage from './SignInPage.jsx';
+import { useLocked } from './LockedProvider.jsx'
 
 function Footer({ 
     handleAddSection, 
@@ -13,7 +14,6 @@ function Footer({
     fileName, 
     organizationSections, 
     setUserName, 
-    isLocked, 
     cartsArray,
     handleAddItem,
  }) {
@@ -27,6 +27,8 @@ function Footer({
     const [currentUrl, setCurrentUrl] = useState(null);
     const [allImages, setAllImages] = useState(null);
     const [error, setError] = useState(null);
+
+    const { isLocked } = useLocked();
 
     const {user, isAuthenticated} = useAuth0();
 
@@ -134,10 +136,12 @@ function Footer({
 */
 
                         let imagePlainText = "";
-                        imageSourcesLarge.map((img) => {
+                        imageSources.map((img) => {
                             imagePlainText += img.src;
                             imagePlainText += ", ";
                         });
+
+                        console.log(imagePlainText)
                         const data = {
                             imageData: imagePlainText,
                             url: url,
@@ -162,26 +166,9 @@ function Footer({
         });
     }
 
-    // I don't think this needs to be here
-    /*
-    // Handles response from background.js on scrape
-    useEffect(() => {
-        const messageListener = (message) => {
-            if (message.action === 'scrapeComplete') {
-                console.log()
-            }
-        };
-        chrome.runtime.onMessage.addListener(messageListener);
-    
-        return () => {
-            chrome.runtime.onMessage.removeListener(messageListener);
-        };
-    }, []);
-    */
-
     // Add File Button
     const handleFileClick = () => {
-        console.log(isLocked)
+        console.log("isLocked: ", isLocked);
         if(!isLocked) {
             // Updates footer visulization
             setAddFileState(!addFileState);
@@ -202,47 +189,23 @@ function Footer({
 
     return (
         <>
-            <CSSTransition
-                in={addItemState}
-                timeout={300}
-                classNames={{
-                    enter: 'slide-in',
-                    enterActive: 'slide-in-active',
-                    exit: 'slide-out',
-                    exitActive: 'slide-out-active',
-                }}
-                unmountOnExit
-            >
-                <AddItem  
-                    isVisible={addItemState}
-                    organizationSections={organizationSections}
-                    scrapedData={scrapedData}
-                    errorData={error}
-                    scrapedImage={scrapedImage}
-                    setIsVisible={setAddItemState}
-                    cartsArray={cartsArray}
-                    handleAddItem={handleAddItem}
-                />
-            </CSSTransition>
-            <CSSTransition
-                in={addFileState}
-                timeout={300}
-                classNames={{
-                    enter: 'slide-in',
-                    enterActive: 'slide-in-active',
-                    exit: 'slide-out',
-                    exitActive: 'slide-out-active',
-                }}
-                unmountOnExit
-            >
-                <AddFile 
-                    onAddSection={handleAddSection}
-                    setFileName={setFileName}
-                    fileName={fileName} 
-                    isVisible={addFileState}
-                    setIsVisible={setAddFileState}
-                />
-            </CSSTransition>
+            <AddItem  
+                isVisible={addItemState}
+                organizationSections={organizationSections}
+                scrapedData={scrapedData}
+                errorData={error}
+                scrapedImage={scrapedImage}
+                setIsVisible={setAddItemState}
+                cartsArray={cartsArray}
+                handleAddItem={handleAddItem}
+            />
+            <AddFile 
+                onAddSection={handleAddSection}
+                setFileName={setFileName}
+                fileName={fileName} 
+                isVisible={addFileState}
+                setIsVisible={setAddFileState}
+            />
             
             {signInState && <SignInPage 
                 setUserName={setUserName}
@@ -250,13 +213,13 @@ function Footer({
             />}
             
             <footer className="extension-footer">
-                <button id="scrape" onClick={handleScrapeClick}> 
+                <button id="scrape" className={addItemState ? "extension-footer-active-button" : ""} onClick={handleScrapeClick}> 
                     <FontAwesomeIcon icon={faCartShopping} />    
                 </button>
-                <button id="section" onClick={handleFileClick}> 
+                <button id="section" className={addFileState ? "extension-footer-active-button" : ""} onClick={handleFileClick}> 
                     <FontAwesomeIcon icon={faFolder} />
                 </button>
-                <button id="profile" onClick={signInClick}> 
+                <button id="profile" className={signInState ? "extension-footer-active-button" : ""} onClick={signInClick}> 
                     <FontAwesomeIcon icon={faUser} />
                 </button>
             </footer>
