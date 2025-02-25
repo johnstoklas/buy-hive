@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import ExpandSection from "./ExpandSection.jsx";
 import ModifyOrgSec from "./ModifyOrgSec.jsx";
+import { useLocked } from './LockedProvider.jsx'
+
 
 function OrganizationSection({
   sectionId,
@@ -24,7 +26,10 @@ function OrganizationSection({
   const expandedSectionRef = useRef(null);
   const folderRef = useRef(null);
   const inputRef = useRef(null);
-  const folderTitleRef = useRef(title)
+  const folderTitleRef = useRef(title);
+
+  const { isLocked } = useLocked();
+  
 
   useEffect(() => {
     setSectionTitle(title);
@@ -48,11 +53,13 @@ function OrganizationSection({
   }, [isEditing]);
 
   const handleExpandClick = () => {
-    setIsExpanded((prev) => !prev);
+    if(!isLocked) {
+      setIsExpanded((prev) => !prev);
+    }
   };
 
   const handleModifyClick = () => {
-    if (!modOrgHidden) {
+    if (!modOrgHidden && !isLocked) {
       setModifyOrgSec((prev) => !prev);
       if (folderRef.current) {
         const parentRect = folderRef.current.getBoundingClientRect();
@@ -65,8 +72,10 @@ function OrganizationSection({
 
   //handles editing name of a folder
   const handleTitleClick = () => {
-    setIsEditing(true);
-    setModifyOrgSec(false);
+    if(!isLocked) {
+      setIsEditing(true);
+      setModifyOrgSec(false);
+    }
   };
 
   const handleTitleChange = (e) => {
@@ -112,7 +121,7 @@ function OrganizationSection({
           <button
             className={`expand-section-button ${
               isExpanded && items.length > 0 ? "rotate" : ""
-            }`}
+            } ${isLocked ? "disabled-hover-modify" : ""}`}
             onClick={handleExpandClick}
           >
             ▶
@@ -135,7 +144,9 @@ function OrganizationSection({
           )}
 
           <h4 className="expand-section-items">{items ? items.length : 0}</h4>
-          <button className="expand-section-share" onClick={handleModifyClick}>
+          <button 
+            className={!isLocked ? "expand-section-modify" : "expand-section-modify disabled-hover-modify"} 
+            onClick={handleModifyClick}>
             &#8942;
           </button>
         </div>

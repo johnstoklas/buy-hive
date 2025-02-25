@@ -68,7 +68,9 @@ const SelectFolders = ({
     });
     
     console.log("selected items: ", selectedItems);
-    setSelectedCarts(selectedItems);
+    if(!moveItem) {
+      setSelectedCarts(selectedItems);
+    }
   };
 
   return (

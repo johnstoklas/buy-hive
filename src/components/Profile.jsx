@@ -19,12 +19,9 @@ const Profile = ({ user, setUserName }) => {
                 <div className="profile-name-info">
                     <h2> {user?.name} </h2>
                     <h4> {user?.email} </h4>
-                </div>
-                {/*{JSON.stringify(user)}*/}
-                
+                </div>                
             </div>
         )
-        
     )
 }
 

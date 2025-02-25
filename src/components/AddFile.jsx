@@ -27,10 +27,16 @@ const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible 
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      onAddSection(fileName);
+      onAddSection(fileName)
+        .then(() => {
+          setFileName("");
+        })
+        .catch((error) => {
+          console.error("Failed to add folder:", error);
+        });
     }
   };
-
+  
   return (isVisible || isAnimating) ? (
     <section 
       id="add-file-section"

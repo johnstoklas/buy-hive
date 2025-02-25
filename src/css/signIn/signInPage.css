@@ -14,6 +14,10 @@
     transform: translateX(-50%);
 }
 
+.sign-in-page-home {
+    transform: translate(-50%, 100%) !important;
+}
+
 #sign-in-page input {
     margin-bottom: 5px;
     width: 200px;
@@ -37,6 +41,7 @@
     background-color: var(--accent-color);
     border-style: none;
     border-radius: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
 }
 
 #sign-in-page button:hover {
@@ -63,4 +68,25 @@
 
 #sign-up-button:hover {
     cursor: pointer;
+}
+
+#sign-in-intro-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 40px;
+    align-items: center;
+    font-size: 14px;
+}
+
+#sign-in-intro-container > h1 {
+    margin: 0 0 5px 0;
+}
+
+#sign-in-sub-heading {
+    margin: 0 0 50px 0;
+    font-style: italic;
+}
+
+#sign-in-button {
+    margin-top: 10px;
 }
