@@ -49,42 +49,50 @@ const Extension = () => {
     fetchOrganizationSections();
   }, [userName]);
 
-  // Adds a new folder to the database and updates the UI immediately
   const handleAddSection = (fileName) => {
-    if (!userName) {
-      console.error("User is not logged in.");
-      return;
-    }
-
-    const trimmedFileName = fileName.trim();
-    if (!trimmedFileName) return;
-
-    const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
-    if (isDuplicate) {
-      console.error("A folder with this name already exists.");
-      return;
-    }
-
-    const data = {
-      email: userName.email,
-      cartName: trimmedFileName,
-    };
-
-    chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+    return new Promise((resolve, reject) => {
+      if (!userName) {
+        reject("User is not logged in.");
         return;
       }
-
-      if (response?.status === "success" && response?.data) {
-        // Ensure we use the backend response, which contains the correct cart_id
-        console.log("added file: ", response.data);
-        setOrganizationSections((prev) => [...prev, response.data]); 
-      } else {
-        console.error("Error adding folder:", response?.error);
+  
+      const trimmedFileName = fileName.trim();
+      if (!trimmedFileName) {
+        reject("File name cannot be empty.");
+        return;
       }
+  
+      const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
+      if (isDuplicate) {
+        reject("A folder with this name already exists.");
+        return;
+      }
+  
+      const data = {
+        email: userName.email,
+        cartName: trimmedFileName,
+      };
+  
+      chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
+        if (chrome.runtime.lastError) {
+          const errorMsg = `Error communicating with background script: ${chrome.runtime.lastError.message}`;
+          console.error(errorMsg);
+          reject(errorMsg);
+          return;
+        }
+  
+        if (response?.status === "success" && response?.data) {
+          console.log("Added file:", response.data);
+          setOrganizationSections((prev) => [...prev, response.data]); 
+          resolve(response.data); 
+        } else {
+          console.error("Error adding folder:", response?.error);
+          reject(response?.error || "Unknown error occurred.");
+        }
+      });
     });
   };
+  
 
   // Edits an existing folder
   const handleEditSection = (newFileName, cartId) => {

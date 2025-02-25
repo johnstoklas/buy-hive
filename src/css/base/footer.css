@@ -33,6 +33,11 @@
     color: rgb(32, 32, 32);
 }
 
+.extension-footer-button-disabled:hover {
+    cursor: default !important;
+    color: #888888 !important;
+}
+
 .extension-footer-active-button {
     color: rgb(32, 32, 32) !important;
 }

@@ -31,7 +31,7 @@ function Footer({
 
     const { isLocked, setIsLocked } = useLocked();
 
-    const {user, isAuthenticated} = useAuth0();
+    const {user, isAuthenticated, isLoading} = useAuth0();
 
     useEffect(() => {
         setIsLocked(!isAuthenticated);
@@ -218,13 +218,22 @@ function Footer({
             />}
             
             <footer className="extension-footer">
-                <button id="scrape" className={addItemState ? "extension-footer-active-button" : ""} onClick={handleScrapeClick}> 
+                <button id="scrape" 
+                        className={`${addItemState ? "extension-footer-active-button" : ""} 
+                                    ${isLocked ? "extension-footer-button-disabled" : ""}`} 
+                        onClick={handleScrapeClick}> 
                     <FontAwesomeIcon icon={faCartShopping} />    
                 </button>
-                <button id="section" className={addFileState ? "extension-footer-active-button" : ""} onClick={handleFileClick}> 
+                <button id="section" 
+                        className={`${addFileState ? "extension-footer-active-button" : ""} 
+                                    ${isLocked ? "extension-footer-button-disabled" : ""}`} 
+                        onClick={handleFileClick}> 
                     <FontAwesomeIcon icon={faFolder} />
                 </button>
-                <button id="profile" className={(signInState || !isAuthenticated) ? "extension-footer-active-button" : ""} onClick={signInClick}> 
+                <button id="profile" 
+                        className={`${(signInState || (!isAuthenticated && !isLoading)) ? "extension-footer-active-button" : ""}
+                                    ${isLocked ? "extension-footer-button-disabled" : ""}`} 
+                        onClick={signInClick}> 
                     <FontAwesomeIcon icon={faUser} />
                 </button>
             </footer>

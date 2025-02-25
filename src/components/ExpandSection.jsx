@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ModifyItemSec from './ModifyItemSec.jsx';
+import { useLocked } from './LockedProvider.jsx'
 
 const ExpandSection = ({ 
   item, 
@@ -18,6 +19,8 @@ const ExpandSection = ({
   const inputRef = useRef(null);
   const noteRef = useRef(notes);
 
+  const { isLocked } = useLocked();
+  
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -25,7 +28,9 @@ const ExpandSection = ({
   }, [isEditing]);
   
   const openModifyItem = () => {
-    setModifyVisible(!modifyVisible);
+    if(!isLocked) {
+      setModifyVisible(!modifyVisible);
+    }
   }
 
   const handleNoteClick = () => {
@@ -66,11 +71,17 @@ const ExpandSection = ({
   <>
     <section class="expand-section-expanded-display">
         <div class="shopping-item-container">
-          <a href={item.url} target="_blank" rel="noopener noreferrer">
+          { !isLocked ? (
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              <div class="shopping-item-image-container">
+                  <img src={item.image}></img>
+              </div>
+            </a>
+          ) : ( 
             <div class="shopping-item-image-container">
-                <img src={item.image}></img>
+              <img src={item.image}></img>
             </div>
-          </a>
+          )}
           <div class="shopping-item-information-container">
             <div className="shopping-item-header">
               <div className="shopping-item-header-text">
@@ -78,7 +89,7 @@ const ExpandSection = ({
                 <h4 class="shopping-item-price">  ${item.price} </h4>
               </div>
               <div className="shopping-item-button-container">
-                <button onClick={openModifyItem}> &#8942; </button>
+                <button className={isLocked ? "disabled-hover-modify" : ""} onClick={openModifyItem}> &#8942; </button>
               </div>
             </div>
                 {modifyVisible && <ModifyItemSec 
