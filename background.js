@@ -158,7 +158,12 @@ chrome.runtime.onInstalled.addListener(() => {
       }
   
       const data = await response.json();
-      sendResponse({ status: "success", data });
+
+      const newData = {
+        cart_id: data.cart_id,
+        cart_name: cartName,
+      }
+      sendResponse({ status: "success", data: newData });
     } catch (error) {
       console.error("Error adding folder:", error);
       sendResponse({ status: "error", message: error.message });
@@ -330,10 +335,10 @@ async function handleMoveItem(message, sender, sendResponse) {
 
   const body = JSON.stringify({
       add_to_cart_ids: selectedCarts,
-      remove_from_cart_ids: unselectedCarts
+      //remove_from_cart_ids: unselectedCarts
   });
 
-  const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/modify`;
+  const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/move`;
 
   try {
       const response = await fetch(endpoint, {

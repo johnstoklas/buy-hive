@@ -87,7 +87,7 @@
     line-height: 12px;
 }
 
-.expand-section-share { 
+.expand-section-modify { 
     margin: 0 5px 0 0;
     border-radius: 50%;
     width: 30px;
@@ -96,9 +96,19 @@
     border: none;
 }
 
-.expand-section-share:hover {
+.expand-section-modify:hover {
     background-color: rgb(218, 218, 218);
     cursor: pointer;
+}
+
+.disabled-hover-modify:hover {
+    cursor: default !important;
+    background-color: transparent !important;
+}
+
+.modify-disable:hover {
+    cursor: default;
+    background-color: var(--accent-color) !important;
 }
 
 .expand-section-title-input {

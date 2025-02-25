@@ -16,6 +16,7 @@ function Footer({
     setUserName, 
     cartsArray,
     handleAddItem,
+    userName
  }) {
     const [addItemState, setAddItemState] = useState(false);
     const [addFileState, setAddFileState] = useState(false);
@@ -28,9 +29,13 @@ function Footer({
     const [allImages, setAllImages] = useState(null);
     const [error, setError] = useState(null);
 
-    const { isLocked } = useLocked();
+    const { isLocked, setIsLocked } = useLocked();
 
-    const {user, isAuthenticated} = useAuth0();
+    const {user, isAuthenticated, isLoading} = useAuth0();
+
+    useEffect(() => {
+        setIsLocked(!isAuthenticated);
+    }, [isAuthenticated]);
 
     // Sends user information to background.js for database managament
     useEffect(() => {
@@ -168,7 +173,6 @@ function Footer({
 
     // Add File Button
     const handleFileClick = () => {
-        console.log("isLocked: ", isLocked);
         if(!isLocked) {
             // Updates footer visulization
             setAddFileState(!addFileState);
@@ -213,13 +217,22 @@ function Footer({
             />}
             
             <footer className="extension-footer">
-                <button id="scrape" className={addItemState ? "extension-footer-active-button" : ""} onClick={handleScrapeClick}> 
+                <button id="scrape" 
+                        className={`${addItemState ? "extension-footer-active-button" : ""} 
+                                    ${isLocked ? "extension-footer-button-disabled" : ""}`} 
+                        onClick={handleScrapeClick}> 
                     <FontAwesomeIcon icon={faCartShopping} />    
                 </button>
-                <button id="section" className={addFileState ? "extension-footer-active-button" : ""} onClick={handleFileClick}> 
+                <button id="section" 
+                        className={`${addFileState ? "extension-footer-active-button" : ""} 
+                                    ${isLocked ? "extension-footer-button-disabled" : ""}`} 
+                        onClick={handleFileClick}> 
                     <FontAwesomeIcon icon={faFolder} />
                 </button>
-                <button id="profile" className={signInState ? "extension-footer-active-button" : ""} onClick={signInClick}> 
+                <button id="profile" 
+                        className={`${(signInState || (!isAuthenticated && !isLoading)) ? "extension-footer-active-button" : ""}
+                                    ${isLocked ? "extension-footer-button-disabled" : ""}`} 
+                        onClick={signInClick}> 
                     <FontAwesomeIcon icon={faUser} />
                 </button>
             </footer>

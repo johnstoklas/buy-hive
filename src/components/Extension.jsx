@@ -3,7 +3,10 @@ import "../css/main.css";
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
 import OrganizationSection from "./OrganizationSection.jsx";
-import { LockedProvider } from "./LockedProvider.jsx"
+import { LockedProvider } from "./LockedProvider.jsx";
+import { faFolder } from '@fortawesome/free-solid-svg-icons'
+import SignInPage from "./SignInPage.jsx";
+
 
 const Extension = () => {
   const [organizationSections, setOrganizationSections] = useState([]); // Store fetched sections
@@ -47,42 +50,50 @@ const Extension = () => {
     fetchOrganizationSections();
   }, [userName]);
 
-  // Adds a new folder to the database and updates the UI immediately
   const handleAddSection = (fileName) => {
-    if (!userName) {
-      console.error("User is not logged in.");
-      return;
-    }
-
-    const trimmedFileName = fileName.trim();
-    if (!trimmedFileName) return;
-
-    const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
-    if (isDuplicate) {
-      console.error("A folder with this name already exists.");
-      return;
-    }
-
-    const data = {
-      email: userName.email,
-      cartName: trimmedFileName,
-    };
-
-    chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+    return new Promise((resolve, reject) => {
+      if (!userName) {
+        reject("User is not logged in.");
         return;
       }
-
-      if (response?.status === "success" && response?.data) {
-        // Ensure we use the backend response, which contains the correct cart_id
-        console.log("added file: ", response.data);
-        setOrganizationSections((prev) => [...prev, response.data]); 
-      } else {
-        console.error("Error adding folder:", response?.error);
+  
+      const trimmedFileName = fileName.trim();
+      if (!trimmedFileName) {
+        reject("File name cannot be empty.");
+        return;
       }
+  
+      const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
+      if (isDuplicate) {
+        reject("A folder with this name already exists.");
+        return;
+      }
+  
+      const data = {
+        email: userName.email,
+        cartName: trimmedFileName,
+      };
+  
+      chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
+        if (chrome.runtime.lastError) {
+          const errorMsg = `Error communicating with background script: ${chrome.runtime.lastError.message}`;
+          console.error(errorMsg);
+          reject(errorMsg);
+          return;
+        }
+  
+        if (response?.status === "success" && response?.data) {
+          console.log("Added file:", response.data);
+          setOrganizationSections((prev) => [...prev, response.data]); 
+          resolve(response.data); 
+        } else {
+          console.error("Error adding folder:", response?.error);
+          reject(response?.error || "Unknown error occurred.");
+        }
+      });
     });
   };
+
 
   // Edits an existing folder
   const handleEditSection = (newFileName, cartId) => {
@@ -297,41 +308,49 @@ const Extension = () => {
     <LockedProvider>
       <Header />
       <section id="organization-section">
-        {isLoading ? (
-          <div className="spinner-loader main-page-sl"></div>
-        ) : organizationSections.length > 0 ? (
-          organizationSections.map((section) => (
-            <OrganizationSection
-              sectionId={section.cart_id}
-              title={section.cart_name}
-              itemCount={section.item_count}
-              items={section.items}
-              createdAt={section.created_at}
-              handleEditSection={handleEditSection}
-              handleDeleteSection={handleDeleteSection}
-              handleEditNotes={handleEditNotes}
-              handleDeleteItem={handleDeleteItem}
-              handleMoveItem={handleMoveItem}
-              cartsArray={organizationSections}
-            />
-          ))
+        {userName ? (
+          isLoading ? (
+            <div className="spinner-loader main-page-sl"></div>
+          ) : organizationSections.length > 0 ? (
+            organizationSections.map((section) => (
+              <OrganizationSection
+                sectionId={section.cart_id}
+                title={section.cart_name}
+                itemCount={section.item_count}
+                items={section.items}
+                createdAt={section.created_at}
+                handleEditSection={handleEditSection}
+                handleDeleteSection={handleDeleteSection}
+                handleEditNotes={handleEditNotes}
+                handleDeleteItem={handleDeleteItem}
+                handleMoveItem={handleMoveItem}
+                cartsArray={organizationSections}
+              />
+            ))
+          ) : (
+            <div className="organization-section-empty">
+              <p>Looks like you have nothing here yet.</p>
+              <p>Click <FontAwesomeIcon icon={faFolder} /> to get started!</p>
+            </div>
+          )
         ) : (
-          <div className="organization-section-empty">
-            <p>Looks like you have nothing here yet.</p>
-            <p>Click 📁 to get started!</p>
-          </div>
-        )}
-      </section>
-      <Footer
-        fileName={fileName}
-        setFileName={setFileName}
-        handleAddSection={handleAddSection}
-        organizationSections={organizationSections}
-        setUserName={setUserName}
-        cartsArray={organizationSections}
-        handleAddItem={handleAddItem}
-      />
-    </LockedProvider>
+        <SignInPage 
+          setUserName={setUserName}
+          user={userName}
+          homePage={true}
+        /> )}
+        </section>
+        <Footer
+          fileName={fileName}
+          setFileName={setFileName}
+          handleAddSection={handleAddSection}
+          organizationSections={organizationSections}
+          setUserName={setUserName}
+          cartsArray={organizationSections}
+          handleAddItem={handleAddItem}
+          userName={userName}
+        />
+      </LockedProvider>
   );
 };
 
