@@ -12,7 +12,7 @@ ReactDOM.render(
     <Auth0Provider
     domain={domain}
     clientId={clientId}
-    authorizationParams={{redirect_uri: "chrome-extension:hjghanbkkiojmhokpohlfgchmbjopdoc/popup.html"}}
+    authorizationParams={{redirect_uri: `chrome-extension:${redirectUri}/popup.html`}}
     >
     <Extension />
     </Auth0Provider>

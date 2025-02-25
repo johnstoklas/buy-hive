@@ -3,7 +3,9 @@ import "../css/main.css";
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
 import OrganizationSection from "./OrganizationSection.jsx";
-import { LockedProvider } from "./LockedProvider.jsx"
+import { LockedProvider } from "./LockedProvider.jsx";
+import { faFolder } from '@fortawesome/free-solid-svg-icons'
+import SignInPage from "./SignInPage.jsx";
 
 const Extension = () => {
   const [organizationSections, setOrganizationSections] = useState([]); // Store fetched sections
@@ -297,41 +299,49 @@ const Extension = () => {
     <LockedProvider>
       <Header />
       <section id="organization-section">
-        {isLoading ? (
-          <div className="spinner-loader main-page-sl"></div>
-        ) : organizationSections.length > 0 ? (
-          organizationSections.map((section) => (
-            <OrganizationSection
-              sectionId={section.cart_id}
-              title={section.cart_name}
-              itemCount={section.item_count}
-              items={section.items}
-              createdAt={section.created_at}
-              handleEditSection={handleEditSection}
-              handleDeleteSection={handleDeleteSection}
-              handleEditNotes={handleEditNotes}
-              handleDeleteItem={handleDeleteItem}
-              handleMoveItem={handleMoveItem}
-              cartsArray={organizationSections}
-            />
-          ))
+        {userName ? (
+          isLoading ? (
+            <div className="spinner-loader main-page-sl"></div>
+          ) : organizationSections.length > 0 ? (
+            organizationSections.map((section) => (
+              <OrganizationSection
+                sectionId={section.cart_id}
+                title={section.cart_name}
+                itemCount={section.item_count}
+                items={section.items}
+                createdAt={section.created_at}
+                handleEditSection={handleEditSection}
+                handleDeleteSection={handleDeleteSection}
+                handleEditNotes={handleEditNotes}
+                handleDeleteItem={handleDeleteItem}
+                handleMoveItem={handleMoveItem}
+                cartsArray={organizationSections}
+              />
+            ))
+          ) : (
+            <div className="organization-section-empty">
+              <p>Looks like you have nothing here yet.</p>
+              <p>Click <FontAwesomeIcon icon={faFolder} /> to get started!</p>
+            </div>
+          )
         ) : (
-          <div className="organization-section-empty">
-            <p>Looks like you have nothing here yet.</p>
-            <p>Click 📁 to get started!</p>
-          </div>
-        )}
-      </section>
-      <Footer
-        fileName={fileName}
-        setFileName={setFileName}
-        handleAddSection={handleAddSection}
-        organizationSections={organizationSections}
-        setUserName={setUserName}
-        cartsArray={organizationSections}
-        handleAddItem={handleAddItem}
-      />
-    </LockedProvider>
+        <SignInPage 
+          setUserName={setUserName}
+          user={userName}
+          homePage={true}
+        /> )}
+        </section>
+        <Footer
+          fileName={fileName}
+          setFileName={setFileName}
+          handleAddSection={handleAddSection}
+          organizationSections={organizationSections}
+          setUserName={setUserName}
+          cartsArray={organizationSections}
+          handleAddItem={handleAddItem}
+          userName={userName}
+        />
+      </LockedProvider>
   );
 };
 

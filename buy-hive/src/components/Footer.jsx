@@ -16,6 +16,7 @@ function Footer({
     setUserName, 
     cartsArray,
     handleAddItem,
+    userName
  }) {
     const [addItemState, setAddItemState] = useState(false);
     const [addFileState, setAddFileState] = useState(false);
@@ -28,9 +29,13 @@ function Footer({
     const [allImages, setAllImages] = useState(null);
     const [error, setError] = useState(null);
 
-    const { isLocked } = useLocked();
+    const { isLocked, setIsLocked } = useLocked();
 
     const {user, isAuthenticated} = useAuth0();
+
+    useEffect(() => {
+        setIsLocked(!isAuthenticated);
+    }, [isAuthenticated]);
 
     // Sends user information to background.js for database managament
     useEffect(() => {
@@ -168,7 +173,6 @@ function Footer({
 
     // Add File Button
     const handleFileClick = () => {
-        console.log("isLocked: ", isLocked);
         if(!isLocked) {
             // Updates footer visulization
             setAddFileState(!addFileState);
@@ -181,6 +185,7 @@ function Footer({
     const signInClick = () => {
         if(!isLocked) {
             // Updates footer visulization
+            console.log('sign in state: ', !signInState);
             setSignInState(!signInState);
             setAddFileState(false);
             setAddItemState(false);
@@ -219,7 +224,7 @@ function Footer({
                 <button id="section" className={addFileState ? "extension-footer-active-button" : ""} onClick={handleFileClick}> 
                     <FontAwesomeIcon icon={faFolder} />
                 </button>
-                <button id="profile" className={signInState ? "extension-footer-active-button" : ""} onClick={signInClick}> 
+                <button id="profile" className={(signInState || !isAuthenticated) ? "extension-footer-active-button" : ""} onClick={signInClick}> 
                     <FontAwesomeIcon icon={faUser} />
                 </button>
             </footer>
