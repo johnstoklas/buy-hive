@@ -185,7 +185,6 @@ function Footer({
     const signInClick = () => {
         if(!isLocked) {
             // Updates footer visulization
-            console.log('sign in state: ', !signInState);
             setSignInState(!signInState);
             setAddFileState(false);
             setAddItemState(false);

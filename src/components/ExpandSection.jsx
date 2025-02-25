@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ModifyItemSec from './ModifyItemSec.jsx';
 import { useLocked } from './LockedProvider.jsx'
 
+
 const ExpandSection = ({ 
   item, 
   handleEditNotes, 
@@ -20,7 +21,7 @@ const ExpandSection = ({
   const noteRef = useRef(notes);
 
   const { isLocked } = useLocked();
-  
+
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();

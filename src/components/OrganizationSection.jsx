@@ -3,6 +3,7 @@ import ExpandSection from "./ExpandSection.jsx";
 import ModifyOrgSec from "./ModifyOrgSec.jsx";
 import { useLocked } from './LockedProvider.jsx'
 
+
 function OrganizationSection({
   sectionId,
   title,
@@ -27,7 +28,7 @@ function OrganizationSection({
   const inputRef = useRef(null);
   const folderTitleRef = useRef(title);
 
-      const { isLocked } = useLocked();
+  const { isLocked } = useLocked();
   
 
   useEffect(() => {

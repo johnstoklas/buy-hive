@@ -7,6 +7,7 @@ import { LockedProvider } from "./LockedProvider.jsx";
 import { faFolder } from '@fortawesome/free-solid-svg-icons'
 import SignInPage from "./SignInPage.jsx";
 
+
 const Extension = () => {
   const [organizationSections, setOrganizationSections] = useState([]); // Store fetched sections
   const [fileName, setFileName] = useState(""); // Input for new folder
@@ -92,7 +93,7 @@ const Extension = () => {
       });
     });
   };
-  
+
 
   // Edits an existing folder
   const handleEditSection = (newFileName, cartId) => {
