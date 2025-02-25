@@ -1,0 +1,20 @@
+.edit-notes-container {
+    background-color: var(--secondary-background);
+    width: fit-content;
+    height: fit-content;
+    position: absolute;
+    position: fixed;
+    z-index: 1001;
+    transform: translate(-35%);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.edit-notes-container > textarea {
+    border: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-wrap: wrap;
+    resize: none;
+    width: 140px;
+    height: 45px;
+}

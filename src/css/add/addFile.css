@@ -1,0 +1,84 @@
+@import '../variable.css';
+
+#add-file-section { 
+    position: fixed;
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    width: 250px;
+    height: 35px;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: flex;
+    bottom: 75px;
+    margin-left: 10px;
+    pointer-events: auto; /* Disable interactions initially */
+}
+
+#add-file-initial-state {
+    position: fixed;
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    width: 250px;
+    height: 35px;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: flex;
+    bottom: 0px;
+    margin-left: 10px;
+    opacity: 0; /* Start hidden */
+}
+
+#file-title {
+    width: 80%;
+    border: none;
+    border-radius: 25px;
+    padding: 7px 10px;
+    font-size: 13px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #eaeaea;
+    color: black;
+}
+
+#submit-file {
+    background: none;
+    border: none;
+    color: black;
+    padding: 3px 5px;
+    border-radius: 12px;
+    height: 27px;
+    width: 32px;
+    background-color:var(--accent-color);
+    font-size: 10px;
+    margin-left: 5px;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+}
+
+#submit-file:hover {
+    cursor: pointer;
+}
+
+#submit-file:active {
+    transform: translateY(1px);
+}
+
+@keyframes slideInAddFile {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1;}
+}
+
+@keyframes slideOutAddFile {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100%); opacity: 0; }
+}
+
+.slide-in-add-file {
+    animation: slideInAddFile 0.5s forwards;
+}
+
+.slide-out-add-file {
+    animation: slideOutAddFile 0.5s forwards;
+}

@@ -1,0 +1,38 @@
+@import '../variable.css';
+
+.extension-footer { 
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 60px;
+    align-items: center;  
+    position: fixed;
+    bottom: 0;
+    left: 0;          /* Aligns the header to the left of the viewport */
+    width: 100%;      /* Ensures the header spans the full width */
+    background-color: #fff; /* Optional, for background color */
+    z-index: 1000;    /* Optional, makes sure the header stays above other content */
+    box-shadow: 0 -2px 5px var(--shadow-color); /* Optional, for a subtle shadow */
+    align-items: center;
+}
+
+.extension-footer button {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    text-align: center;
+    border:none;
+    margin: 0 35px;
+    background-color: white;
+    color: #888888;
+}
+
+.extension-footer button:hover {
+    cursor: pointer;
+    color: rgb(32, 32, 32);
+}
+
+.extension-footer-active-button {
+    color: rgb(32, 32, 32) !important;
+}

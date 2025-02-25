@@ -1,0 +1,77 @@
+#edit-popup-section {
+    position: fixed;
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    width: 250px;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    left: 50%;
+    transform: translateX(-50%);
+    transition: bottom 0.3s ease-in;
+    z-index: 1000;
+    top: 185px;
+    height: fit-content;
+    border-radius: 5px;
+}
+
+#edit-popup-section input {
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 0px 5px 10px;
+    margin-bottom: 10px;
+}
+
+#confirm-edit-popup {
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    height: 25px;
+}
+
+#confirm-edit-popup:hover {
+    cursor: pointer;
+}
+
+#close-edit-popup {
+    margin-left: 85px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    height: 25px;
+    width: 50px;
+    align-items: center;
+    vertical-align: center;
+}
+
+#close-edit-popup:hover {
+    cursor: pointer;
+}
+
+#edit-popup-header-section * {
+    display: inline-flex;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    color: black;
+    vertical-align: center;
+}
+
+#edit-popup-header {
+    width: 225px;
+    font-weight: 500;
+}
+
+#close-edit-popup-button {
+    width: 16px;
+    font-size: 12px;
+    font-size: 15px;
+}
+
+#close-edit-popup-button:hover {
+    cursor: pointer;
+}
