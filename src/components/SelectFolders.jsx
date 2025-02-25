@@ -6,26 +6,17 @@ const SelectFolders = ({
   moveItem,
   cartId, 
   itemId
- }) => {
-  const [allOptions, setAllOptions] = useState([]);
-  const [organizationSections, setOrganizationSections] = useState([]);
-
-  useEffect(() => {
-    const array = [];
-    cartsArray.forEach((section) => {
-      array.push(section.cart_name); // Use push instead of add
-    });
-    setOrganizationSections(array); // Use the new array here, not cartsArray
-  }, [cartsArray]);
+}) => {
+  const [selectedCartNames, setSelectedCartNames] = useState([]); // Store selected cart names
 
   useEffect(() => {
     initializeSelectedFolders();
   }, [moveItem]);
 
   const initializeSelectedFolders = () => {
-    const selectedFolders = [];
-    const selectedFolderIds = [];
-    
+    const selectedNames = [];
+    const selectedIds = [];
+
     cartsArray.forEach(cart => {
       if (cart.cart_id === cartId) {
         cart.items.forEach(item => {
@@ -33,8 +24,8 @@ const SelectFolders = ({
             item.selected_cart_ids.forEach(selectedCartId => {
               const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
               if (selectedCart) {
-                selectedFolders.push(selectedCart.cart_name);
-                selectedFolderIds.push(selectedCart.cart_id);
+                selectedNames.push(selectedCart.cart_name);
+                selectedIds.push(selectedCart.cart_id);
               }
             });
           }
@@ -42,64 +33,54 @@ const SelectFolders = ({
       }
     });
 
-    setAllOptions(selectedFolders);
-    setSelectedCarts(selectedFolderIds);
+    setSelectedCartNames(selectedNames);
+    setSelectedCarts(selectedIds);
   };
 
-  const handleCheckboxChange = (option) => {
-    console.log(cartsArray);
+  const handleCheckboxChange = (cartName) => {
+    setSelectedCartNames((prevNames) => {
+      const newSelectedNames = prevNames.includes(cartName)
+        ? prevNames.filter(name => name !== cartName) // Remove if unchecked
+        : [...prevNames, cartName]; // Add if checked
 
-    console.log("options", option);
+      // Map selected names to their respective cart IDs
+      const selectedIds = cartsArray
+        .filter(cart => newSelectedNames.includes(cart.cart_name))
+        .map(cart => cart.cart_id);
 
-    if (allOptions.includes(option)) {
-      setAllOptions(allOptions.filter((item) => item !== option));
-    } else {
-      setAllOptions([...allOptions, option]);
-    }
-
-    const selectedItems = [];
-    cartsArray.forEach((cart) => {
-      if (allOptions.includes(cart.cart_name)) {
-        selectedItems.push(cart.cart_id);
-      }
-      else if(cart.cart_name === option) {
-        selectedItems.push(cart.cart_id);
-      }
+        console.log(selectedIds);
+      setSelectedCarts(selectedIds);
+      return newSelectedNames;
     });
-    
-    console.log("selected items: ", selectedItems);
-    if(!moveItem) {
-      setSelectedCarts(selectedItems);
-    }
   };
 
   return (
     <section id="select-folders-container">
-        <div id="select-folders-header">
-            <p> Select Folders </p>
-            {moveItem ? (<></>) : (<button> New Folder </button>)}
-        </div>
-        <hr id="sf-line-break"></hr>
-        <div id="select-folders-section">
+      <div id="select-folders-header">
+        <p>Select Folders</p>
+        {!moveItem && <button>New Folder</button>}
+      </div>
+      <hr id="sf-line-break" />
+      <div id="select-folders-section">
         <div id="sf-dropdown">
-            <ul style={{ listStyle: "none", padding: 0 }}>
-            {organizationSections.map((option) => (
-                <li key={option}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            {cartsArray.map((cart) => (
+              <li key={cart.cart_id}>
                 <label className="custom-checkbox">
-                    <input
+                  <input
                     type="checkbox"
-                    value={option}
-                    checked={allOptions.includes(option)} // Check if the individual option is selected
-                    onChange={() => handleCheckboxChange(option)} // Pass the individual option here
-                    />
-                    <span className="checkmark"></span>
-                    {option}
+                    value={cart.cart_name}
+                    checked={selectedCartNames.includes(cart.cart_name)}
+                    onChange={() => handleCheckboxChange(cart.cart_name)}
+                  />
+                  <span className="checkmark"></span>
+                  {cart.cart_name}
                 </label>
-                </li>
+              </li>
             ))}
-            </ul>
+          </ul>
         </div>
-        </div>
+      </div>
     </section>
   );
 };

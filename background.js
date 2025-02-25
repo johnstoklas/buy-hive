@@ -328,13 +328,14 @@ chrome.runtime.onInstalled.addListener(() => {
 async function handleMoveItem(message, sender, sendResponse) {
   const { email, itemId, selectedCarts, unselectedCarts } = message.data;
 
+
   if (!email || !itemId) {
       sendResponse({ status: "error", message: "Invalid request: missing email or item ID" });
       return;
   }
 
   const body = JSON.stringify({
-      add_to_cart_ids: selectedCarts,
+      selected_cart_ids: selectedCarts,
       //remove_from_cart_ids: unselectedCarts
   });
 
