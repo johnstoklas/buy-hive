@@ -47,6 +47,8 @@ const MoveItem = ({
                     });
                 }
             });
+
+            console.log("right before move: ", selectedFolders);
             
             handleMoveItem(itemId, selectedFolders, unselectedFolders);
             closeMoveItemPopup();
