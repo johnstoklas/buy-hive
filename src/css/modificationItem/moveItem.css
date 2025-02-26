@@ -1,6 +1,6 @@
 #move-item-container {
     position: fixed;
-    z-index: 1001;
+    z-index: 999;
     left: 50%;
     transform: translateX(-50%);
     top: 70px;
@@ -57,4 +57,9 @@
 #move-item-button:active {
     border: none;
     outline: none;
+}
+
+.move-item-delete {
+    background-color: var(--delete-color) !important;
+    color: white !important;
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SelectFolders from './SelectFolders.jsx';
 import { useLocked } from './LockedProvider.jsx';
+import DeletePopup from './DeletePopup.jsx';
 
 const MoveItem = ({
     cartsArray,
@@ -10,10 +11,12 @@ const MoveItem = ({
     setMoveItemVisible,
     setSec,
     setSecHidden,
-    handleMoveItem
+    handleMoveItem,
+    handleDeleteItem,
 }) => {
 
-    const[selectedFolders, setSelectedFolders] = useState([]);
+    const [selectedFolders, setSelectedFolders] = useState([]);
+    const [deleteVisible, setDeleteVisible] = useState(false);
 
     const { setIsLocked } = useLocked();
 
@@ -22,6 +25,10 @@ const MoveItem = ({
         setSec(false);
         setSecHidden(false);
         setIsLocked(false);
+    }
+
+    const openDeletePopup = () => {
+        setDeleteVisible(!deleteVisible);
     }
 
     const submitMoveItem = () => {
@@ -56,6 +63,14 @@ const MoveItem = ({
     }
     
     return (
+        <>
+        {deleteVisible && <DeletePopup
+            cartId={cartId}
+            itemId={itemId}
+            handleDeleteItem={handleDeleteItem}
+            setIsVisible={setDeleteVisible}
+            type="move"
+        />}
         <section id="move-item-container">
             <div id="move-item-header">
                 <h4> Move Item </h4>
@@ -85,10 +100,17 @@ const MoveItem = ({
             itemId={itemId}
             setSelectedCarts={setSelectedFolders}
         />
-        <div id="move-button-container">
-            <button id="move-item-button" onClick={submitMoveItem}> Confirm Move </button>
-        </div>
+        {selectedFolders.length === 0 ? (
+            <div id="move-button-container">
+                <button id="move-item-button" className="move-item-delete" onClick={openDeletePopup}> Delete Item </button>
+            </div>
+        ) : (
+            <div id="move-button-container">
+                <button id="move-item-button" onClick={submitMoveItem}> Confirm Move </button>
+            </div> 
+        )}
     </section>
+    </>
     )
 };
 

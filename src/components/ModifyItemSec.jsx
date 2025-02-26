@@ -72,6 +72,7 @@ const ModifyItemSec = ({
                 setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
                 handleMoveItem={handleMoveItem}
+                handleDeleteItem={handleDeleteItem}
             />}
             {deleteItemVisible && <DeletePopup 
                 type="item"

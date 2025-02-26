@@ -18,18 +18,22 @@ const DeletePopup = ({
   const { setIsLocked } = useLocked();
 
   const closePopup = () => {
+    console.log("???");
+    if(type === "folder" || type === "item") {
+      setSec(false);
+      setSecHidden(false);
+      setIsLocked(false);
+    }
     setIsVisible(false);
-    setSec(false);
-    setSecHidden(false);
-    setIsLocked(false);
   }
 
   const submitDelete = () => {
     if(type === "folder") {
       handleDeleteSection(cartId);
     }
-    else if(type === "item") {
-      handleDeleteItem(cartId, itemId);
+    else if(type === "item" || type === "move") {
+      handleDeleteItem(cartId, itemId);  
+      setIsLocked(false);
     }
     closePopup();
   }
@@ -39,7 +43,11 @@ const DeletePopup = ({
     <section id="delete-popup-section"> 
         <p id="close-delete-popup" onClick={closePopup}> &#10005; </p>
         <FontAwesomeIcon icon={faTrashCan} id="trash-icon" />
-        <p> Are you sure you want to delete this folder? </p>
+        {type === "folder" ? (
+          <p> Are you sure you want to delete this folder? </p>
+        ) : (
+          <p> Are you sure you want to delete this item? </p>
+        )}
         <div id="dps-button-section">
           <button id="dps-delete-button" onClick={submitDelete}> Yes, I'm sure </button>
           <button id="dps-cancel-button" onClick={closePopup}> No, cancel </button>
