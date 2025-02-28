@@ -10,7 +10,7 @@ const ExpandSection = ({
   cartId, 
   itemId,
   cartsArray,
-  handleMoveItem
+  handleMoveItem,
 }) => {
 
   const [modifyVisible, setModifyVisible] = useState(false);

@@ -15,6 +15,10 @@ chrome.runtime.onInstalled.addListener(() => {
       case "fetchData":
         handleFetchData(message, sender, sendResponse);
         return true;
+
+      case "fetchFolderItems":
+        handleFetchItems(message, sender, sendResponse);
+        return true;
   
       case "addNewFolder":
         handleAddNewFolder(message, sender, sendResponse);
@@ -133,6 +137,33 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "success", data }); // Send fetched data back to React
     } catch (error) {
       console.error("Error fetching data:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  // Fetches all the items from a specificed cart
+  async function handleFetchItems(message, sender, sendResponse) {
+    const { email, cartId } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Email is required to fetch data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/items`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data }); // Send fetched data back to React
+    } catch (error) {
+      console.error("Error fetching items from cart:", error);
       sendResponse({ status: "error", message: error.message });
     }
   }
