@@ -8,6 +8,7 @@ import { userDataContext } from './contexts/UserProvider.jsx';
 const DeletePopup = ({ 
   cartId, 
   itemId,
+  item,
   setIsVisible, 
   setSec, 
   setSecHidden, 
@@ -35,26 +36,34 @@ const DeletePopup = ({
   const handleDeleteItem = (cartId, itemId) => {
 
     const data = {
-        email: userData.email,
-        cartId: cartId,
-        itemId: itemId,
-      };
+      email: userData.email,
+      cartId: cartId,
+      itemId: itemId,
+    };
 
-      chrome.runtime.sendMessage({action: "deleteItem", data: data}, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-          return;
+    chrome.runtime.sendMessage({action: "deleteItem", data: data}, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+        return;
+      }
+
+      if (response?.status === "success") {
+        setItemsInFolder((prev) => prev.filter((section) => section.item_id !== itemId));
+        const newSelectedCarts = item.selected_cart_ids = item.selected_cart_ids.filter(id=> id !== cartId);
+        const sentData = {
+          image: item.image,
+          item_id: item.item_id,
+          name: item.name,
+          notes: item.notes,
+          price: item.price,
+          selected_cart_ids: newSelectedCarts,
+          url: item.url
         }
-  
-        if (response?.status === "success") {
-          // Fetch the latest list after deletion
-          //fetchFolderItems(cartId);
-          //updateScreenSize();
-          setItemsInFolder((prev) => prev.filter((section) => section.item_id !== itemId));
-        } else {
-          console.error("Error deleting item:", response?.error);
-        }
-      });
+        chrome.runtime.sendMessage({action: "updateItems", data: sentData});
+      } else {
+        console.error("Error deleting item:", response?.error);
+      }
+    });
   }
 
   const closePopup = () => {

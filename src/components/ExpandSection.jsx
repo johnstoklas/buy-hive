@@ -66,10 +66,7 @@ const ExpandSection = ({
             }
   
             if (response?.status === "success") {
-              //fetchOrganizationSections();
-              console.log(message.data);
-              //updateItem(data, "updateEditNoteItem");
-              resolve();
+              chrome.runtime.sendMessage({action: "updateItems", data: response.data});
             } else {
               console.error("Error editing notes:", response?.error);
             }

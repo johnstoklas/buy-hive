@@ -178,8 +178,6 @@ function OrganizationSection({
         if (message.action === "cartUpdate") {
             const data = message.data;
 
-            console.log("we got here and the data looks like this: ", data);
-
             setItemsInFolder((prevItems) => {
                 const existingItem = prevItems.find(item => item.item_id === data.item_id);
                 const isInSelectedCarts = data.selected_cart_ids.includes(sectionId);
@@ -218,7 +216,13 @@ function OrganizationSection({
     chrome.runtime.onMessage.addListener(listener);
 
     return () => chrome.runtime.onMessage.removeListener(listener);
-}, []);
+  }, []);
+
+  useEffect(() => {
+    const currentSection = organizationSections.find(section => section.cart_id === sectionId);
+    setItemsInFolder(currentSection?.items || []);
+  }, [organizationSections, sectionId]);
+
 
   
   

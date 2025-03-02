@@ -11,25 +11,17 @@ const SelectFolders = ({
 
   useEffect(() => {
     initializeSelectedFolders();
-  }, []);
+  }, [moveItem]);
 
   const initializeSelectedFolders = () => {
     const selectedNames = [];
     const selectedIds = [];
 
 
-    cartsArray.forEach(cart => {
-      if (cart.cart_id === cartId) {
-        cart.items.forEach(i => {
-          if (i.item_id === item.item_id) {
-            item.selected_cart_ids.forEach(selectedCartId => {
-              const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
-              selectedNames.push(selectedCart.cart_name);
-              selectedIds.push(selectedCart.cart_id);
-            });
-          }
-        });
-      }
+    item.selected_cart_ids.forEach(selectedCartId => {
+      const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
+      selectedNames.push(selectedCart.cart_name);
+      selectedIds.push(selectedCart.cart_id);
     });
 
     setSelectedCartNames(selectedNames);

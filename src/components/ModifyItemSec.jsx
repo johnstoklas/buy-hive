@@ -75,6 +75,7 @@ const ModifyItemSec = ({
                 type="item"
                 cartId={cartId}
                 itemId={itemId}
+                item={item}
                 setIsVisible={setDeleteItemVisible}
                 setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
