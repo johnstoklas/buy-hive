@@ -1,23 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import ExpandSection from "./ExpandSection.jsx";
 import ModifyOrgSec from "./ModifyOrgSec.jsx";
-import { useLocked } from './LockedProvider.jsx'
+import { useLocked } from './contexts/LockedProvider.jsx'
+import { userDataContext } from "./contexts/UserProvider.jsx";
 
 
 function OrganizationSection({
   sectionId,
   title,
   items,
-  userName,
-  handleEditSection,
-  handleDeleteSection,
-  cartsArray,
-  handleUpdateItem,
+  organizationSections,
+  setOrganizationSections,
   expandedFolders,
   setExpandedFolders,
   fetchOrganizationSections,
   isLoading,
-  setIsLoading,
 }) {
   const [sectionHeight, setSectionHeight] = useState("45px");
   const [sectionTitle, setSectionTitle] = useState(title);
@@ -27,7 +24,6 @@ function OrganizationSection({
   const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
   
   const [itemsInFolder, setItemsInFolder] = useState(items);
-  const [folders, setFolders] = useState({});
 
   const expandedSectionRef = useRef(null);
   const folderRef = useRef(null);
@@ -35,6 +31,7 @@ function OrganizationSection({
   const folderTitleRef = useRef(title);
 
   const { isLocked } = useLocked();
+  const { userData } = userDataContext();
 
   const [isExpanded, setIsExpanded] = useState(expandedFolders[sectionId] || false);
 
@@ -48,130 +45,10 @@ function OrganizationSection({
       // Allow animation only after loading is done
       updateScreenSize();
     }
-  }, [isLoading, isExpanded]); // Trigger when loading or expanded state changes
+  }, [isLoading, isExpanded, itemsInFolder]); // Trigger when loading or expanded state changes
 
-  const fetchFolderItems = (cartId) => {
-      if (!userName?.email) {
-        console.error("User is not logged in.");
-        return;
-      }
-  
-      chrome.runtime.sendMessage({
-          action: "fetchFolderItems",
-          data: {
-            email: userName.email,
-            cartId: cartId,
-          },
-        },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            console.error(`Error communicating with background script: ${chrome.runtime.lastError.message}`);
-            return;
-          }
-  
-          if (response?.status === "success") {
-            console.log("Updated carts:", response.data);
-            setItemsInFolder(response.data.items);
-            setIsExpanded(true);
-          } else {
-            console.error("Error fetching data:", (response?.message || "Unknown error occurred."));
-          }
-        }
-      );
-  };
-
-  // Edit item notes
-  const handleEditNotes = (notes, cartId, itemId) => {
-    return new Promise((resolve, reject) => {
-      if (notes.trim()) {
-        // Send update request to background script
-        const data = {
-          email: userName.email,
-          notes,
-          cartId,
-          itemId,
-        };
-  
-        chrome.runtime.sendMessage(
-          { action: "editNotes", data: data },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-              return;
-            }
-  
-            if (response?.status === "success") {
-              fetchOrganizationSections();
-              resolve();
-            } else {
-              console.error("Error editing notes:", response?.error);
-            }
-          }
-        );
-      }
-    });
-  };
-  
-
-  // Moves item to carts
-  const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
-    return new Promise((resolve, reject) => {
-      console.log("item id: ", itemId);
-      const data = {
-        email: userName.email,
-        itemId: itemId,
-        selectedCarts: selectedCarts,
-        unselectedCarts: unselectedCarts,
-      }
-
-      console.log(data);
-
-      chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-          return;
-        }
-  
-        if (response?.status === "success") {
-          //fetchOrganizationSections();
-          fetchOrganizationSections();
-          resolve();
-        } else {
-          console.error("Error moving item:", response?.error);
-        }
-      });
-    });
-  }
-
-  // Delete an item
-  const handleDeleteItem = (cartId, itemId) => {
-    return new Promise((resolve, reject) => {
-      const data = {
-        email: userName.email,
-        cartId: cartId,
-        itemId: itemId,
-      };
-
-      console.log(data);
-
-      chrome.runtime.sendMessage({action: "deleteItem", data: data}, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-          return;
-        }
-  
-        if (response?.status === "success") {
-          // Fetch the latest list after deletion
-          //fetchFolderItems(cartId);
-          fetchOrganizationSections();
-          //updateScreenSize();
-          resolve();
-
-        } else {
-          console.error("Error deleting item:", response?.error);
-        }
-      });
-    });
+  const updateItem = (data, message) => {
+    chrome.runtime.sendMessage({message, data});
   }
 
   useEffect(() => {
@@ -197,12 +74,10 @@ function OrganizationSection({
 
   const handleExpandClick = () => {
     if (isLocked) return;
-  
-    // Toggle the expanded state of the folder
+
     setIsExpanded((prev) => {
       const newExpandedState = !prev;
       
-      // Update the expandedFolders state to persist the open folders
       setExpandedFolders(prevState => ({
         ...prevState,
         [sectionId]: newExpandedState
@@ -212,7 +87,6 @@ function OrganizationSection({
     });
   };
   
-
   const handleModifyClick = () => {
     if (!modOrgHidden && !isLocked) {
       setModifyOrgSec((prev) => !prev);
@@ -235,6 +109,44 @@ function OrganizationSection({
 
   const handleTitleChange = (e) => {
     setSectionTitle(e.target.value);
+  };
+
+  // Edits an existing folder
+  const handleEditSection = (newFileName, cartId) => {
+      if (!userData) return;
+      if (!cartId) return; 
+      if (!newFileName.trim()) return;
+  
+      const isDuplicate = organizationSections.some(
+        (section) => section.cart_name === newFileName.trim() && section.cart_id !== cartId
+      );
+  
+      if (isDuplicate) {
+        return;
+      }
+  
+      const data = {
+        email: userData.email,
+        newCartName: newFileName.trim(),
+        cartId: cartId,
+      };
+  
+      chrome.runtime.sendMessage({ action: "editFolder", data }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          setOrganizationSections((prev) =>
+            prev.map((section) =>
+              section.cart_id === cartId ? { ...section, cart_name: newFileName.trim() } : section
+            )
+          );
+        } else {
+          console.error("Error updating folder:", response?.error);
+        }
+      });
   };
 
   const handleTitleBlur = () => {
@@ -261,6 +173,56 @@ function OrganizationSection({
     }
   };
 
+  useEffect(() => {
+    const listener = (message) => {
+        if (message.action === "cartUpdate") {
+            const data = message.data;
+
+            console.log("we got here and the data looks like this: ", data);
+
+            setItemsInFolder((prevItems) => {
+                const existingItem = prevItems.find(item => item.item_id === data.item_id);
+                const isInSelectedCarts = data.selected_cart_ids.includes(sectionId);
+
+                let updatedItems;
+
+                if (isInSelectedCarts) {
+                    if (existingItem) {
+                        // Update the item if it already exists
+                        updatedItems = prevItems.map(item =>
+                            item.item_id === data.item_id ? { ...item, ...data } : item
+                        );
+                    } else {
+                        // Add the item if it doesn't exist
+                        updatedItems = [...prevItems, data];
+                    }
+                } else {
+                    // Remove the item if the cart is no longer selected
+                    updatedItems = prevItems.filter(item => item.item_id !== data.item_id);
+                }
+
+                // After updating itemsInFolder, update organizationSections
+                setOrganizationSections((prevSections) =>
+                    prevSections.map(section =>
+                        section.cart_id === sectionId
+                            ? { ...section, items: updatedItems }
+                            : section
+                    )
+                );
+
+                return updatedItems;  // Return for setItemsInFolder
+            });
+        }
+    };
+
+    chrome.runtime.onMessage.addListener(listener);
+
+    return () => chrome.runtime.onMessage.removeListener(listener);
+}, []);
+
+  
+  
+
   return (
     <div
       className="expand-section-main-display section"
@@ -275,8 +237,8 @@ function OrganizationSection({
         <div className="expand-section-content" ref={folderRef}>
           <button
             className={`expand-section-button ${
-              isExpanded && itemsInFolder.length > 0 ? "rotate" : ""
-            } ${isLocked ? "disabled-hover-modify" : ""}`}
+              itemsInFolder && isExpanded && itemsInFolder.length > 0 ? "rotate" : ""
+          } ${isLocked ? "disabled-hover-modify" : ""}`}          
             onClick={handleExpandClick}
           >
             ▶
@@ -314,9 +276,9 @@ function OrganizationSection({
             position={modifyOrgSecPosition}
             ref={folderRef}
             handleEditSection={handleEditSection}
-            handleDeleteSection={handleDeleteSection}
             cartId={sectionId}
             handleTitleClick={handleTitleClick}
+            setOrganizationSections={setOrganizationSections}
           />
         )}
       </section>
@@ -327,12 +289,10 @@ function OrganizationSection({
             <ExpandSection
               key={item.item_id}
               item={item}
-              handleEditNotes={handleEditNotes}
-              handleDeleteItem={handleDeleteItem}
               cartId={sectionId}
               itemId={item.item_id}
-              cartsArray={cartsArray}
-              handleMoveItem={handleMoveItem}
+              cartsArray={organizationSections}
+              setItemsInFolder={setItemsInFolder}
             />
           ))
         )

@@ -40,10 +40,37 @@ const AddItem = ({
     };
   }, [isVisible]);
 
+  const standarizedPrice = (price) => {
+    function formatPrice(p) {
+      p = p.trim().replace(/\$/g, '');
+      let num = parseFloat(p);
+      if(isNaN(num)) {
+        return "";
+      }
+      return `$${num.toFixed(2)}`;
+    }
+    if(price.includes('-')) {
+      const [low, high] = price.split('-').map(p => p.trim()) 
+      return `${formatPrice(low)} - ${formatPrice(high)}`
+    }
+    else if(price.toLowerCase().includes('to')) {
+      const [low, high] = price.split('to').map(p => p.trim()) 
+      return `${formatPrice(low)} - ${formatPrice(high)}`
+    }
+    else {
+      return formatPrice(price);
+    }
+  }
+
   useEffect(() => {
     if (scrapedData) {
       setItemTitle(scrapedData?.product_name || "");
-      setItemPrice(scrapedData?.price || "");
+      const scrapedPrice = scrapedData?.price; 
+      if(scrapedData?.price) {
+        const correctedPrice = standarizedPrice(scrapedPrice);
+        setItemPrice(correctedPrice);
+      }
+      else setItemPrice("");
     }
   }, [scrapedData]);
 
@@ -83,7 +110,10 @@ const AddItem = ({
         <h4 className="processing-add-item">{`Error: ${errorData}`}</h4>
       ) : (
         <>
-          <h1 id="add-item-title">Add Item</h1>
+          <div id="add-item-header">
+            <h1 id="add-item-title">Add Item</h1>
+            <p id="add-item-close" onClick={() => setIsVisible(false)}> &#10005; </p>
+          </div>
           <div className="add-item-container">
             <div className="add-item-image-container">
               {scrapedImage ? (
@@ -97,7 +127,7 @@ const AddItem = ({
                 {itemTitle || <div className="add-item-loading"></div>}
               </h4>
               <h4 className="add-item-price">
-                {itemPrice || <div className="add-item-loading"></div>}
+                {itemPrice || <div className="add-item-loading add-item-loading-price"></div>}
               </h4>
               <textarea
                 id="add-item-notes"

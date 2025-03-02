@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocked } from './LockedProvider.jsx';
+import { useLocked } from './contexts/LockedProvider.jsx';
 
 const EditPopup = ({ 
   setIsVisible, 

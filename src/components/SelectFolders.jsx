@@ -5,28 +5,27 @@ const SelectFolders = ({
   setSelectedCarts,
   moveItem,
   cartId, 
-  itemId
+  item
 }) => {
   const [selectedCartNames, setSelectedCartNames] = useState([]); // Store selected cart names
 
   useEffect(() => {
     initializeSelectedFolders();
-  }, [moveItem]);
+  }, []);
 
   const initializeSelectedFolders = () => {
     const selectedNames = [];
     const selectedIds = [];
 
+
     cartsArray.forEach(cart => {
       if (cart.cart_id === cartId) {
-        cart.items.forEach(item => {
-          if (item.item_id === itemId) {
+        cart.items.forEach(i => {
+          if (i.item_id === item.item_id) {
             item.selected_cart_ids.forEach(selectedCartId => {
               const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
-              if (selectedCart) {
-                selectedNames.push(selectedCart.cart_name);
-                selectedIds.push(selectedCart.cart_id);
-              }
+              selectedNames.push(selectedCart.cart_name);
+              selectedIds.push(selectedCart.cart_id);
             });
           }
         });

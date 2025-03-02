@@ -12,7 +12,7 @@ const LoginButton = () => {
                 <button onClick={() => loginWithPopup()}>
                     Sign Up
                 </button>
-                <button id="sign-in-button" onClick={() => loginWithPopup()}>
+                <button className="alt-button" onClick={() => loginWithPopup()}>
                     Sign In
                 </button>
             </div>

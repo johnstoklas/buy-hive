@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { CSSTransition  } from 'react-transition-group';
 import { useAuth0 } from '@auth0/auth0-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-icons'
 import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
 import SignInPage from './SignInPage.jsx';
-import { useLocked } from './LockedProvider.jsx'
+import { useLocked } from './contexts/LockedProvider.jsx';
+import { userDataContext } from './contexts/UserProvider.jsx';
 
 function Footer({ 
-    handleAddSection, 
-    setFileName, 
-    fileName, 
     organizationSections, 
-    setUserName, 
+    setOrganizationSections,
     cartsArray,
     handleAddItem,
-    userName
  }) {
     const [addItemState, setAddItemState] = useState(false);
     const [addFileState, setAddFileState] = useState(false);
     const [signInState, setSignInState] = useState(false);
-    const [outerHtml, setOuterHtml] = useState('');
+    const [fileName, setFileName] = useState("");
 
     const [scrapedData, setScrapedData] = useState(null);
     const [scrapedImage, setScrapedImage] = useState(null);
@@ -30,8 +26,8 @@ function Footer({
     const [error, setError] = useState(null);
 
     const { isLocked, setIsLocked } = useLocked();
-
-    const {user, isAuthenticated, isLoading} = useAuth0();
+    const { user, isAuthenticated, isLoading } = useAuth0();
+    const { setUserData } = userDataContext();
 
     useEffect(() => {
         setIsLocked(!isAuthenticated);
@@ -40,7 +36,7 @@ function Footer({
     // Sends user information to background.js for database managament
     useEffect(() => {
         if (user) {
-            setUserName(user);
+            setUserData(user);
             chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
                 console.log('Response from background.js:', response);
             });
@@ -52,14 +48,12 @@ function Footer({
     const handleScrapeClick = () => {
         if(!isLocked) {
             setAddItemState(!addItemState);
-            console.log(addItemState)
             setAddFileState(false);
             setSignInState(false);
             if(!addItemState) {
                 gatherPriceTitleData();
                 gatherImageData();
             }
-            // Updates footer visulization
         }
     };
 
@@ -72,7 +66,6 @@ function Footer({
                 const data = {
                     innerText: results[0].result,
                 }
-                console.log(data);
                 chrome.runtime.sendMessage({ action: "scrapePage", data:data }, (response) => {
                     if(response?.status === 'success') {
                         console.log("title/price: (status)", response.data.cart_items);
@@ -86,7 +79,6 @@ function Footer({
           });
           
           function getInnerText() {
-            console.log(document.body.innerText)
             return document.body.innerText;
           }       
     }
@@ -94,7 +86,6 @@ function Footer({
     const gatherImageData = () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length > 0) {
-              // Grabs the current URL
               const currentTab = tabs[0];
               const url = currentTab.url
               setCurrentUrl(url);
@@ -121,24 +112,12 @@ function Footer({
 
                         imageSources.forEach(img => {
                             console.log(img.width);
-                            if (img.width > 20 && img.height > 20) {  // Adjust threshold as needed
+                            if (img.width > 20 && img.height > 20) { 
                                 imageSourcesLarge.push(img);
                             }
                         });
 
                         console.log("filtered for size, length of:", imageSourcesLarge.length, " , ", imageSourcesLarge)
-
-                        /*const imageSourcesPos = [];
-
-                        imageSources.forEach(img => {
-                            let rect = img.src.getBoundingClientRect();
-                            if (rect.width > 200 && rect.height > 200 && rect.top > 100) { // Adjust as needed
-                                imageSourcesPos.push(img);
-                            }
-                        });
-
-                        console.log("filtered for size, length of:", imageSourcesPos.length, " , ", imageSourcesPos)
-*/
 
                         let imagePlainText = "";
                         imageSources.map((img) => {
@@ -204,16 +183,17 @@ function Footer({
                 handleAddItem={handleAddItem}
             />
             <AddFile 
-                onAddSection={handleAddSection}
                 setFileName={setFileName}
                 fileName={fileName} 
                 isVisible={addFileState}
                 setIsVisible={setAddFileState}
+                organizationSections={organizationSections}
+                setOrganizationSections={setOrganizationSections}
             />
             
             {signInState && <SignInPage 
-                setUserName={setUserName}
                 user={user}
+                setIsVisible={setSignInState}
             />}
             
             <footer className="extension-footer">

@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SelectFolders from './SelectFolders.jsx';
-import { useLocked } from './LockedProvider.jsx';
+import { useLocked } from './contexts/LockedProvider.jsx';
 import DeletePopup from './DeletePopup.jsx';
+import { userDataContext } from './contexts/UserProvider.jsx';
 
 const MoveItem = ({
     cartsArray,
@@ -11,14 +12,39 @@ const MoveItem = ({
     setMoveItemVisible,
     setSec,
     setSecHidden,
-    handleMoveItem,
-    handleDeleteItem,
 }) => {
 
     const [selectedFolders, setSelectedFolders] = useState([]);
     const [deleteVisible, setDeleteVisible] = useState(false);
 
     const { setIsLocked } = useLocked();
+    const { userData } = userDataContext();
+
+    // Moves item to carts
+    const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
+
+        const data = {
+        email: userData.email,
+        itemId: itemId,
+        selectedCarts: selectedCarts,
+        unselectedCarts: unselectedCarts,
+        }
+
+        chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
+        if (chrome.runtime.lastError) {
+            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+            return;
+        }
+    
+        if (response?.status === "success") {
+            //fetchOrganizationSections();
+            const data = response.data;
+            chrome.runtime.sendMessage({action: "updateItems", data: data});
+        } else {
+            console.error("Error moving item:", response?.error);
+        }
+        });
+    }
 
     const closeMoveItemPopup = () => {
         setMoveItemVisible(false);
@@ -54,8 +80,6 @@ const MoveItem = ({
                     });
                 }
             });
-
-            console.log("right before move: ", selectedFolders);
             
             handleMoveItem(itemId, selectedFolders, unselectedFolders);
             closeMoveItemPopup();
@@ -67,7 +91,6 @@ const MoveItem = ({
         {deleteVisible && <DeletePopup
             cartId={cartId}
             itemId={itemId}
-            handleDeleteItem={handleDeleteItem}
             setIsVisible={setDeleteVisible}
             type="move"
         />}
@@ -85,7 +108,7 @@ const MoveItem = ({
                 <div className="shopping-item-header">
                 <div className="shopping-item-header-text">
                     <h4 class="shopping-item-name"> {item.name} </h4>
-                    <h4 class="shopping-item-price">  ${item.price} </h4>
+                    <h4 class="shopping-item-price">  {item.price} </h4>
                 </div>
                 </div>
                     <div class="shopping-item-notes" style={{color: item.notes ? "black" : "gray"}}> {item.notes ? item.notes : "None"} </div>
@@ -96,6 +119,7 @@ const MoveItem = ({
             moveItem={true}
             select
             cartsArray={cartsArray}
+            item={item}
             cartId={cartId}
             itemId={itemId}
             setSelectedCarts={setSelectedFolders}

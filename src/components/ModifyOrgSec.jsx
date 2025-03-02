@@ -3,20 +3,22 @@ import EditPopup from './EditPopup.jsx';
 import DeletePopup from './DeletePopup.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { useLocked } from './LockedProvider.jsx';
+import { useLocked } from './contexts/LockedProvider.jsx';
+import EditNotes from './EditNotes.jsx';
 
 const ModifyOrgSec = ({ 
   setModifyOrgSec, 
   modOrgHidden, 
   setModOrgHidden, 
   position, 
-  handleDeleteSection,
   cartId,
-  handleTitleClick
+  handleTitleClick,
+  setOrganizationSections,
 }) => {
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
+  const [sharePopupVisible, setSharePopupVisible] = useState(false);
 
   const { setIsLocked } = useLocked();
 
@@ -47,6 +49,10 @@ const ModifyOrgSec = ({
     setDeletePopupVisible(!deletePopupVisible);
   }
 
+  const toggleSharePopup = () => {
+    setSharePopupVisible(!sharePopupVisible);
+  }
+
   useEffect(() => {
     setIsLocked(editPopupVisible || deletePopupVisible);
   }, [editPopupVisible, deletePopupVisible]);
@@ -63,16 +69,17 @@ const ModifyOrgSec = ({
       setIsVisible={setDeletePopupVisible}
       setSec={setModifyOrgSec}
       setSecHidden={setModOrgHidden}
-      handleDeleteSection={handleDeleteSection}
       cartId={cartId}
       type={"folder"}
+      setOrganizationSections={setOrganizationSections}
     />}
+
     <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }`} ref={modifyOrgSec} >
         <button onClick={toggleEditPopup}>
           <FontAwesomeIcon icon={faPenToSquare} />
           <p> Edit </p>
         </button>
-        <button>
+        <button onClick={toggleSharePopup}>
           <FontAwesomeIcon icon={faArrowUpFromBracket} />
           <p> Share </p>
         </button>

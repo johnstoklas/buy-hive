@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ModifyItemSec from './ModifyItemSec.jsx';
-import { useLocked } from './LockedProvider.jsx'
-
+import { useLocked } from './contexts/LockedProvider.jsx'
+import { userDataContext } from './contexts/UserProvider.jsx';
 
 const ExpandSection = ({ 
   item, 
-  handleEditNotes, 
-  handleDeleteItem,
   cartId, 
   itemId,
   cartsArray,
-  handleMoveItem,
+  setItemsInFolder,
 }) => {
 
   const [modifyVisible, setModifyVisible] = useState(false);
@@ -21,6 +19,11 @@ const ExpandSection = ({
   const noteRef = useRef(notes);
 
   const { isLocked } = useLocked();
+  const { userData } = userDataContext(); 
+
+  useEffect(() => {
+    console.log("item: ", item);
+  }, []);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -43,16 +46,43 @@ const ExpandSection = ({
     setNotes(e.target.value);
   };
 
+  // Edit item notes
+  const handleEditNotes = (notes, cartId, itemId) => {
+      if (notes.trim()) {
+
+        const data = {
+          email: userData.email,
+          notes,
+          cartId,
+          itemId,
+        };
+  
+        chrome.runtime.sendMessage(
+          { action: "editNotes", data: data },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+              return;
+            }
+  
+            if (response?.status === "success") {
+              //fetchOrganizationSections();
+              console.log(message.data);
+              //updateItem(data, "updateEditNoteItem");
+              resolve();
+            } else {
+              console.error("Error editing notes:", response?.error);
+            }
+          }
+        );
+      }
+  };
+
   const handleNoteBlur = () => {
-    //setIsEditing(false);
       if(notes) {
         noteRef.current = notes;
         handleEditNotes(notes, cartId, itemId);
       }
-      /*
-      else {
-        setNotes(noteRef.current);
-      }*/
   };
 
   const handleNoteKeyDown = (e) => {
@@ -87,7 +117,7 @@ const ExpandSection = ({
             <div className="shopping-item-header">
               <div className="shopping-item-header-text">
                 <h4 class="shopping-item-name"> {item.name} </h4>
-                <h4 class="shopping-item-price">  ${item.price} </h4>
+                <h4 class="shopping-item-price">  {item.price} </h4>
               </div>
               <div className="shopping-item-button-container">
                 <button className={isLocked ? "disabled-hover-modify" : ""} onClick={openModifyItem}> &#8942; </button>
@@ -96,15 +126,13 @@ const ExpandSection = ({
                 {modifyVisible && <ModifyItemSec 
                   notesContent={notes}
                   setNotes={setNotes}
-                  handleEditNotes={handleEditNotes}
-                  handleDeleteItem={handleDeleteItem}
                   cartId={cartId}
                   itemId={itemId}
                   handleNoteClick={handleNoteClick}
                   setModifyItemSec={setModifyVisible}
                   cartsArray={cartsArray}
                   item={item}
-                  handleMoveItem={handleMoveItem}
+                  setItemsInFolder={setItemsInFolder}
                 />} 
 
                 {isEditing ? (

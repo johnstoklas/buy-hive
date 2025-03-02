@@ -54,7 +54,11 @@
 
 .organization-section-empty {
     text-align: center;
-    margin-top: 120px;
+    margin-top: 140px;
+}
+
+#org-sec-empty-folder {
+    color: #888888;
 }
 
 .organization-section-empty p { 

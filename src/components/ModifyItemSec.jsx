@@ -4,17 +4,16 @@ import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-
 import EditNotes from './EditNotes.jsx';
 import DeletePopup from './DeletePopup.jsx';
 import MoveItem from './MoveItem.jsx';
-import { useLocked } from './LockedProvider.jsx';
+import { useLocked } from './contexts/LockedProvider.jsx';
 
 const ModifyItemSec = ({ 
     cartId, 
     itemId, 
-    handleDeleteItem,
     handleNoteClick,
     setModifyItemSec,
     cartsArray,
     item,
-    handleMoveItem,
+    setItemsInFolder,
  }) => {  
     
     const [deleteItemVisible, setDeleteItemVisible] = useState(false);
@@ -71,17 +70,15 @@ const ModifyItemSec = ({
                 setMoveItemVisible={setMoveItemVisible}
                 setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
-                handleMoveItem={handleMoveItem}
-                handleDeleteItem={handleDeleteItem}
             />}
             {deleteItemVisible && <DeletePopup 
                 type="item"
                 cartId={cartId}
                 itemId={itemId}
-                handleDeleteItem={handleDeleteItem}
                 setIsVisible={setDeleteItemVisible}
                 setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
+                setItemsInFolder={setItemsInFolder}
             />}
             <div 
             className={`modify-org-sec modify-item-sec ${modItemHidden ? "hidden" : ""}`}

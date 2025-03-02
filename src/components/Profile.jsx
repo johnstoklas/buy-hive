@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { userDataContext } from './contexts/UserProvider.jsx';
 
-const Profile = ({ user, setUserName }) => {
+const Profile = ({ user }) => {
 
     const { isLoading, isAuthenticated} = useAuth0();
+    const { setUserData } = userDataContext();
 
     useEffect(() => {
         console.log("user: ", user);
         if (!isLoading && isAuthenticated && user) {
-          setUserName(user);
+          setUserData(user);
         }
       }, [isLoading, isAuthenticated, user]);
 

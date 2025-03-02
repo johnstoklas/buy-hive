@@ -1,10 +1,20 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { userDataContext } from './contexts/UserProvider.jsx';
 
-const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible }) => {
+const AddFile = ({ 
+  setFileName, 
+  fileName, 
+  isVisible, 
+  setIsVisible,
+  organizationSections,
+  setOrganizationSections
+ }) => {
   const addFile = useRef(null);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const {userData} = userDataContext();
 
   useEffect(() => {
     if (isVisible) {
@@ -25,15 +35,30 @@ const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible 
     };
   }, [isVisible]);
 
+  const handleAddSection = (fileName) => {
+      if (!userData) return;
+
+      const trimmedFileName = fileName.trim();
+      if (!trimmedFileName) return;
+
+      const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
+      if (isDuplicate) return;
+
+      const data = { email: userData.email, cartName: trimmedFileName };
+
+      chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
+        if (response?.status === "success" && response?.data) {
+          setOrganizationSections((prev) => [...prev, response.data]);
+          setFileName("");
+        } else {
+          console.log(error);
+        }
+      });
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      onAddSection(fileName)
-        .then(() => {
-          setFileName("");
-        })
-        .catch((error) => {
-          console.error("Failed to add folder:", error);
-        });
+      handleAddSection(fileName)
     }
   };
   
@@ -57,7 +82,7 @@ const AddFile = ({ onAddSection, setFileName, fileName, isVisible, setIsVisible 
       <button 
         type="button" 
         id="submit-file" 
-        onClick={() => onAddSection(fileName)} 
+        onClick={() => handleAddSection(fileName)} 
       >
         <FontAwesomeIcon icon={faCheck} />
       </button>

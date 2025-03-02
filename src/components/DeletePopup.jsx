@@ -1,21 +1,61 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { cloneElement, useState } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { useLocked } from './LockedProvider.jsx';
+import { useLocked } from './contexts/LockedProvider.jsx';
+import { userDataContext } from './contexts/UserProvider.jsx';
 
 
 const DeletePopup = ({ 
+  cartId, 
+  itemId,
   setIsVisible, 
   setSec, 
   setSecHidden, 
-  cartId, 
-  handleDeleteSection, 
-  handleDeleteItem,
   type,
-  itemId,
+  setItemsInFolder,
+  setOrganizationSections,
 }) => {
 
   const { setIsLocked } = useLocked();
+  const { userData } = userDataContext();
+
+  const handleDeleteSection = (cartId) => {
+    if (!userData) return;
+
+    chrome.runtime.sendMessage({ action: "deleteFolder", data: { email: userData.email, cartId } }, (response) => {
+      if (response?.status === "success") {
+        setOrganizationSections((prev) => prev.filter((section) => section.cart_id !== cartId));
+      } else {
+        console.error("Error deleting folder:", response?.error);
+      }
+    });
+  };
+
+  // Delete an item
+  const handleDeleteItem = (cartId, itemId) => {
+
+    const data = {
+        email: userData.email,
+        cartId: cartId,
+        itemId: itemId,
+      };
+
+      chrome.runtime.sendMessage({action: "deleteItem", data: data}, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          // Fetch the latest list after deletion
+          //fetchFolderItems(cartId);
+          //updateScreenSize();
+          setItemsInFolder((prev) => prev.filter((section) => section.item_id !== itemId));
+        } else {
+          console.error("Error deleting item:", response?.error);
+        }
+      });
+  }
 
   const closePopup = () => {
     console.log("???");

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Extension from './components/Extension.jsx'; // Import your main Extension component
+import Popup from './components/Popup.jsx';
 import { Auth0Provider } from '@auth0/auth0-react';
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
@@ -14,7 +14,7 @@ ReactDOM.render(
     clientId={clientId}
     authorizationParams={{redirect_uri: `chrome-extension:${redirectUri}/popup.html`}}
     >
-    <Extension />
+    <Popup />
     </Auth0Provider>
   </React.StrictMode>,
   document.getElementById('root') // Ensure this matches your 'popup.html'
