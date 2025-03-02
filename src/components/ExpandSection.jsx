@@ -8,6 +8,7 @@ const ExpandSection = ({
   cartId, 
   itemId,
   cartsArray,
+  itemsInFolder,
   setItemsInFolder,
 }) => {
 
@@ -129,6 +130,7 @@ const ExpandSection = ({
                   setModifyItemSec={setModifyVisible}
                   cartsArray={cartsArray}
                   item={item}
+                  itemsInFolder={itemsInFolder}
                   setItemsInFolder={setItemsInFolder}
                 />} 
 

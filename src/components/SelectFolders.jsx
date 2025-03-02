@@ -14,18 +14,22 @@ const SelectFolders = ({
   }, [moveItem]);
 
   const initializeSelectedFolders = () => {
-    const selectedNames = [];
-    const selectedIds = [];
+    if(item) {
+      const selectedNames = [];
+      const selectedIds = [];
 
 
-    item.selected_cart_ids.forEach(selectedCartId => {
-      const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
-      selectedNames.push(selectedCart.cart_name);
-      selectedIds.push(selectedCart.cart_id);
-    });
+      item.selected_cart_ids.forEach(selectedCartId => {
+        const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
+        if(selectedCart) {
+          selectedNames.push(selectedCart.cart_name);
+          selectedIds.push(selectedCart.cart_id);
+        }
+      });
 
-    setSelectedCartNames(selectedNames);
-    setSelectedCarts(selectedIds);
+      setSelectedCartNames(selectedNames);
+      setSelectedCarts(selectedIds);
+    }
   };
 
   const handleCheckboxChange = (cartName) => {

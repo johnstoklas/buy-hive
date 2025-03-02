@@ -296,6 +296,7 @@ function OrganizationSection({
               cartId={sectionId}
               itemId={item.item_id}
               cartsArray={organizationSections}
+              itemsInFolder={itemsInFolder}
               setItemsInFolder={setItemsInFolder}
             />
           ))

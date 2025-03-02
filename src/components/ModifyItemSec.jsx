@@ -13,6 +13,7 @@ const ModifyItemSec = ({
     setModifyItemSec,
     cartsArray,
     item,
+    itemsInFolder,
     setItemsInFolder,
  }) => {  
     
@@ -79,6 +80,7 @@ const ModifyItemSec = ({
                 setIsVisible={setDeleteItemVisible}
                 setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
+                itemInFolder={itemsInFolder}
                 setItemsInFolder={setItemsInFolder}
             />}
             <div 

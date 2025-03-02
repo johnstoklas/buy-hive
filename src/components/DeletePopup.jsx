@@ -13,6 +13,7 @@ const DeletePopup = ({
   setSec, 
   setSecHidden, 
   type,
+  itemsInFolder,
   setItemsInFolder,
   setOrganizationSections,
 }) => {
@@ -26,6 +27,19 @@ const DeletePopup = ({
     chrome.runtime.sendMessage({ action: "deleteFolder", data: { email: userData.email, cartId } }, (response) => {
       if (response?.status === "success") {
         setOrganizationSections((prev) => prev.filter((section) => section.cart_id !== cartId));
+        itemsInFolder.forEach((item) => {
+          const newSelectedCarts = item.selected_cart_ids = item.selected_cart_ids.filter(id=> id !== cartId);
+          const sentData = {
+            image: item.image,
+            item_id: item.item_id,
+            name: item.name,
+            notes: item.notes,
+            price: item.price,
+            selected_cart_ids: newSelectedCarts,
+            url: item.url
+          }
+          chrome.runtime.sendMessage({action: "updateItems", data: sentData});
+        });
       } else {
         console.error("Error deleting folder:", response?.error);
       }
