@@ -14,7 +14,6 @@ function OrganizationSection({
   expandedFolders,
   setExpandedFolders,
   fetchOrganizationSections,
-  isLoading,
 }) {
   const [sectionHeight, setSectionHeight] = useState("45px");
   const [sectionTitle, setSectionTitle] = useState(title);
@@ -22,6 +21,7 @@ function OrganizationSection({
   const [modifyOrgSec, setModifyOrgSec] = useState(false);
   const [modOrgHidden, setModOrgHidden] = useState(false);
   const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
+  const [isLoading, setIsLoading] = useState(false);
   
   const [itemsInFolder, setItemsInFolder] = useState(items);
 
@@ -199,6 +199,8 @@ function OrganizationSection({
                     updatedItems = prevItems.filter(item => item.item_id !== data.item_id);
                 }
 
+                console.log("updated items: ", updatedItems);
+
                 // After updating itemsInFolder, update organizationSections
                 setOrganizationSections((prevSections) =>
                     prevSections.map(section =>
@@ -219,13 +221,14 @@ function OrganizationSection({
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     const currentSection = organizationSections.find(section => section.cart_id === sectionId);
+    //console.log("org secs? ", organizationSections);
+    //console.log("updated section: ", currentSection);
     setItemsInFolder(currentSection?.items || []);
-  }, [organizationSections, sectionId]);
-
-
-  
-  
+    console.log("items in folder: ", itemsInFolder);
+    setIsLoading(false);
+  }, [organizationSections]);
 
   return (
     <div
@@ -283,11 +286,13 @@ function OrganizationSection({
             cartId={sectionId}
             handleTitleClick={handleTitleClick}
             setOrganizationSections={setOrganizationSections}
+            cartName={sectionTitle}
           />
         )}
       </section>
       <div className="expand-section-expanded-display" ref={expandedSectionRef}>
-      {isExpanded && (
+      {itemsInFolder ? 
+      (isExpanded && (
         isLoading ? [] : (
           itemsInFolder.map((item) => (
             <ExpandSection
@@ -301,7 +306,7 @@ function OrganizationSection({
             />
           ))
         )
-      )}
+      )) : []}
       </div>
     </div>
   );

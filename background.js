@@ -1,4 +1,4 @@
-chrome.runtime.onInstalled.addListener(() => {
+  chrome.runtime.onInstalled.addListener(() => {
     console.log("Background script installed");
   });
   
@@ -50,6 +50,10 @@ chrome.runtime.onInstalled.addListener(() => {
 
       case "updateItems":
         updateItems(message, sender, sendResponse);
+        return true;
+
+      case "sendEmail":
+        checkDomainExists(message, sender, sendResponse);
         return true;
   
       default:
@@ -403,3 +407,34 @@ chrome.runtime.onInstalled.addListener(() => {
     console.log("message", message);
     chrome.runtime.sendMessage({action: "cartUpdate", data: message.data });
   }
+
+  async function checkDomainExists(message, sender, sendResponse) {
+    const { email, cartId, recipient } = message.data;
+
+    const data = { 
+      cart_id: cartId,
+      recipient_email: recipient,
+    };
+
+    console.log(JSON.stringify(data));
+
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/share`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),  // Make sure this is JSON stringified
+        });
+
+        if (!response.ok) {
+            const responseData = await response.json();
+            throw new Error(responseData.detail || responseData.message || `HTTP error! Status: ${response.status}`);
+        }
+
+        sendResponse({ status: "success" });
+    } catch (error) {
+        sendResponse({ status: "error", message: error.message || "An unknown error occurred" });
+    }
+}
+

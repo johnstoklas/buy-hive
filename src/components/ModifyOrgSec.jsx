@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useLocked } from './contexts/LockedProvider.jsx';
 import EditNotes from './EditNotes.jsx';
+import ShareFolder from './ShareFolder.jsx';
 
 const ModifyOrgSec = ({ 
   setModifyOrgSec, 
@@ -14,6 +15,7 @@ const ModifyOrgSec = ({
   cartId,
   handleTitleClick,
   setOrganizationSections,
+  cartName,
 }) => {
 
   const [editPopupVisible, setEditPopupVisible] = useState(false);
@@ -27,7 +29,7 @@ const ModifyOrgSec = ({
   // If the user clicks out of the modification pop-up it disappears
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (modifyOrgSec.current && !modifyOrgSec.current.contains(event.target) && !editPopupVisible && !deletePopupVisible) {
+      if (modifyOrgSec.current && !modifyOrgSec.current.contains(event.target) && !editPopupVisible && !deletePopupVisible && !sharePopupVisible) {
         setModifyOrgSec(false); 
       }
     };
@@ -37,7 +39,7 @@ const ModifyOrgSec = ({
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [setModifyOrgSec, editPopupVisible, deletePopupVisible]);
+  }, [setModifyOrgSec, editPopupVisible, deletePopupVisible, sharePopupVisible]);
 
   // toggles edit title popup
   const toggleEditPopup = () => {
@@ -54,17 +56,24 @@ const ModifyOrgSec = ({
   }
 
   useEffect(() => {
-    setIsLocked(editPopupVisible || deletePopupVisible);
-  }, [editPopupVisible, deletePopupVisible]);
+    setIsLocked(editPopupVisible || deletePopupVisible || sharePopupVisible);
+  }, [editPopupVisible, deletePopupVisible, sharePopupVisible]);
   
 
   // Updates if modification screen should be visible when another popup appears
   useEffect(() => {
-      setModOrgHidden(editPopupVisible || deletePopupVisible);
-  }, [editPopupVisible, deletePopupVisible]);
+      setModOrgHidden(editPopupVisible || deletePopupVisible || sharePopupVisible);
+  }, [editPopupVisible, deletePopupVisible, sharePopupVisible]);
 
   return (
   <>
+    {sharePopupVisible && <ShareFolder 
+      setIsVisible={setSharePopupVisible}
+      setSec={setModifyOrgSec}
+      setSecHidden={setModOrgHidden}
+      cartId={cartId}
+      cartName={cartName}
+    />}
     {deletePopupVisible && <DeletePopup 
       setIsVisible={setDeletePopupVisible}
       setSec={setModifyOrgSec}

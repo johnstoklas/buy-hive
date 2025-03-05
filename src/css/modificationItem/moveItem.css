@@ -14,12 +14,13 @@
 #move-item-header {
     display: flex;
     flex-direction: row;
-    align-items: center
+    align-items: center;
 }
 
 #move-item-header > p {
     position: absolute;
     right: 20px;
+    font-size: 14px;
 }
 
 #move-item-header > p:hover {

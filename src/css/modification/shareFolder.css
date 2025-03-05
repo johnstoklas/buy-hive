@@ -1,0 +1,109 @@
+#share-folder-section {
+    position: fixed;
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    width: 250px;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
+    left: 50%;
+    transform: translateX(-50%);
+    transition: bottom 0.3s ease-in;
+    z-index: 1000;
+    top: 160px;
+    height: 120px;
+    border-radius: 5px;
+}
+
+.center-items {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+#share-folder-section input {
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 0px 5px 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+#share-folder-header-section * {
+    display: inline-flex;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    color: black;
+    vertical-align: center;
+}
+
+#share-folder-header {
+    width: 234px;
+    font-weight: 500;
+}
+
+#share-folder-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+#share-folder-description {
+    color: black;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    margin: 5px 0 10px 0;
+    gap: 3px;
+}
+
+#share-folder-description em {
+    max-width: 95px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#share-folder-cart-name {
+    font-style: italic;
+}
+
+.share-folder-button {
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    height: 25px;
+    width: fit-content;
+}
+
+.share-folder-button:hover {
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#confirm-share-folder {
+    background-color: var(--accent-color);  
+    color: white;  
+    border: none;
+}
+
+#close-share-folder {
+    border: 1px solid gray;
+}
+
+#close-share-folder-button {
+    width: 16px;
+}
+
+#close-share-folder-button:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#share-folder-success-message {
+    color: black;
+}
+

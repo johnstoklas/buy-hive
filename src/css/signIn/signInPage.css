@@ -52,7 +52,6 @@
 
 #sign-in-page button:focus {
     outline: none;
-    border: none;
 }
 
 #submit-sign-in {

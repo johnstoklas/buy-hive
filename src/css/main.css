@@ -12,4 +12,5 @@
 @import './modification/deletePopup.css';
 @import './add/selectFolders.css';
 @import './modificationItem/editNotes.css';
-@import './modificationItem/moveItem.css'
+@import './modificationItem/moveItem.css';
+@import './modification/shareFolder.css';
