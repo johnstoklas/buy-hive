@@ -49,51 +49,42 @@ const ExpandSection = ({
 
   // Edit item notes
   const handleEditNotes = (notes, cartId, itemId) => {
-      if (notes.trim()) {
+      const data = {
+        email: userData.email,
+        notes: notes.trim(),
+        cartId,
+        itemId,
+      };
 
-        const data = {
-          email: userData.email,
-          notes,
-          cartId,
-          itemId,
-        };
-  
-        chrome.runtime.sendMessage(
-          { action: "editNotes", data: data },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-              return;
-            }
-  
-            if (response?.status === "success") {
-              chrome.runtime.sendMessage({action: "updateItems", data: response.data});
-            } else {
-              console.error("Error editing notes:", response?.error);
-            }
+      chrome.runtime.sendMessage(
+        { action: "editNotes", data: data },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+            return;
           }
-        );
-      }
+
+          if (response?.status === "success") {
+            chrome.runtime.sendMessage({action: "updateItems", data: response.data});
+          } else {
+            console.error("Error editing notes:", response?.error);
+          }
+        }
+      );
   };
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      const length = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(length, length); // Move cursor to the end
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
 
   const handleNoteBlur = () => {
-      if(notes) {
-        noteRef.current = notes;
-        handleEditNotes(notes, cartId, itemId);
-      }
-  };
-
-  const handleNoteKeyDown = (e) => {
-    if (e.key === "Enter") {
-      setIsEditing(false);
-      if(notes) {
-        noteRef.current = notes;
-        handleEditNotes(notes, cartId, itemId);
-      }
-      else {
-        setNotes(noteRef.current);
-      }
-    }
+    noteRef.current = notes;
+    handleEditNotes(notes, cartId, itemId);
+    setIsEditing(false);
   };
 
   return (
@@ -135,17 +126,20 @@ const ExpandSection = ({
                 />} 
 
                 {isEditing ? (
-                  <input 
+                  <textarea
                     ref={inputRef}
-                    type="textarea"
                     className="shopping-item-notes"
                     value={notes}
                     onChange={handleNoteChange}
                     onBlur={handleNoteBlur}
-                    onKeyDown={handleNoteKeyDown}
-                  />
+                  />              
                 ) : (
-                  <div class="shopping-item-notes" style={{color: notes ? "black" : "gray"}}> {notes ? notes : "None"} </div>
+                  <div 
+                    className="shopping-item-notes" 
+                    style={{ color: notes ? "black" : "gray" }}
+                  >
+                    {(notes || notes.trim() !== "") ? notes : "None"}
+                  </div>
                 )}
             </div>
         </div>
