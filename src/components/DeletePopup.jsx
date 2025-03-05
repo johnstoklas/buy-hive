@@ -16,6 +16,7 @@ const DeletePopup = ({
   itemsInFolder,
   setItemsInFolder,
   setOrganizationSections,
+  handleMoveItem
 }) => {
 
   const { setIsLocked } = useLocked();
@@ -94,8 +95,12 @@ const DeletePopup = ({
     if(type === "folder") {
       handleDeleteSection(cartId);
     }
-    else if(type === "item" || type === "move") {
+    else if(type === "item") {
       handleDeleteItem(cartId, itemId);  
+      setIsLocked(false);
+    }
+    else if(type === "move") {
+      handleMoveItem(itemId, [], []);
       setIsLocked(false);
     }
     closePopup();
@@ -108,8 +113,10 @@ const DeletePopup = ({
         <FontAwesomeIcon icon={faTrashCan} id="trash-icon" />
         {type === "folder" ? (
           <p> Are you sure you want to delete this folder? </p>
-        ) : (
+        ) : type === "item" ? (
           <p> Are you sure you want to delete this item? </p>
+        ) : (
+          <p>Are you sure you want to delete this item permanently?</p>
         )}
         <div id="dps-button-section">
           <button id="dps-delete-button" onClick={submitDelete}> Yes, I'm sure </button>

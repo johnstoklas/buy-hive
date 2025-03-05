@@ -12,39 +12,13 @@ const MoveItem = ({
     setMoveItemVisible,
     setSec,
     setSecHidden,
+    handleMoveItem
 }) => {
 
     const [selectedFolders, setSelectedFolders] = useState([]);
     const [deleteVisible, setDeleteVisible] = useState(false);
 
     const { setIsLocked } = useLocked();
-    const { userData } = userDataContext();
-
-    // Moves item to carts
-    const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
-
-        const data = {
-        email: userData.email,
-        itemId: itemId,
-        selectedCarts: selectedCarts,
-        unselectedCarts: unselectedCarts,
-        }
-
-        chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
-        if (chrome.runtime.lastError) {
-            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-            return;
-        }
-    
-        if (response?.status === "success") {
-            //fetchOrganizationSections();
-            const data = response.data;
-            chrome.runtime.sendMessage({action: "updateItems", data: data});
-        } else {
-            console.error("Error moving item:", response?.error);
-        }
-        });
-    }
 
     const closeMoveItemPopup = () => {
         setMoveItemVisible(false);
@@ -93,6 +67,7 @@ const MoveItem = ({
             itemId={itemId}
             setIsVisible={setDeleteVisible}
             type="move"
+            handleMoveItem={handleMoveItem}
         />}
         <section id="move-item-container">
             <div id="move-item-header">
