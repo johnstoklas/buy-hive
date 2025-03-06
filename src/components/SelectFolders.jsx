@@ -5,9 +5,12 @@ const SelectFolders = ({
   setSelectedCarts,
   moveItem,
   cartId, 
-  item
+  item,
+  handleAddSection
 }) => {
   const [selectedCartNames, setSelectedCartNames] = useState([]); // Store selected cart names
+  const [isAddingFolder, setIsAddingFolder] = useState(false); // Whether the user is adding a new folder
+  const [newFolderName, setNewFolderName] = useState(''); // New folder name input
 
   useEffect(() => {
     initializeSelectedFolders();
@@ -17,7 +20,6 @@ const SelectFolders = ({
     if(item) {
       const selectedNames = [];
       const selectedIds = [];
-
 
       item.selected_cart_ids.forEach(selectedCartId => {
         const selectedCart = cartsArray.find(c => c.cart_id === selectedCartId);
@@ -43,17 +45,33 @@ const SelectFolders = ({
         .filter(cart => newSelectedNames.includes(cart.cart_name))
         .map(cart => cart.cart_id);
 
-        console.log(selectedIds);
       setSelectedCarts(selectedIds);
       return newSelectedNames;
     });
+  };
+
+  const handleInputChange = (e) => {
+    setNewFolderName(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleAddSection(newFolderName);
+    }
+  };
+
+  const closeKeyDown = () => {
+    setNewFolderName("");
+    setIsAddingFolder(false);
   };
 
   return (
     <section id="select-folders-container">
       <div id="select-folders-header">
         <p>Select Folders</p>
-        {!moveItem && <button>New Folder</button>}
+        {!moveItem && (
+          <button onClick={() => setIsAddingFolder(true)}>New Folder</button>
+        )}
       </div>
       <hr id="sf-line-break" />
       <div id="select-folders-section">
@@ -73,6 +91,28 @@ const SelectFolders = ({
                 </label>
               </li>
             ))}
+            {isAddingFolder && (
+              <li key="new-folder">
+                <label className="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={false}
+                    disabled
+                  />
+                  <span className="checkmark"></span>
+                  <input
+                    type="text"
+                    value={newFolderName}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onBlur={closeKeyDown}
+                    placeholder="Folder name"
+                    id="add-folder-input"
+                    autoFocus
+                  />
+                </label>
+              </li>
+            )}
           </ul>
         </div>
       </div>

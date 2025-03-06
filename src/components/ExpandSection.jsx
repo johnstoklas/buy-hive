@@ -81,7 +81,7 @@ const ExpandSection = ({
     }
   }, [isEditing]);
 
-  const handleNoteBlur = () => {
+  const handleOffNoteClick = () => {
     noteRef.current = notes;
     handleEditNotes(notes, cartId, itemId);
     setIsEditing(false);
@@ -131,7 +131,7 @@ const ExpandSection = ({
                     className="shopping-item-notes"
                     value={notes}
                     onChange={handleNoteChange}
-                    onBlur={handleNoteBlur}
+                    onBlur={handleOffNoteClick}
                   />              
                 ) : (
                   <div 

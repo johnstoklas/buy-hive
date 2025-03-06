@@ -10,6 +10,7 @@ const AddItem = ({
   cartsArray, 
   scrapedImage,
   handleAddItem,
+  handleAddSection
 }) => {
   const [itemTitle, setItemTitle] = useState(null);
   const [itemPrice, setItemPrice] = useState(null);
@@ -144,6 +145,7 @@ const AddItem = ({
               setAllCarts={setAllCarts}
               selectedCarts={selectedCarts}
               setSelectedCarts={setSelectedCarts}
+              handleAddSection={handleAddSection}
             />
           </div>
           <button id="add-item" onClick={submitAdd}>

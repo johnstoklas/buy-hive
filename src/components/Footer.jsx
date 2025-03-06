@@ -27,7 +27,7 @@ function Footer({
 
     const { isLocked, setIsLocked } = useLocked();
     const { user, isAuthenticated, isLoading } = useAuth0();
-    const { setUserData } = userDataContext();
+    const { userData, setUserData } = userDataContext();
 
     useEffect(() => {
         setIsLocked(!isAuthenticated);
@@ -150,6 +150,27 @@ function Footer({
         });
     }
 
+    const handleAddSection = (fileName) => {
+        if (!userData) return;
+  
+        const trimmedFileName = fileName.trim();
+        if (!trimmedFileName) return;
+  
+        const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
+        if (isDuplicate) return;
+  
+        const data = { email: userData.email, cartName: trimmedFileName };
+  
+        chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
+          if (response?.status === "success" && response?.data) {
+            setOrganizationSections((prev) => [...prev, response.data]);
+            setFileName("");
+          } else {
+            console.log(error);
+          }
+        });
+    };
+
     // Add File Button
     const handleFileClick = () => {
         if(!isLocked) {
@@ -181,6 +202,7 @@ function Footer({
                 setIsVisible={setAddItemState}
                 cartsArray={cartsArray}
                 handleAddItem={handleAddItem}
+                handleAddSection={handleAddSection}
             />
             <AddFile 
                 setFileName={setFileName}
@@ -189,6 +211,7 @@ function Footer({
                 setIsVisible={setAddFileState}
                 organizationSections={organizationSections}
                 setOrganizationSections={setOrganizationSections}
+                handleAddSection={handleAddSection}
             />
             
             {signInState && <SignInPage 
