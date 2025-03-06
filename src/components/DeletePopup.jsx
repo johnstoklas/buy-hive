@@ -81,13 +81,37 @@ const DeletePopup = ({
     });
   }
 
+  // Deletes item from all carts
+  const handleDeleteItemAll = (itemId) => {
+    const data = {
+      email: userData.email,
+      itemId: itemId,
+    };
+
+    chrome.runtime.sendMessage({action: "deleteItemAll", data: data}, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+        return;
+      }
+
+      if (response?.status === "success") {
+        setItemsInFolder((prev) => prev.filter((section) => section.item_id !== itemId));
+        //const newSelectedCarts = item.selected_cart_ids = item.selected_cart_ids.filter(id=> id !== cartId);
+        const sentData = {
+          item_id: itemId,
+          selected_cart_ids: [],
+        }
+        chrome.runtime.sendMessage({action: "updateItems", data: sentData});
+      } else {
+        console.error("Error deleting item:", response?.error);
+      }
+    });
+  }
+
   const closePopup = () => {
-    console.log("???");
-    if(type === "folder" || type === "item") {
-      setSec(false);
-      setSecHidden(false);
-      setIsLocked(false);
-    }
+    setSec(false);
+    setSecHidden(false);
+    setIsLocked(false);
     setIsVisible(false);
   }
 
@@ -97,11 +121,9 @@ const DeletePopup = ({
     }
     else if(type === "item") {
       handleDeleteItem(cartId, itemId);  
-      setIsLocked(false);
     }
     else if(type === "move") {
-      handleMoveItem(itemId, [], []);
-      setIsLocked(false);
+      handleDeleteItemAll(itemId);
     }
     closePopup();
   }

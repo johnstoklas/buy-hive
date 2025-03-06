@@ -40,6 +40,10 @@
         handleDeleteItem(message, sender, sendResponse);
         return true;
 
+      case "deleteItemAll":
+        handleDeleteItemAll(message, sender, sendResponse);
+        return true;
+
       case "addItem":
         handleAddItem(message, sender, sendResponse);
         return true;
@@ -54,7 +58,7 @@
 
       case "sendEmail":
         checkDomainExists(message, sender, sendResponse);
-        return true;
+        return true;        
   
       default:
         console.warn(`Unknown action: ${message.action}`);
@@ -316,6 +320,32 @@
       sendResponse({ status: "success", data });
     } catch (error) {
       console.error("Error deleting item:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  // Deletes an item from a folder
+  async function handleDeleteItemAll(message, sender, sendResponse) {
+    const { email, itemId } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid item data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/nuke`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error deleting item all:", error);
       sendResponse({ status: "error", message: error.message });
     }
   }

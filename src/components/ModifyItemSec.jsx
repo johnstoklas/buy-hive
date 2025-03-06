@@ -63,32 +63,6 @@ const ModifyItemSec = ({
          setModItemHidden(deleteItemVisible || moveItemVisible);
      }, [deleteItemVisible, moveItemVisible]);
 
-    // Moves item to carts
-    const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
-
-        const data = {
-        email: userData.email,
-        itemId: itemId,
-        selectedCarts: selectedCarts,
-        unselectedCarts: unselectedCarts,
-        }
-
-        chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
-        if (chrome.runtime.lastError) {
-            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-            return;
-        }
-    
-        if (response?.status === "success") {
-            //fetchOrganizationSections();
-            const data = response.data;
-            chrome.runtime.sendMessage({action: "updateItems", data: data});
-        } else {
-            console.error("Error moving item:", response?.error);
-        }
-        });
-    }
-
     return (
         <>
             {moveItemVisible && <MoveItem
@@ -99,7 +73,7 @@ const ModifyItemSec = ({
                 setMoveItemVisible={setMoveItemVisible}
                 setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
-                handleMoveItem={handleMoveItem}
+                setItemsInFolder={setItemsInFolder}
             />}
             {deleteItemVisible && <DeletePopup 
                 type="item"
