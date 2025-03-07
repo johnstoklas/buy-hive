@@ -124,13 +124,17 @@ const AddItem = ({
             <p id="add-item-close" onClick={() => setIsVisible(false)}> &#10005; </p>
           </div>
           <div className="add-item-container">
-            <div className="add-item-image-container">
-              {scrapedImage ? (
-                <img src={scrapedImage} />
-              ) : (
-                <div className="add-image-loading"></div>
-              )}
-            </div>
+            
+                {scrapedImage ? (
+                  <div className="add-item-image-container-container"> 
+                    <div className="add-item-image-container">
+                      <img src={scrapedImage} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="add-image-loading"></div>
+                )}
+
             <div className="add-item-information-container">
               <h4 className="add-item-name">
                 {itemTitle || <div className="add-item-loading"></div>}

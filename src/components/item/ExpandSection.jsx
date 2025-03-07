@@ -94,8 +94,10 @@ const ExpandSection = ({
         <div class="shopping-item-container">
           { !isLocked ? (
             <a href={item.url} target="_blank" rel="noopener noreferrer">
-              <div class="shopping-item-image-container">
-                  <img src={item.image}></img>
+              <div class="shopping-item-image-container-container"> 
+                <div class="shopping-item-image-container">
+                    <img src={item.image}></img>
+                </div>
               </div>
             </a>
           ) : ( 

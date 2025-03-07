@@ -18,22 +18,30 @@
     display: flex;
     /*box-shadow: 0 4px 6px var(--shadow-color); /* Optional, for a subtle shadow */
     color: black;
+    padding-left: 7px;
+    box-sizing: border-box;
+}
+
+.shopping-item-image-container-container {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    margin-right: 5px;
 }
 
 .shopping-item-image-container {
     display: flex;
     height: 80px;
-    width: 80px;
+    max-width: 80px;
     align-items: center;
     justify-content: center;
-    margin-left: 10px;
 }
 
 .shopping-item-image-container img {
     width: 100%;
     height: auto;
     max-height: 100%;
-    max-width: 100%;
     object-fit: contain;
     border-radius: 10px;
 }
