@@ -7,13 +7,13 @@ import AddFile from './AddFile.jsx';
 import SignInPage from '../profile/SignInPage.jsx';
 import { useLocked } from '../contexts/LockedProvider.jsx';
 import { userDataContext } from '../contexts/UserProvider.jsx';
-import UserNotification from '../UserNotification.jsx';
 
 function Footer({ 
     organizationSections, 
     setOrganizationSections,
     cartsArray,
     handleAddItem,
+    showNotification
  }) {
     const [addItemState, setAddItemState] = useState(false); // toggles visiblity for add item
     const [addFileState, setAddFileState] = useState(false); // toggles visiblity for add folder
@@ -23,25 +23,13 @@ function Footer({
 
     const [scrapedData, setScrapedData] = useState(null); // stores scraped price and title data
     const [scrapedImage, setScrapedImage] = useState(null); // stores scraped image data
+    const [currentUrl, setCurrentUrl] = useState(null);
+    const [tabId, setTabId] = useState(null)
     const [error, setError] = useState(null); // error if either scraping mechanism fails
-
-    const [notificationVisible, setNotificationVisible] = useState(false);
-    const [notifMessage, setNotifMessage] = useState("");
-    const [notifStatus, setNotifStatus] = useState(true);
 
     const { isLocked, setIsLocked } = useLocked();
     const { user, isAuthenticated, isLoading } = useAuth0();
     const { userData, setUserData } = userDataContext();
-
-    // Sends a notification to user after action
-    const showNotification = (message, isSuccess) => {
-        setNotifMessage(message);
-        setNotifStatus(isSuccess);
-        setNotificationVisible(true);
-    
-        // Optional: Auto-hide after a few seconds
-        setTimeout(() => setNotificationVisible(false), 1000);
-    };
     
     // Locks screen if user is not logged in
     useEffect(() => {
@@ -58,98 +46,102 @@ function Footer({
         }
     }, [user]);
 
-    // Gather text that is visible on the page for price and title
-    const gatherPriceTitleData = () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.scripting.executeScript({
-              target: { tabId: tabs[0].id },
-              func: getInnerText
-            }, (results) => {
-                const data = {
-                    innerText: results[0].result,
-                }
-                chrome.runtime.sendMessage({ action: "scrapePage", data:data }, (response) => {
-                    if(response?.status === 'success') {
-                        console.log("title/price: (status)", response.data.cart_items);
-                        setScrapedData(response.data.cart_items);
-                    }
-                    else if (response?.status === 'error') {
-                        console.log(response?.message);
-                    }
-                });
-            });
-          });
-          
-          function getInnerText() {
-            return document.body.innerText;
-          }       
-    }
-
-    // Gathers all images from the page
-    const gatherImageData = () => {
+    useEffect(() => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length > 0) {
               const currentTab = tabs[0];
               const url = currentTab.url
+              const tab = tabs[0].id;
 
-              const tabId = tabs[0].id;
-
-              chrome.scripting.executeScript(
-                {
-                    target: { tabId: tabId },
-                    func: () => {
-                        return Array.from(document.querySelectorAll("img")).map(img => ({
-                            src: img.src,
-                            width: img.naturalWidth,
-                            height: img.naturalHeight
-                        }));
-                    },
-                },
-                (results) => {
-                    if (results && results[0]?.result) {
-                        const imageSources = results[0].result;
-                        console.log("Images found, length of: ", imageSources.length, " , ", imageSources);
-
-                        const imageSourcesLarge = [];
-
-                        imageSources.forEach(img => {
-                            console.log(img.width);
-                            if (img.width > 20 && img.height > 20) { 
-                                imageSourcesLarge.push(img);
-                            }
-                        });
-
-                        console.log("filtered for size, length of:", imageSourcesLarge.length, " , ", imageSourcesLarge)
-
-                        let imagePlainText = "";
-                        imageSources.map((img) => {
-                            imagePlainText += img.src;
-                            imagePlainText += ", ";
-                        });
-
-                        console.log(imagePlainText)
-                        const data = {
-                            imageData: imagePlainText,
-                            url: url,
-                        }
-                        chrome.runtime.sendMessage({action: "sendImageData", data:data }, (response) => {
-                            if(response?.status === 'success') {
-                                console.log("image data: ", response.data);
-                                setScrapedImage(response.data);
-                            }
-                            else if (response?.status === 'error') {
-                                console.log(response?.message);
-                            }
-                        })
-                    } else {
-                        console.error("Failed to get images or no images found.");
-                    }
-                }
-            );
+              setCurrentUrl(url);
+              setTabId(tab);
             } else {
-              console.error("No active tab found.");
-            }
+            console.error("No active tab found.");
+          }
         });
+    }, []);
+
+    // Gather text that is visible on the page for price and title
+    const gatherPriceTitleData = () => {
+        chrome.scripting.executeScript({
+            target: {tabId: tabId},
+            func: () => {
+                return document.body.innerText;
+            }
+        }, (results) => {
+            const data = {
+                innerText: results[0].result,
+            }
+            chrome.runtime.sendMessage({ action: "scrapePage", data:data }, (response) => {
+                if(response?.status === 'success' && !error) {
+                    console.log("title/price: (status)", response.data.cart_items);
+                    if(!response.data.cart_items.price || !response.data.cart_items.product_name) {
+                        setError("invalid website");
+                        return;
+                    }
+                    setScrapedData(response.data.cart_items);
+                }
+                else {
+                    setError(response?.message);
+                }
+            });
+        });  
+    }
+
+    // Gathers all images from the page
+    const gatherImageData = () => {
+        console.log("CURRENT: ", currentUrl);
+        chrome.scripting.executeScript({
+            target: { tabId: tabId },
+            func: () => {
+                return Array.from(document.querySelectorAll("img")).map(img => ({
+                    src: img.src,
+                    width: img.naturalWidth,
+                    height: img.naturalHeight
+                }));
+            },
+        }, (results) => {
+            if (results && results[0]?.result) {
+                const imageSources = results[0].result;
+                //console.log("Images found, length of: ", imageSources.length, " , ", imageSources);
+
+                const imageSourcesLarge = [];
+
+                imageSources.forEach(img => {
+                    console.log(img.width);
+                    if (img.width > 20 && img.height > 20) { 
+                        imageSourcesLarge.push(img);
+                    }
+                });
+
+                //console.log("filtered for size, length of:", imageSourcesLarge.length, " , ", imageSourcesLarge)
+
+                let imagePlainText = "";
+                imageSources.map((img) => {
+                    imagePlainText += img.src;
+                    imagePlainText += ", ";
+                });
+
+                //console.log(imagePlainText)
+                const data = {
+                    imageData: imagePlainText,
+                    url: currentUrl,
+                }
+                chrome.runtime.sendMessage({action: "sendImageData", data:data }, (response) => {
+                    if(response?.status === 'success' && !error) {
+                        console.log("image data: ", response.data);
+                        setScrapedImage(response.data);
+                    }
+                    else {
+                        setError(response?.message);
+                    }
+                })
+            } else {
+                console.error("Failed to get images or no images found.");
+                setError("failed to get images")
+            }
+            }
+        );
     }
 
     // Handles adding a new folder
@@ -174,15 +166,21 @@ function Footer({
             setFileName("");
             showNotification("Succesfully Added Folder!", true);
           } else {
-            console.log(response?.message);
+            console.error(response?.message);
             showNotification("Error Adding Folder", false);
           }
         });
     };
 
     // Add Item Button
-    const handleScrapeClick = () => {
-        if(!isLocked) {
+    const handleScrapeClick = () => {     
+        const allUrls = organizationSections.flatMap(section => 
+            section.items.map(item => item.url)
+        );
+
+        const alreadyIn = allUrls.includes(currentUrl);
+
+        if(!isLocked && !error && !alreadyIn) {
             setAddItemState(!addItemState);
             setAddFileState(false);
             setSignInState(false);
@@ -190,6 +188,12 @@ function Footer({
                 gatherPriceTitleData();
                 gatherImageData();
             }
+        }
+        else if(!isLocked && error && !alreadyIn) {
+            showNotification("Invalid website", false);
+        }
+        else if(!isLocked && !error && alreadyIn) {
+            showNotification("Item has already been added", false);
         }
     };
 
@@ -215,11 +219,6 @@ function Footer({
 
     return (
         <>
-            {notificationVisible && <UserNotification 
-                notificationVisible={notificationVisible}
-                notifStatus={notifStatus}
-                notifMessage={notifMessage}
-            />}
             <AddItem  
                 isVisible={addItemState}
                 organizationSections={organizationSections}
@@ -230,6 +229,7 @@ function Footer({
                 cartsArray={cartsArray}
                 handleAddItem={handleAddItem}
                 handleAddSection={handleAddSection}
+                showNotification={showNotification}
             />
             <AddFile 
                 setFileName={setFileName}

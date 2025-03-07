@@ -10,6 +10,7 @@ const ExpandSection = ({
   cartsArray,
   itemsInFolder,
   setItemsInFolder,
+  showNotification,
 }) => {
 
   const [modifyVisible, setModifyVisible] = useState(false);
@@ -123,6 +124,7 @@ const ExpandSection = ({
                   item={item}
                   itemsInFolder={itemsInFolder}
                   setItemsInFolder={setItemsInFolder}
+                  showNotification={showNotification}
                 />} 
 
                 {isEditing ? (

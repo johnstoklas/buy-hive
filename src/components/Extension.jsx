@@ -4,6 +4,7 @@ import Header from "./Header.jsx";
 import Footer from "./footer/Footer.jsx";
 import SignInPage from "./profile/SignInPage.jsx";
 import OrganizationSection from "./folder/OrganizationSection.jsx";
+import UserNotification from './UserNotification.jsx';
 
 import { LockedProvider } from "./contexts/LockedProvider.jsx";
 import { userDataContext } from "./contexts/UserProvider.jsx"
@@ -15,7 +16,20 @@ const Extension = () => {
   const [organizationSections, setOrganizationSections] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [notificationVisible, setNotificationVisible] = useState(false); // toggles visiblity of user notificaton
+  const [notifMessage, setNotifMessage] = useState(""); 
+  const [notifStatus, setNotifStatus] = useState(true); // whether success or error
+
   const { userData } = userDataContext();  
+
+  const showNotification = (message, isSuccess) => {
+    setNotifMessage(message);
+    setNotifStatus(isSuccess);
+    setNotificationVisible(true);
+
+    // Optional: Auto-hide after a few seconds
+    setTimeout(() => setNotificationVisible(false), 1000);
+  };
 
   // Add item to cart
   const handleAddItem = (data) => {
@@ -27,13 +41,16 @@ const Extension = () => {
       chrome.runtime.sendMessage({action: "addItem", data: newData}, (response) => {
         if (chrome.runtime.lastError) {
           console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          console.log("Error adding item:", response?.message);
           return;
         }
   
         if (response?.status === "success") {
           console.log("fetched data ", response.data.item);
           chrome.runtime.sendMessage({action: "updateItems", data: response.data.item});
-        } else {
+          showNotification("Succesfully added item!", true);
+        } else if(response?.status === "error") {
+          showNotification("Error adding item", false);
           console.error("Error adding item:", response?.message);
         }
       });
@@ -89,6 +106,7 @@ const Extension = () => {
                   fetchOrganizationSections={fetchOrganizationSections}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
+                  showNotification={showNotification}
                 />
               ))
             ) : (
@@ -100,12 +118,18 @@ const Extension = () => {
           ) : (
             <SignInPage homePage={true} />
           )}
+            {notificationVisible && <UserNotification 
+                notificationVisible={notificationVisible}
+                notifStatus={notifStatus}
+                notifMessage={notifMessage}
+            />}
         </section>
         <Footer
           organizationSections={organizationSections}
           setOrganizationSections={setOrganizationSections}
           cartsArray={organizationSections}
           handleAddItem={handleAddItem}
+          showNotification={showNotification}
         />
       </LockedProvider>
   );

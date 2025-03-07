@@ -17,6 +17,7 @@ const DeletePopup = ({
   setItemsInFolder,
   setOrganizationSections,
   handleMoveItem,
+  showNotification,
 }) => {
 
   const { setIsLocked } = useLocked();
@@ -96,13 +97,14 @@ const DeletePopup = ({
 
       if (response?.status === "success") {
         setItemsInFolder((prev) => prev.filter((section) => section.item_id !== itemId));
-        //const newSelectedCarts = item.selected_cart_ids = item.selected_cart_ids.filter(id=> id !== cartId);
         const sentData = {
           item_id: itemId,
           selected_cart_ids: [],
         }
         chrome.runtime.sendMessage({action: "updateItems", data: sentData});
+        showNotification("Succesfully deleted item everywhere!", true);
       } else {
+        showNotification("Error deleting item everywhere", false);
         console.error("Error deleting item:", response?.message);
       }
     });

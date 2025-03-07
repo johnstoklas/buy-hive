@@ -50,7 +50,7 @@ const ShareFolder = ({
             closePopup();  
           }, 500);
         } else {
-          console.log("message: ", response);
+          console.error("message: ", response);
           setIsLoading(false);
         }
       });

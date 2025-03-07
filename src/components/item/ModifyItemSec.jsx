@@ -15,6 +15,7 @@ const ModifyItemSec = ({
     item,
     itemsInFolder,
     setItemsInFolder,
+    showNotification,
  }) => {  
     
     const [deleteItemVisible, setDeleteItemVisible] = useState(false);
@@ -73,6 +74,7 @@ const ModifyItemSec = ({
                 setSec={setModifyItemSec}
                 setSecHidden={setModItemHidden}
                 setItemsInFolder={setItemsInFolder}
+                showNotification={showNotification}
             />}
             {deleteItemVisible && <DeletePopup 
                 type="item"

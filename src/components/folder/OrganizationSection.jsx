@@ -10,6 +10,7 @@ function OrganizationSection({
   organizationSections,
   setOrganizationSections,
   fetchOrganizationSections,
+  showNotification,
 }) {
   const { cart_id: sectionId, cart_name: title, items } = cart;
   
@@ -276,6 +277,7 @@ function OrganizationSection({
                   cartsArray={organizationSections}
                   itemsInFolder={section.items} // <- items live inside the matched section
                   setItemsInFolder={setItemsInFolder}
+                  showNotification={showNotification}
                 />
               ))
             )

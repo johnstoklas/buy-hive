@@ -3,6 +3,7 @@ import SelectFolders from './SelectFolders.jsx';
 import { useLocked } from '../contexts/LockedProvider.jsx';
 import DeletePopup from '../folder/DeletePopup.jsx';
 import { userDataContext } from '../contexts/UserProvider.jsx';
+import UserNotification from '../UserNotification.jsx';
 
 const MoveItem = ({
     cartsArray,
@@ -13,6 +14,7 @@ const MoveItem = ({
     setSec,
     setSecHidden,
     setItemsInFolder,
+    showNotification,
 }) => {
 
     const [selectedFolders, setSelectedFolders] = useState([]);
@@ -50,10 +52,11 @@ const MoveItem = ({
         }
     
         if (response?.status === "success") {
-            //fetchOrganizationSections();
             const data = response.data;
             chrome.runtime.sendMessage({action: "updateItems", data: data});
+            showNotification("Item succesfully moved!", true);
         } else {
+            showNotification("Failed to move item", false);
             console.error("Error moving item:", response?.message);
         }
         });
@@ -99,6 +102,7 @@ const MoveItem = ({
             setIsLocked={setIsLocked}
             type="move"
             setItemsInFolder={setItemsInFolder}
+            showNotification={showNotification}
         />}
         <section id="move-item-container">
             <div id="move-item-header">

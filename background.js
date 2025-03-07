@@ -80,6 +80,7 @@
       });
   
       if (!response.ok) {
+        sendResponse({status: "error", message: response.status});
         throw new Error(`HTTP error! status: ${response.status}`);
       }
   
@@ -432,12 +433,6 @@
     }
   }
 
-  // Updates notes of an item on the client side
-  async function updateItems(message, sender, sendResponse) {
-    console.log("message", message);
-    chrome.runtime.sendMessage({action: "cartUpdate", data: message.data });
-  }
-
   async function checkDomainExists(message, sender, sendResponse) {
     const { email, cartId, recipient } = message.data;
 
@@ -466,5 +461,10 @@
     } catch (error) {
         sendResponse({ status: "error", message: error.message || "An unknown error occurred" });
     }
-}
+  }
 
+  // Updates notes of an item on the client side
+  async function updateItems(message, sender, sendResponse) {
+    console.log("message", message);
+    chrome.runtime.sendMessage({action: "cartUpdate", data: message.data });
+  }

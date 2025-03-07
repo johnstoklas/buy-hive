@@ -10,7 +10,7 @@ const AddItem = ({
   cartsArray, 
   scrapedImage,
   handleAddItem,
-  handleAddSection
+  handleAddSection, showNotification
 }) => {
   const [itemTitle, setItemTitle] = useState(null);
   const [itemPrice, setItemPrice] = useState(null);
@@ -64,7 +64,18 @@ const AddItem = ({
   }
 
   useEffect(() => {
-    if (scrapedData) {
+    console.log("scraped data is: ", scrapedData);
+  }, [scrapedData])
+
+  useEffect(() => {
+    console.log("error data: ", errorData);
+    if(errorData) {
+      setIsVisible(false);
+      setTimeout(() => { 
+        showNotification("Invalid website", false);
+      }, 300);
+    }
+    else if (scrapedData) {
       setItemTitle(scrapedData?.product_name || "");
       const scrapedPrice = scrapedData?.price; 
       if(scrapedData?.price) {
@@ -73,7 +84,8 @@ const AddItem = ({
       }
       else setItemPrice("");
     }
-  }, [scrapedData]);
+
+  }, [scrapedData, errorData]);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -107,10 +119,6 @@ const AddItem = ({
         if (!isVisible) setIsAnimating(false);
       }}
     >
-      {errorData ? (
-        <h4 className="processing-add-item">{`Error: ${errorData}`}</h4>
-      ) : (
-        <>
           <div id="add-item-header">
             <h1 id="add-item-title">Add Item</h1>
             <p id="add-item-close" onClick={() => setIsVisible(false)}> &#10005; </p>
@@ -151,8 +159,6 @@ const AddItem = ({
           <button id="add-item" onClick={submitAdd}>
             Add Item
           </button>
-        </>
-      )}
     </section>
   ) : null;
 };
