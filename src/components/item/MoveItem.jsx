@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SelectFolders from './SelectFolders.jsx';
-import { useLocked } from './contexts/LockedProvider.jsx';
-import DeletePopup from './DeletePopup.jsx';
-import { userDataContext } from './contexts/UserProvider.jsx';
+import { useLocked } from '../contexts/LockedProvider.jsx';
+import DeletePopup from '../folder/DeletePopup.jsx';
+import { userDataContext } from '../contexts/UserProvider.jsx';
 
 const MoveItem = ({
     cartsArray,
@@ -19,6 +19,8 @@ const MoveItem = ({
     const [deleteVisible, setDeleteVisible] = useState(false);
 
     const { setIsLocked } = useLocked();
+    const { userData } = userDataContext();
+    
 
     const closeMoveItemPopup = () => {
         setMoveItemVisible(false);
@@ -52,7 +54,7 @@ const MoveItem = ({
             const data = response.data;
             chrome.runtime.sendMessage({action: "updateItems", data: data});
         } else {
-            console.error("Error moving item:", response?.error);
+            console.error("Error moving item:", response?.message);
         }
         });
     }

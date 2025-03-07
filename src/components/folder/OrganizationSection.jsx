@@ -1,20 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
-import ExpandSection from "./ExpandSection.jsx";
+import ExpandSection from "../item/ExpandSection.jsx";
 import ModifyOrgSec from "./ModifyOrgSec.jsx";
-import { useLocked } from './contexts/LockedProvider.jsx'
-import { userDataContext } from "./contexts/UserProvider.jsx";
+import { useLocked } from '../contexts/LockedProvider.jsx'
+import { userDataContext } from "../contexts/UserProvider.jsx";
 
 
 function OrganizationSection({
-  sectionId,
-  title,
-  items,
+  cart,
   organizationSections,
   setOrganizationSections,
-  expandedFolders,
-  setExpandedFolders,
   fetchOrganizationSections,
 }) {
+  const { cart_id: sectionId, cart_name: title, items } = cart;
+  
   const [sectionHeight, setSectionHeight] = useState("45px");
   const [sectionTitle, setSectionTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false); // Track if editing
@@ -23,7 +21,7 @@ function OrganizationSection({
   const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
   const [isLoading, setIsLoading] = useState(false);
   
-  const [itemsInFolder, setItemsInFolder] = useState(items);
+  const [itemsInFolder, setItemsInFolder] = useState(items || []);
 
   const expandedSectionRef = useRef(null);
   const folderRef = useRef(null);
@@ -33,23 +31,15 @@ function OrganizationSection({
   const { isLocked } = useLocked();
   const { userData } = userDataContext();
 
-  const [isExpanded, setIsExpanded] = useState(expandedFolders[sectionId] || false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  // Ensure that the state is updated when the parent changes
-  useEffect(() => {
-    setIsExpanded(expandedFolders[sectionId] || false);
-  }, [expandedFolders, sectionId]);
 
   useEffect(() => {
-    if (!isLoading) {
       // Allow animation only after loading is done
-      updateScreenSize();
-    }
-  }, [isLoading, isExpanded, itemsInFolder]); // Trigger when loading or expanded state changes
-
-  const updateItem = (data, message) => {
-    chrome.runtime.sendMessage({message, data});
-  }
+      if(!isLoading) {
+        updateScreenSize();
+      }
+  }, [isLoading, isExpanded, itemsInFolder, organizationSections]); // Trigger when loading or expanded state changes
 
   useEffect(() => {
     setSectionTitle(title);
@@ -64,6 +54,7 @@ function OrganizationSection({
           : "45px"
       );
     }
+    if(itemsInFolder && itemsInFolder.length == 0 ) setIsExpanded(false); 
   };
 
   useEffect(() => {
@@ -74,17 +65,7 @@ function OrganizationSection({
 
   const handleExpandClick = () => {
     if (isLocked) return;
-
-    setIsExpanded((prev) => {
-      const newExpandedState = !prev;
-      
-      setExpandedFolders(prevState => ({
-        ...prevState,
-        [sectionId]: newExpandedState
-      }));
-  
-      return newExpandedState;
-    });
+    setIsExpanded(!isExpanded);
   };
   
   const handleModifyClick = () => {
@@ -120,10 +101,7 @@ function OrganizationSection({
       const isDuplicate = organizationSections.some(
         (section) => section.cart_name === newFileName.trim() && section.cart_id !== cartId
       );
-  
-      if (isDuplicate) {
-        return;
-      }
+      if (isDuplicate) return;
   
       const data = {
         email: userData.email,
@@ -144,7 +122,7 @@ function OrganizationSection({
             )
           );
         } else {
-          console.error("Error updating folder:", response?.error);
+          console.error("Error updating folder:", response?.message);
         }
       });
   };
@@ -201,6 +179,8 @@ function OrganizationSection({
 
                 console.log("updated items: ", updatedItems);
 
+                setIsLoading(true);
+
                 // After updating itemsInFolder, update organizationSections
                 setOrganizationSections((prevSections) =>
                     prevSections.map(section =>
@@ -209,6 +189,7 @@ function OrganizationSection({
                             : section
                     )
                 );
+                setIsLoading(false);
 
                 return updatedItems;  // Return for setItemsInFolder
             });
@@ -219,16 +200,6 @@ function OrganizationSection({
 
     return () => chrome.runtime.onMessage.removeListener(listener);
   }, []);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const currentSection = organizationSections.find(section => section.cart_id === sectionId);
-    //console.log("org secs? ", organizationSections);
-    //console.log("updated section: ", currentSection);
-    setItemsInFolder(currentSection?.items || []);
-    console.log("items in folder: ", itemsInFolder);
-    setIsLoading(false);
-  }, [organizationSections]);
 
   return (
     <div
@@ -291,22 +262,25 @@ function OrganizationSection({
         )}
       </section>
       <div className="expand-section-expanded-display" ref={expandedSectionRef}>
-      {itemsInFolder ? 
-      (isExpanded && (
-        isLoading ? [] : (
-          itemsInFolder.map((item) => (
-            <ExpandSection
-              key={item.item_id}
-              item={item}
-              cartId={sectionId}
-              itemId={item.item_id}
-              cartsArray={organizationSections}
-              itemsInFolder={itemsInFolder}
-              setItemsInFolder={setItemsInFolder}
-            />
-          ))
-        )
-      )) : []}
+      {organizationSections
+        .filter(section => section.cart_id === sectionId)
+        .flatMap(section => (
+          isExpanded ? (
+            isLoading ? [] : (
+              section.items.map((item) => (
+                <ExpandSection
+                  key={item.item_id}
+                  item={item}
+                  cartId={sectionId}
+                  itemId={item.item_id}
+                  cartsArray={organizationSections}
+                  itemsInFolder={section.items} // <- items live inside the matched section
+                  setItemsInFolder={setItemsInFolder}
+                />
+              ))
+            )
+          ) : []
+      ))}
       </div>
     </div>
   );

@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import "../css/main.css";
 import Header from "./Header.jsx";
-import Footer from "./Footer.jsx";
-import SignInPage from "./SignInPage.jsx";
-import OrganizationSection from "./OrganizationSection.jsx";
+import Footer from "./footer/Footer.jsx";
+import SignInPage from "./profile/SignInPage.jsx";
+import OrganizationSection from "./folder/OrganizationSection.jsx";
 
 import { LockedProvider } from "./contexts/LockedProvider.jsx";
 import { userDataContext } from "./contexts/UserProvider.jsx"
-import { faFolder } from '@fortawesome/free-solid-svg-icons';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFolder } from '@fortawesome/free-solid-svg-icons';
 
 const Extension = () => {
   const [organizationSections, setOrganizationSections] = useState([]);
-  const [expandedFolders, setExpandedFolders] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
   const { userData } = userDataContext();  
@@ -31,9 +31,10 @@ const Extension = () => {
         }
   
         if (response?.status === "success") {
-          fetchOrganizationSections();
+          console.log("fetched data ", response.data.item);
+          chrome.runtime.sendMessage({action: "updateItems", data: response.data.item});
         } else {
-          console.error("Error adding item:", response?.error);
+          console.error("Error adding item:", response?.message);
         }
       });
   }
@@ -48,10 +49,6 @@ const Extension = () => {
       }))
     );
   };
-
-  useEffect(() => {
-    localStorage.setItem('expandedFolders', JSON.stringify(expandedFolders));
-  }, [expandedFolders]);
 
   const fetchOrganizationSections = () => {
     if (userData?.email) {
@@ -83,19 +80,12 @@ const Extension = () => {
             isLoading ? (
               <div className="spinner-loader main-page-sl"></div>
             ) : organizationSections.length > 0 ? (
-              organizationSections.map((section) => (
+              organizationSections.map((cart) => (
                 <OrganizationSection
-                  key={section.cart_id}
-                  sectionId={section.cart_id}
-                  title={section.cart_name}
-                  itemCount={section.item_count}
-                  items={section.items}
-                  createdAt={section.created_at}
+                  cart={cart}
                   organizationSections={organizationSections}
                   setOrganizationSections={setOrganizationSections}
                   handleUpdateItem={handleUpdateItem}
-                  expandedFolders={expandedFolders}
-                  setExpandedFolders={setExpandedFolders}
                   fetchOrganizationSections={fetchOrganizationSections}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import SelectFolders from './SelectFolders.jsx';
+import SelectFolders from '../item/SelectFolders.jsx';
 
 const AddItem = ({
   isVisible, 

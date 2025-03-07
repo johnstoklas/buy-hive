@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { userDataContext } from './contexts/UserProvider.jsx';
+import { userDataContext } from '../contexts/UserProvider.jsx';
 
 const Profile = ({ user }) => {
 

@@ -144,7 +144,6 @@
     resize: none;
     padding: 5px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-y: scroll;
 }
 
 #add-item-notes:focus {

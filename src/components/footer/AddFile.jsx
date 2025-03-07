@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { userDataContext } from './contexts/UserProvider.jsx';
+import { userDataContext } from '../contexts/UserProvider.jsx';
 
 const AddFile = ({ 
   setFileName, 
@@ -9,7 +9,8 @@ const AddFile = ({
   isVisible, 
   setIsVisible,
   organizationSections,
-  setOrganizationSections
+  setOrganizationSections,
+  handleAddSection
  }) => {
   const addFile = useRef(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -34,27 +35,6 @@ const AddFile = ({
       document.removeEventListener("click", handleClickOutside);
     };
   }, [isVisible]);
-
-  const handleAddSection = (fileName) => {
-      if (!userData) return;
-
-      const trimmedFileName = fileName.trim();
-      if (!trimmedFileName) return;
-
-      const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
-      if (isDuplicate) return;
-
-      const data = { email: userData.email, cartName: trimmedFileName };
-
-      chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
-        if (response?.status === "success" && response?.data) {
-          setOrganizationSections((prev) => [...prev, response.data]);
-          setFileName("");
-        } else {
-          console.log(error);
-        }
-      });
-  };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {

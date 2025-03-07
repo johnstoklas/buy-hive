@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-icons'
 import AddItem from './AddItem.jsx';
 import AddFile from './AddFile.jsx';
-import SignInPage from './SignInPage.jsx';
-import { useLocked } from './contexts/LockedProvider.jsx';
-import { userDataContext } from './contexts/UserProvider.jsx';
+import SignInPage from '../profile/SignInPage.jsx';
+import { useLocked } from '../contexts/LockedProvider.jsx';
+import { userDataContext } from '../contexts/UserProvider.jsx';
+import UserNotification from '../UserNotification.jsx';
 
 function Footer({ 
     organizationSections, 
@@ -14,21 +15,35 @@ function Footer({
     cartsArray,
     handleAddItem,
  }) {
-    const [addItemState, setAddItemState] = useState(false);
-    const [addFileState, setAddFileState] = useState(false);
-    const [signInState, setSignInState] = useState(false);
-    const [fileName, setFileName] = useState("");
+    const [addItemState, setAddItemState] = useState(false); // toggles visiblity for add item
+    const [addFileState, setAddFileState] = useState(false); // toggles visiblity for add folder
+    const [signInState, setSignInState] = useState(false); // toggles visiblity for profile page
 
-    const [scrapedData, setScrapedData] = useState(null);
-    const [scrapedImage, setScrapedImage] = useState(null);
-    const [currentUrl, setCurrentUrl] = useState(null);
-    const [allImages, setAllImages] = useState(null);
-    const [error, setError] = useState(null);
+    const [fileName, setFileName] = useState(""); // stores folder name data
+
+    const [scrapedData, setScrapedData] = useState(null); // stores scraped price and title data
+    const [scrapedImage, setScrapedImage] = useState(null); // stores scraped image data
+    const [error, setError] = useState(null); // error if either scraping mechanism fails
+
+    const [notificationVisible, setNotificationVisible] = useState(false);
+    const [notifMessage, setNotifMessage] = useState("");
+    const [notifStatus, setNotifStatus] = useState(true);
 
     const { isLocked, setIsLocked } = useLocked();
     const { user, isAuthenticated, isLoading } = useAuth0();
     const { userData, setUserData } = userDataContext();
 
+    // Sends a notification to user after action
+    const showNotification = (message, isSuccess) => {
+        setNotifMessage(message);
+        setNotifStatus(isSuccess);
+        setNotificationVisible(true);
+    
+        // Optional: Auto-hide after a few seconds
+        setTimeout(() => setNotificationVisible(false), 1000);
+    };
+    
+    // Locks screen if user is not logged in
     useEffect(() => {
         setIsLocked(!isAuthenticated);
     }, [isAuthenticated]);
@@ -43,20 +58,7 @@ function Footer({
         }
     }, [user]);
 
-    
-    // Add Item Button
-    const handleScrapeClick = () => {
-        if(!isLocked) {
-            setAddItemState(!addItemState);
-            setAddFileState(false);
-            setSignInState(false);
-            if(!addItemState) {
-                gatherPriceTitleData();
-                gatherImageData();
-            }
-        }
-    };
-
+    // Gather text that is visible on the page for price and title
     const gatherPriceTitleData = () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.scripting.executeScript({
@@ -72,7 +74,7 @@ function Footer({
                         setScrapedData(response.data.cart_items);
                     }
                     else if (response?.status === 'error') {
-                        setError(response.error);
+                        console.log(response?.message);
                     }
                 });
             });
@@ -83,12 +85,12 @@ function Footer({
           }       
     }
 
+    // Gathers all images from the page
     const gatherImageData = () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length > 0) {
               const currentTab = tabs[0];
               const url = currentTab.url
-              setCurrentUrl(url);
 
               const tabId = tabs[0].id;
 
@@ -136,7 +138,7 @@ function Footer({
                                 setScrapedImage(response.data);
                             }
                             else if (response?.status === 'error') {
-                                setError(response.error);
+                                console.log(response?.message);
                             }
                         })
                     } else {
@@ -150,14 +152,19 @@ function Footer({
         });
     }
 
-    const handleAddSection = (fileName) => {
-        if (!userData) return;
-  
+    // Handles adding a new folder
+    const handleAddSection = (fileName) => {  
+        if(!userData) {
+            showNotification("Error Adding Folder", false);
+            return;
+        } 
         const trimmedFileName = fileName.trim();
-        if (!trimmedFileName) return;
-  
         const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
-        if (isDuplicate) return;
+        
+        if (isDuplicate || !trimmedFileName) {
+            showNotification("Invalid Folder Name!", false);
+            return;
+        }
   
         const data = { email: userData.email, cartName: trimmedFileName };
   
@@ -165,10 +172,25 @@ function Footer({
           if (response?.status === "success" && response?.data) {
             setOrganizationSections((prev) => [...prev, response.data]);
             setFileName("");
+            showNotification("Succesfully Added Folder!", true);
           } else {
-            console.log(error);
+            console.log(response?.message);
+            showNotification("Error Adding Folder", false);
           }
         });
+    };
+
+    // Add Item Button
+    const handleScrapeClick = () => {
+        if(!isLocked) {
+            setAddItemState(!addItemState);
+            setAddFileState(false);
+            setSignInState(false);
+            if(!addItemState) {
+                gatherPriceTitleData();
+                gatherImageData();
+            }
+        }
     };
 
     // Add File Button
@@ -193,6 +215,11 @@ function Footer({
 
     return (
         <>
+            {notificationVisible && <UserNotification 
+                notificationVisible={notificationVisible}
+                notifStatus={notifStatus}
+                notifMessage={notifMessage}
+            />}
             <AddItem  
                 isVisible={addItemState}
                 organizationSections={organizationSections}

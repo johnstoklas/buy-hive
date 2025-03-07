@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { userDataContext } from './contexts/UserProvider.jsx';
-import { useLocked } from './contexts/LockedProvider.jsx';
+import { userDataContext } from '../contexts/UserProvider.jsx';
+import { useLocked } from '../contexts/LockedProvider.jsx';
 
 const ShareFolder = ({
   setIsVisible,

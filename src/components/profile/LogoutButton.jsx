@@ -17,11 +17,11 @@ const LogoutButton = ({ setIsVisible }) => {
   return (
     isAuthenticated && (
       <>
-        <button onClick={handleLogout}>
-          Sign Out
-        </button>
-        <button className="alt-button" onClick={viewItems}> 
+        <button onClick={viewItems}> 
           View Items 
+        </button>
+        <button className="alt-button" onClick={handleLogout}>
+          Sign Out
         </button>
       </>
 

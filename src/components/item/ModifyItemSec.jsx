@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import EditNotes from './EditNotes.jsx';
-import DeletePopup from './DeletePopup.jsx';
+import DeletePopup from '../folder/DeletePopup.jsx';
 import MoveItem from './MoveItem.jsx';
-import { useLocked } from './contexts/LockedProvider.jsx';
-import { userDataContext } from './contexts/UserProvider.jsx';
+import { useLocked } from '../contexts/LockedProvider.jsx';
+import { userDataContext } from '../contexts/UserProvider.jsx';
 
 const ModifyItemSec = ({ 
     cartId, 

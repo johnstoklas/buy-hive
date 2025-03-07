@@ -1,0 +1,32 @@
+#user-notif-container {
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    border-radius: 10px;
+    position: absolute;
+    z-index: 10000;
+    height: fit-content;
+    padding: 10px 15px;
+    align-items: center;
+    box-sizing: border-box;
+    gap: 15px;
+    margin-left: 10px;
+}
+
+.user-notif-success-background {
+    background-color: aquamarine;
+}
+
+.user-notif-error-background {
+    background-color: palevioletred;
+}
+
+#user-notif-icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 3px solid black;
+    width: 25px;
+    height: 25px;
+}

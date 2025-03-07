@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import EditPopup from './EditPopup.jsx';
 import DeletePopup from './DeletePopup.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { useLocked } from './contexts/LockedProvider.jsx';
-import EditNotes from './EditNotes.jsx';
+import { useLocked } from '../contexts/LockedProvider.jsx';
 import ShareFolder from './ShareFolder.jsx';
 
 const ModifyOrgSec = ({ 
@@ -16,9 +14,9 @@ const ModifyOrgSec = ({
   handleTitleClick,
   setOrganizationSections,
   cartName,
+  updateItems,
 }) => {
 
-  const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
   const [sharePopupVisible, setSharePopupVisible] = useState(false);
 
@@ -29,7 +27,7 @@ const ModifyOrgSec = ({
   // If the user clicks out of the modification pop-up it disappears
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (modifyOrgSec.current && !modifyOrgSec.current.contains(event.target) && !editPopupVisible && !deletePopupVisible && !sharePopupVisible) {
+      if (modifyOrgSec.current && !modifyOrgSec.current.contains(event.target) && !deletePopupVisible && !sharePopupVisible) {
         setModifyOrgSec(false); 
       }
     };
@@ -39,10 +37,10 @@ const ModifyOrgSec = ({
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [setModifyOrgSec, editPopupVisible, deletePopupVisible, sharePopupVisible]);
+  }, [setModifyOrgSec, deletePopupVisible, sharePopupVisible]);
 
   // toggles edit title popup
-  const toggleEditPopup = () => {
+  const toggleEdit = () => {
     handleTitleClick();
   }
 
@@ -56,14 +54,14 @@ const ModifyOrgSec = ({
   }
 
   useEffect(() => {
-    setIsLocked(editPopupVisible || deletePopupVisible || sharePopupVisible);
-  }, [editPopupVisible, deletePopupVisible, sharePopupVisible]);
+    setIsLocked(deletePopupVisible || sharePopupVisible);
+  }, [deletePopupVisible, sharePopupVisible]);
   
 
   // Updates if modification screen should be visible when another popup appears
   useEffect(() => {
-      setModOrgHidden(editPopupVisible || deletePopupVisible || sharePopupVisible);
-  }, [editPopupVisible, deletePopupVisible, sharePopupVisible]);
+      setModOrgHidden(deletePopupVisible || sharePopupVisible);
+  }, [deletePopupVisible, sharePopupVisible]);
 
   return (
   <>
@@ -81,10 +79,11 @@ const ModifyOrgSec = ({
       cartId={cartId}
       type={"folder"}
       setOrganizationSections={setOrganizationSections}
+      updateItems={updateItems}
     />}
 
     <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }`} ref={modifyOrgSec} >
-        <button onClick={toggleEditPopup}>
+        <button onClick={toggleEdit}>
           <FontAwesomeIcon icon={faPenToSquare} />
           <p> Edit </p>
         </button>

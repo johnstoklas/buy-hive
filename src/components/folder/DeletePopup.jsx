@@ -1,8 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { cloneElement, useState } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { useLocked } from './contexts/LockedProvider.jsx';
-import { userDataContext } from './contexts/UserProvider.jsx';
+import { useLocked } from '../contexts/LockedProvider.jsx';
+import { userDataContext } from '../contexts/UserProvider.jsx';
 
 
 const DeletePopup = ({ 
@@ -16,7 +16,7 @@ const DeletePopup = ({
   itemsInFolder,
   setItemsInFolder,
   setOrganizationSections,
-  handleMoveItem
+  handleMoveItem,
 }) => {
 
   const { setIsLocked } = useLocked();
@@ -39,10 +39,10 @@ const DeletePopup = ({
             selected_cart_ids: newSelectedCarts,
             url: item.url
           }
-          chrome.runtime.sendMessage({action: "updateItems", data: sentData});
+          //chrome.runtime.sendMessage({action: "updateItems", data: sentData});
         });
       } else {
-        console.error("Error deleting folder:", response?.error);
+        console.error("Error deleting folder:", response?.message);
       }
     });
   };
@@ -76,7 +76,7 @@ const DeletePopup = ({
         }
         chrome.runtime.sendMessage({action: "updateItems", data: sentData});
       } else {
-        console.error("Error deleting item:", response?.error);
+        console.error("Error deleting item:", response?.message);
       }
     });
   }
@@ -103,7 +103,7 @@ const DeletePopup = ({
         }
         chrome.runtime.sendMessage({action: "updateItems", data: sentData});
       } else {
-        console.error("Error deleting item:", response?.error);
+        console.error("Error deleting item:", response?.message);
       }
     });
   }

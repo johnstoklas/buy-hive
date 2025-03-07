@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ModifyItemSec from './ModifyItemSec.jsx';
-import { useLocked } from './contexts/LockedProvider.jsx'
-import { userDataContext } from './contexts/UserProvider.jsx';
+import { useLocked } from '../contexts/LockedProvider.jsx'
+import { userDataContext } from '../contexts/UserProvider.jsx';
 
 const ExpandSection = ({ 
   item, 
@@ -67,7 +67,7 @@ const ExpandSection = ({
           if (response?.status === "success") {
             chrome.runtime.sendMessage({action: "updateItems", data: response.data});
           } else {
-            console.error("Error editing notes:", response?.error);
+            console.error("Error editing notes:", response?.message);
           }
         }
       );
