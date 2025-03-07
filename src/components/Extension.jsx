@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../css/main.css";
 import Header from "./Header.jsx";
 import Footer from "./footer/Footer.jsx";
@@ -20,6 +20,10 @@ const Extension = () => {
   const [notifMessage, setNotifMessage] = useState(""); 
   const [notifStatus, setNotifStatus] = useState(true); // whether success or error
 
+  const [addFileState, setAddFileState] = useState(false); // toggles visiblity for add folder
+
+  const organizationSectionRef = useRef(null);
+
   const { userData } = userDataContext();  
 
   const showNotification = (message, isSuccess) => {
@@ -28,7 +32,8 @@ const Extension = () => {
     setNotificationVisible(true);
 
     // Optional: Auto-hide after a few seconds
-    setTimeout(() => setNotificationVisible(false), 1000);
+    //1000
+    setTimeout(() => setNotificationVisible(false), 1500);
   };
 
   // Add item to cart
@@ -92,7 +97,9 @@ const Extension = () => {
   return (
       <LockedProvider>
         <Header />
-        <section id="organization-section" style={{ overflowY: 'auto', maxHeight: '400px' }}>
+        <section id="organization-section" 
+        style={{ overflowY: 'auto', maxHeight: '400px' }}
+        ref={organizationSectionRef}>
           {userData ? (
             isLoading ? (
               <div className="spinner-loader main-page-sl"></div>
@@ -118,11 +125,12 @@ const Extension = () => {
           ) : (
             <SignInPage homePage={true} />
           )}
-            {notificationVisible && <UserNotification 
+            <UserNotification 
                 notificationVisible={notificationVisible}
                 notifStatus={notifStatus}
                 notifMessage={notifMessage}
-            />}
+                addFileState={addFileState}
+            />
         </section>
         <Footer
           organizationSections={organizationSections}
@@ -130,6 +138,9 @@ const Extension = () => {
           cartsArray={organizationSections}
           handleAddItem={handleAddItem}
           showNotification={showNotification}
+          addFileState={addFileState}
+          setAddFileState={setAddFileState}
+          organizationSectionRef={organizationSectionRef}
         />
       </LockedProvider>
   );

@@ -1,6 +1,6 @@
 #move-item-container {
     position: fixed;
-    z-index: 999;
+    z-index: 4;
     left: 50%;
     transform: translateX(-50%);
     top: 70px;
@@ -25,6 +25,7 @@
 
 #move-item-header > p:hover {
     cursor: pointer;
+    font-weight: bold;
 }
 
 .move-item-container {
@@ -45,7 +46,7 @@
     box-sizing: border-box;
     border-radius: 4px;
     font-size: 11px;
-    color: black;
+    color: white;
     margin-top: 10px;
     height: 26px;
     width: fit-content;
@@ -53,6 +54,7 @@
 
 #move-item-button:hover {
     cursor: pointer;
+    box-shadow: 0 2px 5px var(--shadow-color); /* Optional, for a subtle shadow */
 }
 
 #move-item-button:active {

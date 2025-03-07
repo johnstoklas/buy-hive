@@ -8,6 +8,7 @@ const ShareFolder = ({
   setSecHidden, 
   cartId,
   cartName, 
+  showNotification,
 }) => {
 
   const [email, setEmail] = useState("");
@@ -39,23 +40,17 @@ const ShareFolder = ({
         console.log(response);
         if (response?.status === "success") {
           setIsLoading(false);
-          setSuccessMessage(
-            <>
-              Successfully shared <em>{cartName}</em>!
-            </>
-          );
-                    
-          setTimeout(() => {
-            setSuccessMessage("");
-            closePopup();  
-          }, 500);
+          closePopup();  
+          showNotification("Email succesfully sent!", true);
         } else {
           console.error("message: ", response);
           setIsLoading(false);
+          showNotification("Error sending email", false);
         }
       });
     } else {
       console.log("invalid email");
+      showNotification("Invalid email", false);
     }
   }
 
@@ -67,8 +62,8 @@ const ShareFolder = ({
   
   return (
     <>
-      <section id="share-folder-section" className={(isLoading || successMessage) ? "center-items" : ""}> 
-        {!isLoading && !successMessage ? (
+      <section id="share-folder-section" className={isLoading ? "center-items" : ""}> 
+        {!isLoading ? (
           <>        
             <div id="share-folder-header-section">
               <p id="share-folder-header"> Share Folder </p>
@@ -89,12 +84,10 @@ const ShareFolder = ({
               <button id="close-share-folder" className="share-folder-button" onClick={closePopup}> Cancel </button>
             </div>
           </>
-        ) : isLoading ? (
-          <div className="spinner-loader"></div>
         ) : (
-            <div id="share-folder-success-message"> {successMessage} </div>
+          <div className="spinner-loader"></div>
         )}
-      </section>
+        </section>
     </>
   )
 };

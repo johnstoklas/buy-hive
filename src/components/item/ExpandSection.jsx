@@ -40,6 +40,7 @@ const ExpandSection = ({
   }
 
   const handleNoteClick = () => {
+    noteRef.current = notes; 
     setIsEditing(true);
     setModifyVisible(false);
   };
@@ -83,8 +84,9 @@ const ExpandSection = ({
   }, [isEditing]);
 
   const handleOffNoteClick = () => {
-    noteRef.current = notes;
-    handleEditNotes(notes, cartId, itemId);
+    if (notes.trim() !== noteRef.current.trim()) {
+      handleEditNotes(notes, cartId, itemId);
+    }
     setIsEditing(false);
   };
 
@@ -101,8 +103,10 @@ const ExpandSection = ({
               </div>
             </a>
           ) : ( 
-            <div class="shopping-item-image-container">
-              <img src={item.image}></img>
+            <div class="shopping-item-image-container-container"> 
+              <div class="shopping-item-image-container">
+                  <img src={item.image}></img>
+              </div>
             </div>
           )}
           <div class="shopping-item-information-container">

@@ -13,10 +13,12 @@ function Footer({
     setOrganizationSections,
     cartsArray,
     handleAddItem,
-    showNotification
+    showNotification,
+    addFileState,
+    setAddFileState,
+    organizationSectionRef
  }) {
     const [addItemState, setAddItemState] = useState(false); // toggles visiblity for add item
-    const [addFileState, setAddFileState] = useState(false); // toggles visiblity for add folder
     const [signInState, setSignInState] = useState(false); // toggles visiblity for profile page
 
     const [fileName, setFileName] = useState(""); // stores folder name data
@@ -165,6 +167,13 @@ function Footer({
             setOrganizationSections((prev) => [...prev, response.data]);
             setFileName("");
             showNotification("Succesfully Added Folder!", true);
+
+            if (organizationSectionRef.current) {
+                organizationSectionRef.current.scrollTo({
+                    top: organizationSectionRef.current.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
           } else {
             console.error(response?.message);
             showNotification("Error Adding Folder", false);

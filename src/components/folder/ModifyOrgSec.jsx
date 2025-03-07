@@ -14,7 +14,7 @@ const ModifyOrgSec = ({
   handleTitleClick,
   setOrganizationSections,
   cartName,
-  updateItems,
+  showNotification,
 }) => {
 
   const [deletePopupVisible, setDeletePopupVisible] = useState(false);
@@ -71,6 +71,7 @@ const ModifyOrgSec = ({
       setSecHidden={setModOrgHidden}
       cartId={cartId}
       cartName={cartName}
+      showNotification={showNotification}
     />}
     {deletePopupVisible && <DeletePopup 
       setIsVisible={setDeletePopupVisible}
@@ -79,7 +80,6 @@ const ModifyOrgSec = ({
       cartId={cartId}
       type={"folder"}
       setOrganizationSections={setOrganizationSections}
-      updateItems={updateItems}
     />}
 
     <div className={`modify-org-sec ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }`} ref={modifyOrgSec} >

@@ -259,6 +259,7 @@ function OrganizationSection({
             handleTitleClick={handleTitleClick}
             setOrganizationSections={setOrganizationSections}
             cartName={sectionTitle}
+            showNotification={showNotification}
           />
         )}
       </section>
