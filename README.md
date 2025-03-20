@@ -100,7 +100,7 @@ Follow these steps to run BuyHive locally:
 **src/**  
 - **components/**: Handles components for adding items, modifying folders, and modifying items.
 - **css/**: Handles styling for all components
-- `index.js: Handles log-in, utilizing Auth0.
+- `index.js`: Handles log-in, utilizing Auth0.
 - `background.js`: Background script for Chrome APIs.  
 
 background.js`: Handles API requests to MongoDB on user interaction.
