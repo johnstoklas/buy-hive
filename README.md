@@ -95,7 +95,7 @@ Follow these steps to run BuyHive locally:
 **public**
 - `images`: Folder containing extension icons.
 - `popup.html`: Main HTML file for the extension (utilized Babel because of React framework).  
-
+---
 **src/**  
 - **components/**: Handles components for adding items, modifying folders, and modifying items.
 - **css/**: Handles styling for all components
