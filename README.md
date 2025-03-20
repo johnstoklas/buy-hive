@@ -101,11 +101,10 @@ Follow these steps to run BuyHive locally:
 - **components/**: Handles components for adding items, modifying folders, and modifying items.
 - **css/**: Handles styling for all components
 - `index.js`: Handles log-in, utilizing Auth0.
-- `background.js`: Background script for Chrome APIs.  
 
-background.js`: Handles API requests to MongoDB on user interaction.
-`manifest.json`: Chrome extension configuration.  
-`README.md`: Project documentation.
+- `background.js`: Handles API requests to MongoDB on user interaction.
+- `manifest.json`: Chrome extension configuration.  
+- `README.md`: Project documentation.
 
 ## Future Features  
 - **Website Auto-Detection**: Introduce a smart detection button that automatically appears when users visit supported shopping websites. This feature minimizes the need to manually interact with the extension, saving time and making the shopping process more seamless.
