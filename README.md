@@ -20,6 +20,9 @@ BuyHive condenses all of that work into one cart, improving shopping efficiency 
   - Edit notes and titles using intuitive, inline-edit functionality built with **React hooks**.  
   - Delete items or folders with real-time updates.
   - Move items between folders, ensuring maximum organization without clutter.
+ 
+- **Email Sharing**:  
+  BuyHive allows users to share folders directly via email. This feature allows users to send items to friends and family without the hassle of having to send several links. 
 
 - **Popup and Click Handling**:  
   To reduce clutter and optimize the limited space in the extension window, BuyHive uses **useRef** to handle user clicks effectively. When a user clicks outside a pop-up, the pop-up disappears to minimize distractions. In addition, global variables are implemented to track the visibility of active popups, ensuring that multiple popups cannot be displayed simultaneously.
@@ -90,19 +93,19 @@ Follow these steps to run BuyHive locally:
 
 ## Folder Structure  
 
-> **public**
-> - `images`: Folder containing extension icons.
-> - `popup.html`: Main HTML file for the extension (utilized Babel because of React framework).  
+**public**
+- `images`: Folder containing extension icons.
+- `popup.html`: Main HTML file for the extension (utilized Babel because of React framework).  
 
-> **src/**  
-> - **components/**: Handles components for adding items, modifying folders, and modifying items.
-> - **css/**: Handles styling for all components
-> - `index.js: Handles log-in, utilizing Auth0.
-> - `background.js`: Background script for Chrome APIs.  
+**src/**  
+- **components/**: Handles components for adding items, modifying folders, and modifying items.
+- **css/**: Handles styling for all components
+- `index.js: Handles log-in, utilizing Auth0.
+- `background.js`: Background script for Chrome APIs.  
 
-> `background.js`: Handles API requests to MongoDB on user interaction.
-> `manifest.json`: Chrome extension configuration.  
-> `README.md`: Project documentation.
+background.js`: Handles API requests to MongoDB on user interaction.
+`manifest.json`: Chrome extension configuration.  
+`README.md`: Project documentation.
 
 ## Future Features  
 - **Website Auto-Detection**: Introduce a smart detection button that automatically appears when users visit supported shopping websites. This feature minimizes the need to manually interact with the extension, saving time and making the shopping process more seamless.
