@@ -11,7 +11,6 @@ BuyHive condenses all of that work into one cart, improving shopping efficiency 
 
   ![User Authentication](readme_assets/log%20in.gif)
 
-
 - **Adding Items**:  
   BuyHive utilizes our backend AI models to scrape relevant product data (price, title, product image) from web pages. Users can add items to custom folders and annotate them with notes for better organization. All data is sent to our database using **MongoDB** and middleware for sending data using requests can be found in `background.js`.
 
@@ -28,19 +27,18 @@ BuyHive condenses all of that work into one cart, improving shopping efficiency 
   - Delete items or folders with real-time updates.
   - Move items between folders, ensuring maximum organization without clutter.
  
-    ![Editing and Moving Item](readme_assets/moving%20-%20editing.gif)
+    ![Editing and Moving Item](readme_assets/moving%20-%20editing%20notes.gif)
  
 - **Email Sharing**:  
   BuyHive allows users to share folders directly via email. This feature allows users to send items to friends and family without the hassle of having to send several links.
 
     ![Sharing Items](readme_assets/sharing%20cart.gif)
 
-
 - **Popup and Click Handling**:  
   To reduce clutter and optimize the limited space in the extension window, BuyHive uses **useRef** to handle user clicks effectively. When a user clicks outside a pop-up, the pop-up disappears to minimize distractions. In addition, global variables are implemented to track the visibility of active popups, ensuring that multiple popups cannot be displayed simultaneously.
+  
+  ![Reduce Clutter](readme_assets/ui%20declutter.gif)
 
-  
-  
 ## Local Installation
 Follow these steps to run BuyHive locally:
 
