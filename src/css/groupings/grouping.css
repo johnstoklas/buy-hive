@@ -4,6 +4,7 @@
     padding: 10px 0;
     width: 300px;
     overflow-x: hidden;
+    overflow-y: scroll;
     height: 320px;
     margin-top: 55.5px;
     position: relative;
@@ -53,7 +54,11 @@
 
 .organization-section-empty {
     text-align: center;
-    margin-top: 120px;
+    margin-top: 140px;
+}
+
+#org-sec-empty-folder {
+    color: #888888;
 }
 
 .organization-section-empty p { 

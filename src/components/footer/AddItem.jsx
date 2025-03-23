@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import SelectFolders from './SelectFolders.jsx';
+import SelectFolders from '../item/SelectFolders.jsx';
 
 const AddItem = ({
   isVisible, 
@@ -10,6 +10,7 @@ const AddItem = ({
   cartsArray, 
   scrapedImage,
   handleAddItem,
+  handleAddSection, showNotification
 }) => {
   const [itemTitle, setItemTitle] = useState(null);
   const [itemPrice, setItemPrice] = useState(null);
@@ -40,12 +41,51 @@ const AddItem = ({
     };
   }, [isVisible]);
 
-  useEffect(() => {
-    if (scrapedData) {
-      setItemTitle(scrapedData?.product_name || "");
-      setItemPrice(scrapedData?.price || "");
+  const standarizedPrice = (price) => {
+    function formatPrice(p) {
+      p = p.trim().replace(/\$/g, '');
+      let num = parseFloat(p);
+      if(isNaN(num)) {
+        return "";
+      }
+      return `$${num.toFixed(2)}`;
     }
-  }, [scrapedData]);
+    if(price.includes('-')) {
+      const [low, high] = price.split('-').map(p => p.trim()) 
+      return `${formatPrice(low)} - ${formatPrice(high)}`
+    }
+    else if(price.toLowerCase().includes('to')) {
+      const [low, high] = price.split('to').map(p => p.trim()) 
+      return `${formatPrice(low)} - ${formatPrice(high)}`
+    }
+    else {
+      return formatPrice(price);
+    }
+  }
+
+  useEffect(() => {
+    console.log("scraped data is: ", scrapedData);
+  }, [scrapedData])
+
+  useEffect(() => {
+    console.log("error data: ", errorData);
+    if(errorData) {
+      setIsVisible(false);
+      setTimeout(() => { 
+        showNotification("Invalid website", false);
+      }, 300);
+    }
+    else if (scrapedData) {
+      setItemTitle(scrapedData?.product_name || "");
+      const scrapedPrice = scrapedData?.price; 
+      if(scrapedData?.price) {
+        const correctedPrice = standarizedPrice(scrapedPrice);
+        setItemPrice(correctedPrice);
+      }
+      else setItemPrice("");
+    }
+
+  }, [scrapedData, errorData]);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -79,25 +119,28 @@ const AddItem = ({
         if (!isVisible) setIsAnimating(false);
       }}
     >
-      {errorData ? (
-        <h4 className="processing-add-item">{`Error: ${errorData}`}</h4>
-      ) : (
-        <>
-          <h1 id="add-item-title">Add Item</h1>
+          <div id="add-item-header">
+            <h1 id="add-item-title">Add Item</h1>
+            <p id="add-item-close" onClick={() => setIsVisible(false)}> &#10005; </p>
+          </div>
           <div className="add-item-container">
-            <div className="add-item-image-container">
-              {scrapedImage ? (
-                <img src={scrapedImage} />
-              ) : (
-                <div className="add-image-loading"></div>
-              )}
-            </div>
+            
+                {scrapedImage ? (
+                  <div className="add-item-image-container-container"> 
+                    <div className="add-item-image-container">
+                      <img src={scrapedImage} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="add-image-loading"></div>
+                )}
+
             <div className="add-item-information-container">
               <h4 className="add-item-name">
                 {itemTitle || <div className="add-item-loading"></div>}
               </h4>
               <h4 className="add-item-price">
-                {itemPrice || <div className="add-item-loading"></div>}
+                {itemPrice || <div className="add-item-loading add-item-loading-price"></div>}
               </h4>
               <textarea
                 id="add-item-notes"
@@ -114,13 +157,12 @@ const AddItem = ({
               setAllCarts={setAllCarts}
               selectedCarts={selectedCarts}
               setSelectedCarts={setSelectedCarts}
+              handleAddSection={handleAddSection}
             />
           </div>
           <button id="add-item" onClick={submitAdd}>
             Add Item
           </button>
-        </>
-      )}
     </section>
   ) : null;
 };

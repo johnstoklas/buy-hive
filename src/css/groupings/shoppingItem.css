@@ -18,22 +18,30 @@
     display: flex;
     /*box-shadow: 0 4px 6px var(--shadow-color); /* Optional, for a subtle shadow */
     color: black;
+    padding-left: 7px;
+    box-sizing: border-box;
+}
+
+.shopping-item-image-container-container {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    margin-right: 5px;
 }
 
 .shopping-item-image-container {
     display: flex;
     height: 80px;
-    width: 80px;
+    max-width: 80px;
     align-items: center;
     justify-content: center;
-    margin-left: 10px;
 }
 
 .shopping-item-image-container img {
     width: 100%;
     height: auto;
     max-height: 100%;
-    max-width: 100%;
     object-fit: contain;
     border-radius: 10px;
 }
@@ -98,4 +106,32 @@
     text-align: initial;
     font-size: 12px;
     box-sizing: border-box;
+    white-space: pre-wrap;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    resize: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.shopping-item-notes::-webkit-scrollbar {
+    width: 6px; 
+}
+
+.shopping-item-notes::-webkit-scrollbar-track {
+    background: #f0f0f0; 
+    border-radius: 10px;
+}
+
+.shopping-item-notes::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 10px;
+}
+
+.shopping-item-notes::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+    cursor: pointer;
+}
+
+.shopping-item-notes::-webkit-scrollbar-button {
+    display: none; 
 }

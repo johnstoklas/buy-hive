@@ -11,7 +11,7 @@
     left: 0;          /* Aligns the header to the left of the viewport */
     width: 100%;      /* Ensures the header spans the full width */
     background-color: #fff; /* Optional, for background color */
-    z-index: 1000;    /* Optional, makes sure the header stays above other content */
+    z-index: 10;    /* Optional, makes sure the header stays above other content */
     box-shadow: 0 -2px 5px var(--shadow-color); /* Optional, for a subtle shadow */
     align-items: center;
 }

@@ -1,4 +1,4 @@
-chrome.runtime.onInstalled.addListener(() => {
+  chrome.runtime.onInstalled.addListener(() => {
     console.log("Background script installed");
   });
   
@@ -14,6 +14,10 @@ chrome.runtime.onInstalled.addListener(() => {
 
       case "fetchData":
         handleFetchData(message, sender, sendResponse);
+        return true;
+
+      case "fetchFolderItems":
+        handleFetchItems(message, sender, sendResponse);
         return true;
   
       case "addNewFolder":
@@ -36,6 +40,10 @@ chrome.runtime.onInstalled.addListener(() => {
         handleDeleteItem(message, sender, sendResponse);
         return true;
 
+      case "deleteItemAll":
+        handleDeleteItemAll(message, sender, sendResponse);
+        return true;
+
       case "addItem":
         handleAddItem(message, sender, sendResponse);
         return true;
@@ -43,6 +51,14 @@ chrome.runtime.onInstalled.addListener(() => {
       case "moveItem":
         handleMoveItem(message, sender, sendResponse);
         return true;
+
+      case "updateItems":
+        updateItems(message, sender, sendResponse);
+        return true;
+
+      case "sendEmail":
+        checkDomainExists(message, sender, sendResponse);
+        return true;        
   
       default:
         console.warn(`Unknown action: ${message.action}`);
@@ -64,6 +80,7 @@ chrome.runtime.onInstalled.addListener(() => {
       });
   
       if (!response.ok) {
+        sendResponse({status: "error", message: response.status});
         throw new Error(`HTTP error! status: ${response.status}`);
       }
   
@@ -133,6 +150,33 @@ chrome.runtime.onInstalled.addListener(() => {
       sendResponse({ status: "success", data }); // Send fetched data back to React
     } catch (error) {
       console.error("Error fetching data:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
+  // Fetches all the items from a specificed cart
+  async function handleFetchItems(message, sender, sendResponse) {
+    const { email, cartId } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Email is required to fetch data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/items`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data }); // Send fetched data back to React
+    } catch (error) {
+      console.error("Error fetching items from cart:", error);
       sendResponse({ status: "error", message: error.message });
     }
   }
@@ -281,16 +325,39 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   }
 
+  // Deletes an item from a folder
+  async function handleDeleteItemAll(message, sender, sendResponse) {
+    const { email, itemId } = message.data;
+    if (!email) {
+      sendResponse({ status: "error", message: "Invalid item data" });
+      return;
+    }
+  
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/nuke`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      sendResponse({ status: "success", data });
+    } catch (error) {
+      console.error("Error deleting item all:", error);
+      sendResponse({ status: "error", message: error.message });
+    }
+  }
+
   // Adds an item to specified folders
   async function handleAddItem(message, sender, sendResponse) {
     const { email, itemData } = message.data;
 
-    const priceString = itemData.itemPrice.replace(/[^0-9.-]+/g, ''); // Removes everything except numbers, dot, and minus
-    const priceInt = parseFloat(priceString);
-
     const requestBody = {
       name: itemData.itemTitle,
-      price: priceInt,
+      price: itemData.itemPrice,
       image: itemData.itemImage,
       url: itemData.itemUrl,
       notes: itemData.itemNotes,
@@ -325,42 +392,79 @@ chrome.runtime.onInstalled.addListener(() => {
   }
 
  // Moves an item between folders
-async function handleMoveItem(message, sender, sendResponse) {
-  const { email, itemId, selectedCarts, unselectedCarts } = message.data;
+  async function handleMoveItem(message, sender, sendResponse) {
+    const { email, itemId, selectedCarts, unselectedCarts } = message.data;
 
-  if (!email || !itemId) {
-      sendResponse({ status: "error", message: "Invalid request: missing email or item ID" });
-      return;
+
+    if (!email || !itemId) {
+        sendResponse({ status: "error", message: "Invalid request: missing email or item ID" });
+        return;
+    }
+
+    const body = JSON.stringify({
+        selected_cart_ids: selectedCarts,
+        //remove_from_cart_ids: unselectedCarts
+    });
+
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/move`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: body,
+        });
+
+        let data;
+        try {
+            data = await response.json(); // Try to parse JSON
+        } catch (jsonError) {
+            throw new Error(`Invalid JSON response: ${jsonError.message}`);
+        }
+
+        if (!response.ok) {
+            throw new Error(data.detail || data.message || `HTTP error! Status: ${response.status}`);
+        }
+
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error modifying item:", error);
+        sendResponse({ status: "error", message: error.message || "An unknown error occurred" });
+    }
   }
 
-  const body = JSON.stringify({
-      add_to_cart_ids: selectedCarts,
-      //remove_from_cart_ids: unselectedCarts
-  });
+  async function checkDomainExists(message, sender, sendResponse) {
+    const { email, cartId, recipient } = message.data;
 
-  const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/move`;
+    const data = { 
+      cart_id: cartId,
+      recipient_email: recipient,
+    };
 
-  try {
-      const response = await fetch(endpoint, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: body,
-      });
+    console.log(JSON.stringify(data));
 
-      let data;
-      try {
-          data = await response.json(); // Try to parse JSON
-      } catch (jsonError) {
-          throw new Error(`Invalid JSON response: ${jsonError.message}`);
-      }
+    const endpoint = `http://127.0.0.1:8000/carts/${email}/share`;
 
-      if (!response.ok) {
-          throw new Error(data.detail || data.message || `HTTP error! Status: ${response.status}`);
-      }
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),  // Make sure this is JSON stringified
+        });
 
-      sendResponse({ status: "success", data });
-  } catch (error) {
-      console.error("Error modifying item:", error);
-      sendResponse({ status: "error", message: error.message || "An unknown error occurred" });
+        if (!response.ok) {
+            const responseData = await response.json();
+            throw new Error(responseData.detail || responseData.message || `HTTP error! Status: ${response.status}`);
+        }
+
+        sendResponse({ status: "success" });
+    } catch (error) {
+        sendResponse({ status: "error", message: error.message || "An unknown error occurred" });
+    }
   }
-}
+
+  // Updates notes of an item on the client side
+  async function updateItems(message, sender, sendResponse) {
+    console.log("message", message);
+    chrome.runtime.sendMessage({action: "cartUpdate", data: message.data });
+  }

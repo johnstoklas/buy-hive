@@ -38,7 +38,8 @@
     width: 200px;
     padding:  8px 4px;
     box-sizing: border-box;
-    background-color: var(--accent-color);
+    background-color: transparent;
+    border: 1.5px solid var(--accent-color) !important;
     border-style: none;
     border-radius: 25px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional, for a subtle shadow */
@@ -46,11 +47,11 @@
 
 #sign-in-page button:hover {
     cursor: pointer;
+    background-color: var(--accent-color);
 }
 
 #sign-in-page button:focus {
     outline: none;
-    border: none;
 }
 
 #submit-sign-in {
@@ -87,6 +88,6 @@
     font-style: italic;
 }
 
-#sign-in-button {
+.alt-button {
     margin-top: 10px;
 }

@@ -1,15 +1,21 @@
-@import './add/addFile.css';
 @import './base/footer.css';
 @import './base/header.css';
+@import './base/userNotification.css';
 @import './base/index.css';
+
 @import './groupings/grouping.css';
 @import './groupings/shoppingItem.css';
+
 @import './add/addItem.css';
-@import './signIn/signInPage.css';
-@import './modification/modifyOrgSec.css';
-@import './modification/editPopup.css';
-@import './signIn/profile.css';
-@import './modification/deletePopup.css';
+@import './add/addFile.css';
 @import './add/selectFolders.css';
-@import './modificationItem/editNotes.css';
-@import './modificationItem/moveItem.css'
+
+@import './signIn/signInPage.css';
+@import './signIn/profile.css';
+
+@import './modification/modifyOrgSec.css';
+@import './modification/deletePopup.css';
+@import './modification/shareFolder.css';
+
+@import './modificationItem/moveItem.css';
+
