@@ -4,7 +4,6 @@ const Dotenv = require('dotenv-webpack');
 module.exports = {
   entry: {
     popup: './src/index.js',  // Entry point for popup
-    content: './content.js',  // Entry point for content script
   },
   output: {
     filename: '[name].bundle.js',  // Output a separate file for each entry point
