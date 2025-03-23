@@ -11,7 +11,7 @@ BuyHive condenses all of that work into one cart, improving shopping efficiency 
 
 - **Adding Items**:  
   BuyHive utilizes our backend AI models to scrape relevant product data (price, title, product image) from web pages. Users can add items to custom folders and annotate them with notes for better organization. All data is sent to our database using **MongoDB** and middleware for sending data using requests can be found in `background.js`.
-  ![Adding Item](/readme_assets/adding item)
+  ![Adding Item](readme_assets/adding item.gif)
 
 - **Folder Organization**:  
   Users can create multiple folders to categorize items based on purpose (e.g., gifts, personal purchases). Folder creation and updates are managed using **React state** via `useState`, ensuring smooth real-time **Virtual DOM** updates. Folders are sent to **MongoDB**, but while a user is on BuyHive in the same session, those changes are made locally, reducing data flow between client and server.
