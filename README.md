@@ -9,6 +9,9 @@ BuyHive condenses all of that work into one cart, improving shopping efficiency 
 - **User Authentication**:  
   BuyHive provides a secure and streamlined login process by leveraging **Auth0** for user authentication. User profiles and session data are securely stored using **Chrome Extension APIs**, enabling a simple and seamless login experience. With this integration, users can easily manage their personalized folders and preferences across sessions.
 
+  ![User Authentication](readme_assets/log%20in.gif)
+
+
 - **Adding Items**:  
   BuyHive utilizes our backend AI models to scrape relevant product data (price, title, product image) from web pages. Users can add items to custom folders and annotate them with notes for better organization. All data is sent to our database using **MongoDB** and middleware for sending data using requests can be found in `background.js`.
 
@@ -17,17 +20,26 @@ BuyHive condenses all of that work into one cart, improving shopping efficiency 
 - **Folder Organization**:  
   Users can create multiple folders to categorize items based on purpose (e.g., gifts, personal purchases). Folder creation and updates are managed using **React state** via `useState`, ensuring smooth real-time **Virtual DOM** updates. Folders are sent to **MongoDB**, but while a user is on BuyHive in the same session, those changes are made locally, reducing data flow between client and server.
 
+    ![Editing Folder Name](readme_assets/editing%20folder%20name.gif)
+
 - **Item Management**:  
   Manage your items effortlessly using real-time updates to reduce client-server data flow:
   - Edit notes and titles using intuitive, inline-edit functionality built with **React hooks**.  
   - Delete items or folders with real-time updates.
   - Move items between folders, ensuring maximum organization without clutter.
  
+    ![Editing and Moving Item](readme_assets/moving%20-%20editing.gif)
+ 
 - **Email Sharing**:  
-  BuyHive allows users to share folders directly via email. This feature allows users to send items to friends and family without the hassle of having to send several links. 
+  BuyHive allows users to share folders directly via email. This feature allows users to send items to friends and family without the hassle of having to send several links.
+
+    ![Sharing Items](readme_assets/sharing%20cart.gif)
+
 
 - **Popup and Click Handling**:  
   To reduce clutter and optimize the limited space in the extension window, BuyHive uses **useRef** to handle user clicks effectively. When a user clicks outside a pop-up, the pop-up disappears to minimize distractions. In addition, global variables are implemented to track the visibility of active popups, ensuring that multiple popups cannot be displayed simultaneously.
+
+  
   
 ## Local Installation
 Follow these steps to run BuyHive locally:
