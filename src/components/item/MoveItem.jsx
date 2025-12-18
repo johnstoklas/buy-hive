@@ -39,10 +39,10 @@ const MoveItem = ({
     const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
 
         const data = {
-        email: userData.email,
-        itemId: itemId,
-        selectedCarts: selectedCarts,
-        unselectedCarts: unselectedCarts,
+            accessToken: userData,
+            itemId: itemId,
+            selectedCarts: selectedCarts,
+            unselectedCarts: unselectedCarts,
         }
 
         chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {

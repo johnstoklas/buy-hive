@@ -1,17 +1,9 @@
 @import '../variable.css';
 
-html, body {
-    width: 300px;
-    height: 400px;
-    margin: 0;
-    padding: 0;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, sans-serif;
-    justify-items: center;
-}
-
-body { 
-    padding: 0 20px;
-    box-sizing: border-box;
+#root {
+  width: 300px;
+  height: 400px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 input[type="text"]:focus {
@@ -37,7 +29,3 @@ input[type="text"]:focus {
       transform: rotate(360deg);
     }
   }
-
-.main-page-sl {
-  transform: translate(-50%, 100%) !important;
-}

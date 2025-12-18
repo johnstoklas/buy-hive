@@ -105,7 +105,7 @@ function OrganizationSection({
       if (isDuplicate) return;
   
       const data = {
-        email: userData.email,
+        accessToken: userData,
         newCartName: newFileName.trim(),
         cartId: cartId,
       };

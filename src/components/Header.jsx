@@ -10,7 +10,7 @@ function Header() {
 
     return (
         <>
-        <header class="extension-header">
+        <header class="extension-header" style={{display: "flex", justifyContent: "space-between"}}>
             <h1>🐝BuyHive</h1>
                 <div>
                 {/*

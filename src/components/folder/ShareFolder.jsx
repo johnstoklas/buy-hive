@@ -30,7 +30,7 @@ const ShareFolder = ({
     if(emailRegex.test(email)) {
 
       const data = {
-        email: userData.email,
+        accessToken: userData,
         cartId: cartId,
         recipient: email,
       }

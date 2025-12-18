@@ -4,14 +4,26 @@ import { userDataContext } from '../contexts/UserProvider.jsx';
 
 const Profile = ({ user }) => {
 
-    const { isLoading, isAuthenticated} = useAuth0();
+    const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
     const { setUserData } = userDataContext();
 
+    const apiUrl = process.env.REACT_APP_AUDIENCE_API;
+
     useEffect(() => {
-        console.log("user: ", user);
-        if (!isLoading && isAuthenticated && user) {
-          setUserData(user);
+        const syncUser = async() => {
+            console.log("user: ", user);
+            if (!isLoading && isAuthenticated && user) {
+                const accessToken = await getAccessTokenSilently({
+                    authorizationParams: {
+                        audience: apiUrl
+                    }
+                });
+                setUserData(accessToken)
+            }
         }
+
+        syncUser();
+        
       }, [isLoading, isAuthenticated, user]);
 
     return (

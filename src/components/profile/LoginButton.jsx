@@ -7,7 +7,7 @@ const LoginButton = () => {
     return (
         !isAuthenticated && (
             <div id="sign-in-intro-container">
-                <h1> Welcome to BuyHive! </h1>
+                <h1 style={{fontSize: "20px"}}> Welcome to BuyHive! </h1>
                 <p id="sign-in-sub-heading"> The all in one shopping cart. </p>
                 <button onClick={() => loginWithPopup()}>
                     Sign Up

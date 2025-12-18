@@ -20,9 +20,12 @@ const LogoutButton = ({ setIsVisible }) => {
         <button onClick={viewItems}> 
           View Items 
         </button>
+        <button className="alt-button" onClick={() => window.open('https://buyhive.dev/report', '_blank')}>
+          Report an Issue
+        </button>
         <button className="alt-button" onClick={handleLogout}>
           Sign Out
-        </button>
+        </button>     
       </>
 
     )

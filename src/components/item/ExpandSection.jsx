@@ -52,7 +52,7 @@ const ExpandSection = ({
   // Edit item notes
   const handleEditNotes = (notes, cartId, itemId) => {
       const data = {
-        email: userData.email,
+        accessToken: userData,
         notes: notes.trim(),
         cartId,
         itemId,

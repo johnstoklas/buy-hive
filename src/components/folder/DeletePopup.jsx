@@ -26,7 +26,7 @@ const DeletePopup = ({
   const handleDeleteSection = (cartId) => {
     if (!userData) return;
 
-    chrome.runtime.sendMessage({ action: "deleteFolder", data: { email: userData.email, cartId } }, (response) => {
+    chrome.runtime.sendMessage({ action: "deleteFolder", data: { userData, cartId } }, (response) => {
       if (response?.status === "success") {
         setOrganizationSections((prev) => prev.filter((section) => section.cart_id !== cartId));
         itemsInFolder.forEach((item) => {
@@ -52,7 +52,7 @@ const DeletePopup = ({
   const handleDeleteItem = (cartId, itemId) => {
 
     const data = {
-      email: userData.email,
+      accessToken: userData,
       cartId: cartId,
       itemId: itemId,
     };
@@ -85,7 +85,7 @@ const DeletePopup = ({
   // Deletes item from all carts
   const handleDeleteItemAll = (itemId) => {
     const data = {
-      email: userData.email,
+      accessToken: userData,
       itemId: itemId,
     };
 

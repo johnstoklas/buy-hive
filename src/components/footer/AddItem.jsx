@@ -113,15 +113,16 @@ const AddItem = ({
   return (isVisible || isAnimating) ? (
     <section
       id="add-item-section"
+      style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}
       ref={addItem}
       className={isVisible ? "slide-in-add-item" : "slide-out-add-item"}
       onAnimationEnd={() => {
         if (!isVisible) setIsAnimating(false);
       }}
     >
-          <div id="add-item-header">
-            <h1 id="add-item-title">Add Item</h1>
-            <p id="add-item-close" onClick={() => setIsVisible(false)}> &#10005; </p>
+          <div id="add-item-header" style={{justifyContent: "space-between"}}>
+            <h1 id="add-item-title" style={{paddingLeft: "10px"}}>Add Item</h1>
+            <p id="add-item-close" style={{paddingRight: "10px"}} onClick={() => setIsVisible(false)}> &#10005; </p>
           </div>
           <div className="add-item-container">
             

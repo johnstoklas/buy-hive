@@ -2,7 +2,6 @@
 
 
 .extension-header {
-    justify-content: flex-start;
     width: 100%;
     align-items: center;
     margin: 0 0 0 0;
@@ -12,7 +11,7 @@
     background-color: #fff; /* Optional, for background color */
     z-index: 10;    /* Optional, makes sure the header stays above other content */
     box-shadow: 0 2px 5px var(--shadow-color); /* Optional, for a subtle shadow */
-    padding: 10px 5px;
+    padding: 10px 0px;
 }
 
 .extension-header * {
@@ -21,8 +20,8 @@
 }
 
 .extension-header h1 {
-    margin: 0 0 0 10px;
-    width: 170px;
+    margin: 0;
+    padding-left: 5px;
     font-weight: 500;
     letter-spacing: .5px;
 }
@@ -36,6 +35,7 @@
     height: 32px;
     width: 32px;
     color: black;
+    padding-left: 5px;
 }
 
 .extension-header button:hover{

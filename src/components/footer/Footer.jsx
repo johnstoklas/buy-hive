@@ -73,6 +73,7 @@ function Footer({
         }, (results) => {
             const data = {
                 innerText: results[0].result,
+                accessToken: user,
             }
             chrome.runtime.sendMessage({ action: "scrapePage", data:data }, (response) => {
                 if(response?.status === 'success' && !error) {

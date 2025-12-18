@@ -39,7 +39,7 @@ const Extension = () => {
   // Add item to cart
   const handleAddItem = (data) => {
       const newData = {
-        email: userData.email,
+        accessToken: userData,
         itemData: data,
       }
 
@@ -76,7 +76,7 @@ const Extension = () => {
     if (userData?.email) {
       setIsLoading(true);
       chrome.runtime.sendMessage(
-        { action: "fetchData", data: { email: userData.email } },
+        { action: "fetchData", data: { accessToken: userData } },
         (response) => {
           if (response?.status === "success") {
             console.log(response.data);

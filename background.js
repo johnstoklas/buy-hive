@@ -1,3 +1,5 @@
+  const apiUrl = process.env.REACT_APP_API_URL
+  
   chrome.runtime.onInstalled.addListener(() => {
     console.log("Background script installed");
   });
@@ -57,7 +59,7 @@
         return true;
 
       case "sendEmail":
-        checkDomainExists(message, sender, sendResponse);
+        handleShareEmail(message, sender, sendResponse);
         return true;        
   
       default:
@@ -69,13 +71,16 @@
 
   // Gets title and pricing from current webpage
   async function handleScrapePage(message, sender, sendResponse) { 
-    const { innerText } = message.data;
+    const { innerText, accessToken } = message.data;
     
-    const endpoint = `http://127.0.0.1:8000/extract`;
+    const endpoint = `${apiUrl}/extract`;
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "text/plain" },
+        headers: { 
+          "Content-Type": "text/plain",
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: innerText,
       });
   
@@ -95,14 +100,17 @@
   // Gets image from current webpage
   async function handleScrapeImage(message, sender, sendResponse) { 
     console.log("dud we get  here?")
-    const { imageData, url } = message.data;
+    const { imageData, url, accessToken } = message.data;
     
-    const endpoint = `http://127.0.0.1:8000/analyze-images`;
+    const endpoint = `${apiUrl}/analyze-images`;
     try {
       
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({
           page_url: url,
           image_urls: imageData,
@@ -129,17 +137,20 @@
   
   // Fetches user data when extension is opened
   async function handleFetchData(message, sender, sendResponse) {
-    const { email } = message.data;
-    if (!email) {
+    const { accessToken } = message.data;
+    if (!accessToken) {
       sendResponse({ status: "error", message: "Email is required to fetch data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}`;
+    const endpoint = `${apiUrl}/carts/`;
     try {
       const response = await fetch(endpoint, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
       });
   
       if (!response.ok) {
@@ -156,17 +167,20 @@
 
   // Fetches all the items from a specificed cart
   async function handleFetchItems(message, sender, sendResponse) {
-    const { email, cartId } = message.data;
-    if (!email) {
+    const { accessToken, cartId } = message.data;
+    if (!accessToken) {
       sendResponse({ status: "error", message: "Email is required to fetch data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/items`;
+    const endpoint = `${apiUrl}/carts/${cartId}`;
     try {
       const response = await fetch(endpoint, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json" 
+        },
       });
   
       if (!response.ok) {
@@ -181,19 +195,22 @@
     }
   }
   
-  // Adds a new folder to the database
+  // Adds a new cart to the database
   async function handleAddNewFolder(message, sender, sendResponse) {
-    const { email, cartName } = message.data;
-    if (!email || !cartName) {
+    const { accessToken, cartName } = message.data;
+    if (!accessToken || !cartName) {
       sendResponse({ status: "error", message: "Invalid folder data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}`;
+    const endpoint = `${apiUrl}/carts`;
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({ cart_name: cartName }),
       });
   
@@ -214,19 +231,22 @@
     }
   }
 
-  // Edits an existing folder in the database 
+  // Edits an existing cart in the database 
   async function handleEditFolder(message, sender, sendResponse) {
-    const { email, cartId, newCartName } = message.data;
-    if (!email || !newCartName) {
+    const { accessToken, cartId, newCartName } = message.data;
+    if (!accessToken || !newCartName) {
       sendResponse({ status: "error", message: "Invalid folder data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/edit-name`;
+    const endpoint = `${apiUrl}/carts/${cartId}/edit-name`;
     try {
       const response = await fetch(endpoint, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({ new_name: newCartName }),
       });
   
@@ -242,19 +262,20 @@
     }
   }
   
-  // Deletes an existing folder in the database 
+  // Deletes an existing cart in the database 
   async function handleDeleteFolder(message, sender, sendResponse) {
-    const { email, cartId } = message.data;
+    const { accessToken, cartId } = message.data;
     console.log("dud we get here")
-    if (!email) {
+    if (!accessToken) {
       sendResponse({ status: "error", message: "Invalid folder data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}`;
+    const endpoint = `${apiUrl}/carts/${cartId}`;
     try {
       const response = await fetch(endpoint, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}`, }
       });
   
       if (!response.ok) {
@@ -271,18 +292,21 @@
 
   // Edits the notes of an item
   async function handleEditNotes(message, sender, sendResponse) {
-    const { email, notes, cartId, itemId } = message.data;
+    const { accessToken, notes, cartId, itemId } = message.data;
     console.log(notes);
-    if (!email) {
+    if (!accessToken) {
       sendResponse({ status: "error", message: "Invalid item data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/edit-note`;
+    const endpoint = `${apiUrl}/carts/items/${itemId}/edit-note`;
     try {
       const response = await fetch(endpoint, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({ new_note: notes }),
       });
   
@@ -298,19 +322,19 @@
     }
   }
 
-  // Deletes an item from a folder
+  // Deletes an item from a cart
   async function handleDeleteItem(message, sender, sendResponse) {
-    const { email, cartId, itemId } = message.data;
-    if (!email) {
+    const { accessToken, cartId, itemId } = message.data;
+    if (!accessToken) {
       sendResponse({ status: "error", message: "Invalid item data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/${cartId}/items/${itemId}`;
+    const endpoint = `${apiUrl}/carts/${cartId}/items/${itemId}`;
     try {
       const response = await fetch(endpoint, {
         method: "DELETE",
-        body: JSON.stringify({ item_id: itemId }),
+        headers: { Authorization: `Bearer ${accessToken}`, },
       });
   
       if (!response.ok) {
@@ -325,18 +349,19 @@
     }
   }
 
-  // Deletes an item from a folder
+  // Deletes all item from a cart
   async function handleDeleteItemAll(message, sender, sendResponse) {
-    const { email, itemId } = message.data;
-    if (!email) {
+    const { accessToken, itemId } = message.data;
+    if (!accessToken) {
       sendResponse({ status: "error", message: "Invalid item data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/nuke`;
+    const endpoint = `${apiUrl}/carts/items/${itemId}/nuke`;
     try {
       const response = await fetch(endpoint, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}`, }
       });
   
       if (!response.ok) {
@@ -351,9 +376,9 @@
     }
   }
 
-  // Adds an item to specified folders
+  // Adds an item to specified carts
   async function handleAddItem(message, sender, sendResponse) {
-    const { email, itemData } = message.data;
+    const { accessToken, itemData } = message.data;
 
     const requestBody = {
       name: itemData.itemTitle,
@@ -366,16 +391,19 @@
   
     console.log("Request Body:", JSON.stringify(requestBody));
 
-    if (!email) {
+    if (!accessToken) {
       sendResponse({ status: "error", message: "Invalid item data" });
       return;
     }
   
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/add-new`;
+    const endpoint = `${apiUrl}/carts/items/add-new`;
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify(requestBody),
       });
   
@@ -391,28 +419,25 @@
     }
   }
 
- // Moves an item between folders
+ // Moves an item between carts
   async function handleMoveItem(message, sender, sendResponse) {
-    const { email, itemId, selectedCarts, unselectedCarts } = message.data;
+    const { accessToken, itemId, selectedCarts, unselectedCarts } = message.data;
 
-
-    if (!email || !itemId) {
+    if (!accessToken || !itemId) {
         sendResponse({ status: "error", message: "Invalid request: missing email or item ID" });
         return;
     }
 
-    const body = JSON.stringify({
-        selected_cart_ids: selectedCarts,
-        //remove_from_cart_ids: unselectedCarts
-    });
-
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/items/${itemId}/move`;
+    const endpoint = `${apiUrl}/carts/items/${itemId}/move`;
 
     try {
         const response = await fetch(endpoint, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: body,
+            headers: { 
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ selected_cart_ids: selectedCarts,})
         });
 
         let data;
@@ -433,8 +458,8 @@
     }
   }
 
-  async function checkDomainExists(message, sender, sendResponse) {
-    const { email, cartId, recipient } = message.data;
+  async function handleShareEmail(message, sender, sendResponse) {
+    const { accessToken, cartId, recipient } = message.data;
 
     const data = { 
       cart_id: cartId,
@@ -443,12 +468,15 @@
 
     console.log(JSON.stringify(data));
 
-    const endpoint = `http://127.0.0.1:8000/carts/${email}/share`;
+    const endpoint = `${apiUrl}/carts/${accessToken}/share`;
 
     try {
         const response = await fetch(endpoint, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json"
+            },
             body: JSON.stringify(data),  // Make sure this is JSON stringified
         });
 
