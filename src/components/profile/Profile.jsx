@@ -11,14 +11,25 @@ const Profile = () => {
 
     useEffect(() => {
         const syncUser = async() => {
-            if (!isLoading && isAuthenticated && user) {
-                const accessToken = await getAccessTokenSilently({
-                    authorizationParams: {
-                        audience: AUTH0_AUDIENCE,
-                    }
-                });
-                setUserData(accessToken)
-            }
+            if (isLoading || !isAuthenticated || !user) return;
+
+            const accessToken = await getAccessTokenSilently({
+                authorizationParams: {
+                    audience: AUTH0_AUDIENCE,
+                }
+            });
+
+            setUserData(accessToken);
+
+            chrome.storage.session.set({
+                accessToken: accessToken,
+                user: {
+                    sub: user.sub,
+                    email: user.email,
+                    name: user.name,
+                    picture: user.picture
+                }
+            });
         }
 
         syncUser();
@@ -26,15 +37,13 @@ const Profile = () => {
       }, [isLoading, isAuthenticated, user]);
 
     return (
-        isAuthenticated && (
-            <div className="profile-info">
-                {user?.picture && <img src={user.picture} alt={user?.name} className="profile-image"/>}
-                <div className="profile-name-info">
-                    <h2> {user?.name} </h2>
-                    <h4> {user?.email} </h4>
-                </div>                
-            </div>
-        )
+        <div className="profile-info">
+            {user?.picture && <img src={user.picture} alt={user?.name} className="profile-image"/>}
+            <div className="profile-name-info">
+                <h2> {user?.name} </h2>
+                <h4> {user?.email} </h4>
+            </div>                
+        </div>
     )
 }
 

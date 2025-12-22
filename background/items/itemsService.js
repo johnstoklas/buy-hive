@@ -7,9 +7,6 @@ export async function handleFetchData(message, sender, sendResponse) {
         return;
     }
 
-    console.log("accessToken:", accessToken);
-
-
     const endpoint = `${apiUrl}/carts`;
     try {
         const response = await fetch(endpoint, {

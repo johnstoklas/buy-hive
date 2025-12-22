@@ -5,7 +5,7 @@
   "version": "1.0",
   "action": {
     "default_popup": "./popup.html",
-    "default_icon": "public/images/spider_man.png"
+    "default_icon": "public/images/buyhive_gradient2_13percent.png"
   },
   "background": { 
     "service_worker": "background/index.js",

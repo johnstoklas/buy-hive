@@ -9,13 +9,16 @@ const LogoutButton = ({ setIsVisible }) => {
   }
 
   // Logs a user out of their account
-  const handleLogout = () => {
-    logout();
-    window.location.replace('chrome-extension://hjghanbkkiojmhokpohlfgchmbjopdoc/popup.html');
+  const handleLogout = async() => {
+    await chrome.storage.session.clear();
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin
+      }
+    });
   };
 
   return (
-    isAuthenticated && (
       <>
         <button onClick={viewItems}> 
           View Items 
@@ -27,8 +30,6 @@ const LogoutButton = ({ setIsVisible }) => {
           Sign Out
         </button>     
       </>
-
-    )
   );
 };
 
