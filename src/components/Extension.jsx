@@ -6,11 +6,13 @@ import SignInPage from "./profile/SignInPage.jsx";
 import OrganizationSection from "./folder/OrganizationSection.jsx";
 import UserNotification from './UserNotification.jsx';
 
-import { LockedProvider } from "./contexts/LockedProvider.jsx";
+import { LockedProvider, useLocked } from "./contexts/LockedProvider.jsx";
 import { userDataContext } from "./contexts/UserProvider.jsx"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
+
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Extension = () => {
   const [organizationSections, setOrganizationSections] = useState([]);
@@ -24,7 +26,35 @@ const Extension = () => {
 
   const organizationSectionRef = useRef(null);
 
-  const { userData } = userDataContext();  
+  const { userData, setUserData } = userDataContext();  
+  const { setIsLocked } = useLocked();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  
+  const AUTH0_AUDIENCE = process.env.REACT_APP_AUTH0_AUDIENCE;
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      const { accessToken, user } = await chrome.storage.session.get([
+        "accessToken",
+        "user"
+      ]);
+
+      console.log("session data", accessToken)
+      console.log("user", user)
+
+      if (accessToken && user) {
+        await getAccessTokenSilently({
+          authorizationParams: { audience: AUTH0_AUDIENCE }
+        });
+        console.log("authenticated?", isAuthenticated);
+        setUserData(accessToken);
+        return;
+      }
+    };
+
+    restoreSession();
+  }, []);
+
 
   const showNotification = (message, isSuccess) => {
     setNotifMessage(message);
@@ -73,7 +103,7 @@ const Extension = () => {
   };
 
   const fetchOrganizationSections = () => {
-    if (userData?.email) {
+    if (userData) {
       setIsLoading(true);
       chrome.runtime.sendMessage(
         { action: "fetchData", data: { accessToken: userData } },
@@ -95,7 +125,7 @@ const Extension = () => {
   }, [userData]);
 
   return (
-      <LockedProvider>
+      <>
         <Header />
         <section id="organization-section" 
         style={{ overflowY: 'auto', maxHeight: '400px' }}
@@ -142,7 +172,7 @@ const Extension = () => {
           setAddFileState={setAddFileState}
           organizationSectionRef={organizationSectionRef}
         />
-      </LockedProvider>
+      </>
   );
 };
 

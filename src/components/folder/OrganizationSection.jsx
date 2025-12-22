@@ -65,6 +65,7 @@ function OrganizationSection({
   }, [isEditing]);
 
   const handleExpandClick = () => {
+    if (!itemsInFolder || itemsInFolder.length === 0) return;
     if (isLocked) return;
     setIsExpanded(!isExpanded);
   };

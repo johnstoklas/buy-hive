@@ -197,6 +197,7 @@
   
   // Adds a new cart to the database
   async function handleAddNewFolder(message, sender, sendResponse) {
+    console.log("background received message", message);
     const { accessToken, cartName } = message.data;
     if (!accessToken || !cartName) {
       sendResponse({ status: "error", message: "Invalid folder data" });
