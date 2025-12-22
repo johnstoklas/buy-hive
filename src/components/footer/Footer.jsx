@@ -38,16 +38,6 @@ function Footer({
         setIsLocked(!isAuthenticated);
     }, [isAuthenticated]);
 
-    // Sends user information to background.js for database managament
-    useEffect(() => {
-        if (user) {
-            setUserData(user);
-            chrome.runtime.sendMessage({ action: "sendUserInfo", data: user }, (response) => {
-                console.log('Response from background.js:', response);
-            });
-        }
-    }, [user]);
-
     useEffect(() => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length > 0) {
@@ -161,14 +151,14 @@ function Footer({
             return;
         }
   
-        const data = { email: userData, cartName: trimmedFileName };
+        const data = { accessToken: userData, cartName: trimmedFileName };
         console.log("sending message to background", data);
   
-        chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
+        chrome.runtime.sendMessage({ action: "addNewCart", data }, (response) => {
           if (response?.status === "success" && response?.data) {
             setOrganizationSections((prev) => [...prev, response.data]);
             setFileName("");
-            showNotification("Succesfully Added Folder!", true);
+            showNotification("Succesfully Added Cart", true);
 
             if (organizationSectionRef.current) {
                 organizationSectionRef.current.scrollTo({

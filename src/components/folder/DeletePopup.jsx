@@ -26,7 +26,7 @@ const DeletePopup = ({
   const handleDeleteSection = (cartId) => {
     if (!userData) return;
 
-    chrome.runtime.sendMessage({ action: "deleteFolder", data: { userData, cartId } }, (response) => {
+    chrome.runtime.sendMessage({ action: "deleteFolder", data: { accessToken: userData, cartId } }, (response) => {
       if (response?.status === "success") {
         setOrganizationSections((prev) => prev.filter((section) => section.cart_id !== cartId));
         itemsInFolder.forEach((item) => {

@@ -1,4 +1,4 @@
-const apiUrl = "https://api.buyhive.dev"
+const apiUrl = "https://buyhive-backend-production.up.railway.app"
 
 export async function handleFetchData(message, sender, sendResponse) {
     const { accessToken } = message.data;
@@ -7,7 +7,10 @@ export async function handleFetchData(message, sender, sendResponse) {
         return;
     }
 
-    const endpoint = `${apiUrl}/carts/`;
+    console.log("accessToken:", accessToken);
+
+
+    const endpoint = `${apiUrl}/carts`;
     try {
         const response = await fetch(endpoint, {
             method: "GET",
