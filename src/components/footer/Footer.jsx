@@ -252,7 +252,6 @@ function Footer({
             />
             
             {signInState && <SignInPage 
-                user={user}
                 setIsVisible={setSignInState}
             />}
             
