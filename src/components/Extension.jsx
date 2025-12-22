@@ -73,7 +73,7 @@ const Extension = () => {
   };
 
   const fetchOrganizationSections = () => {
-    if (userData?.email) {
+    if (userData) {
       setIsLoading(true);
       chrome.runtime.sendMessage(
         { action: "fetchData", data: { accessToken: userData } },

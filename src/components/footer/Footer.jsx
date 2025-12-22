@@ -161,7 +161,8 @@ function Footer({
             return;
         }
   
-        const data = { email: userData.email, cartName: trimmedFileName };
+        const data = { email: userData, cartName: trimmedFileName };
+        console.log("sending message to background", data);
   
         chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
           if (response?.status === "success" && response?.data) {
