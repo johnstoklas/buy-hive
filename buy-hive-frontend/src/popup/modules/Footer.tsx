@@ -1,6 +1,19 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-icons'
-const Footer = () => {
+import type { Dispatch, SetStateAction } from 'react';
+
+interface FooterProps {
+    accountPageVisible: boolean;
+    setAccountPageVisible: Dispatch<SetStateAction<boolean>>;
+    addCartVisible: boolean;
+    setAddCartVisible: Dispatch<SetStateAction<boolean>>;
+}
+const Footer = ({ accountPageVisible, setAccountPageVisible, addCartVisible, setAddCartVisible } : FooterProps) => {
+    const togglePage = (type: string) => {
+        setAccountPageVisible(false);
+        setAddCartVisible(false);
+        if (type === "cart") setAddCartVisible(true);
+    }
     // const [addItemState, setAddItemState] = useState(false); // toggles visiblity for add item
     // const [signInState, setSignInState] = useState(false); // toggles visiblity for profile page
 
@@ -130,41 +143,6 @@ const Footer = () => {
     //     );
     // }
 
-    // // Handles adding a new folder
-    // const handleAddSection = (fileName) => {  
-    //     if(!userData) {
-    //         showNotification("Error Adding Folder", false);
-    //         return;
-    //     } 
-    //     const trimmedFileName = fileName.trim();
-    //     const isDuplicate = organizationSections.some((section) => section.cart_name === trimmedFileName);
-        
-    //     if (isDuplicate || !trimmedFileName) {
-    //         showNotification("Invalid Folder Name!", false);
-    //         return;
-    //     }
-  
-    //     const data = { email: userData.email, cartName: trimmedFileName };
-  
-    //     chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
-    //       if (response?.status === "success" && response?.data) {
-    //         setOrganizationSections((prev) => [...prev, response.data]);
-    //         setFileName("");
-    //         showNotification("Succesfully Added Folder!", true);
-
-    //         if (organizationSectionRef.current) {
-    //             organizationSectionRef.current.scrollTo({
-    //                 top: organizationSectionRef.current.scrollHeight,
-    //                 behavior: 'smooth'
-    //             });
-    //         }
-    //       } else {
-    //         console.error(response?.message);
-    //         showNotification("Error Adding Folder", false);
-    //       }
-    //     });
-    // };
-
     // // Add Item Button
     // const handleScrapeClick = () => {     
     //     const allUrls = organizationSections.flatMap(section => 
@@ -211,14 +189,20 @@ const Footer = () => {
     // };
 
     return (
-        <footer className="flex justify-between w-full h-[60px] items-center px-[40px] text-xl fixed bottom-0 shadow-top">
+        <footer className="flex justify-between w-full h-14 items-center px-10 text-xl fixed bottom-0 shadow-top">
             <button className='hover:cursor-pointer'>
                 <FontAwesomeIcon icon={faCartShopping} />    
             </button>
-            <button className='hover:cursor-pointer'>
+            <button 
+                className='hover:cursor-pointer'
+                onClick={() => togglePage("cart")}
+            >
                 <FontAwesomeIcon icon={faFolder} />
             </button>
-            <button className='hover:cursor-pointer'>
+            <button 
+                className='hover:cursor-pointer'
+                onClick={() => setAccountPageVisible(true)}
+            >
                 <FontAwesomeIcon icon={faUser} />
             </button>
         </footer>

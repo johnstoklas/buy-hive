@@ -1,8 +1,36 @@
 import Header from "./modules/Header";
 import Footer from "./modules/Footer";
 import "../styles/main.css"
+import AccountPage from "./pages/AccountPage";
+import { useEffect, useState } from "react";
+import { useAuth0 } from '@auth0/auth0-react';
+import HomePage from "./pages/HomePage";
+import AddCart from "./modules/AddCart";
 
 const Extension = () => {
+  const [accountPageVisible, setAccountPageVisible] = useState(true);
+  const [addCartVisible, setAddCartVisible] = useState(false);
+
+  const [carts, setCarts] = useState([]);
+
+  const { getAccessTokenSilently } = useAuth0();
+  const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
+
+  useEffect(() => {
+    const getUser = async() => {
+      const user = await chrome.storage.session.get("user");
+      if (!user) return;
+
+      const accessToken = await getAccessTokenSilently({
+          authorizationParams: {
+              audience: AUTH0_AUDIENCE,
+          }
+      });
+
+    }
+
+    getUser();
+  }, []);
   // const [organizationSections, setOrganizationSections] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
 
@@ -86,8 +114,19 @@ const Extension = () => {
 
   return (
       // <LockedProvider>
-      <>
+      <div className="min-h-screen flex flex-col">
         <Header />
+        <div className="flex flex-1 justify-center items-center pt-14 pb-14">
+          {accountPageVisible && <AccountPage />}
+          {!accountPageVisible && <HomePage 
+            carts={carts}
+            setCarts={setCarts}
+          />}
+        </div>
+        {addCartVisible && <AddCart 
+          carts={carts}
+          setCarts={setCarts}
+        />}
         {/* <section id="organization-section" 
         style={{ overflowY: 'auto', maxHeight: '400px' }}
         ref={organizationSectionRef}>
@@ -124,6 +163,10 @@ const Extension = () => {
             />
         </section> */}
         <Footer
+          accountPageVisible={accountPageVisible}
+          setAccountPageVisible={setAccountPageVisible}
+          addCartVisible={addCartVisible}
+          setAddCartVisible={setAddCartVisible}
           // organizationSections={organizationSections}
           // setOrganizationSections={setOrganizationSections}
           // cartsArray={organizationSections}
@@ -133,7 +176,7 @@ const Extension = () => {
           // setAddFileState={setAddFileState}
           // organizationSectionRef={organizationSectionRef}
         />
-        </>
+        </div>
       // </LockedProvider>
   );
 };
