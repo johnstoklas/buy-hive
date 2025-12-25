@@ -1,7 +1,8 @@
-import { useRef, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { Cart } from '@/types/Carts';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface AddFileProps {
     carts: Cart[]
@@ -9,30 +10,31 @@ interface AddFileProps {
 }
 const AddFile = ({carts, setCarts} : AddFileProps) => {
     const [cartName, setCartName] = useState("");
-    const [isAnimating, setIsAnimating] = useState(false);
+    // const [isAnimating, setIsAnimating] = useState(false);
+
+    const { isAuthenticated, isLoading } = useAuth0();
     // const addFile = useRef(null);
 
     // const {userData} = userDataContext();
 
     // Handles adding a new folder
     const handleAddCart = (cartName: string) => {  
-        // if(!userData) {
-        //     // showNotification("Error Adding Folder", false);
-        //     return;
-        // } 
+        if(isLoading) return;
+        if(!isAuthenticated) {
+            // showNotification("Error Adding Folder", false);
+            return;
+        } 
 
         const trimmedCartName = cartName.trim();
         const isDuplicate = carts.some((cart) => cart.name === trimmedCartName);
-        
         if (isDuplicate || !trimmedCartName) {
-            // showNotification("Invalid Folder Name!", false);
+            // showNotification("Invalid Folder Name", false);
             return;
         }
 
-        // const data = { email: userData.email, cartName: trimmedCartName };
-        const data = "hello"
-
-        chrome.runtime.sendMessage({ action: "addNewFolder", data }, (response) => {
+        const data = { cartName: trimmedCartName };
+        console.log("sending data to the backend", data);
+        chrome.runtime.sendMessage({ action: "addNewCart", data }, (response) => {
         if (response?.status === "success" && response?.data) {
             setCarts((prev) => [...prev, response.data]);
             setCartName("");
@@ -80,7 +82,7 @@ const AddFile = ({carts, setCarts} : AddFileProps) => {
     return (
         <div 
             // id="add-file-section"
-            className="flex mb-16 mx-1 py-2 absolute bg-[var(--secondary-background)] text-var(--text-color) justify-center"
+            className="flex mx-1 py-2 fixed bottom-14 w-full bg-[var(--secondary-background)] text-var(--text-color) justify-center"
             //   className={isVisible ? "slide-in-add-file" : "slide-out-add-file"} 
             //   ref={addFile}
             //   onAnimationEnd={() => {

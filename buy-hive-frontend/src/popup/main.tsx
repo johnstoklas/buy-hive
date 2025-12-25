@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Popup from './Popup.tsx';
 import { Auth0Provider } from '@auth0/auth0-react';
+// import { UserProvider } from './context/UserProvider.tsx';
 
 const AUTH0_DOMAIN = import.meta.env.VITE_AUTH0_DOMAIN;
 const AUTH0_CLIENT_ID = import.meta.env.VITE_AUTH0_CLIENT_ID;
@@ -20,7 +21,9 @@ createRoot(document.getElementById('root')!).render(
       useRefreshTokens={true}
       cacheLocation='localstorage'
     >
-      <Popup />
+      {/* <UserProvider> */}
+              <Popup />
+      {/* </UserProvider> */}
     </Auth0Provider>
   </React.StrictMode>,
 )

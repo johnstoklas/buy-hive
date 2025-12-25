@@ -1,17 +1,18 @@
 import type { Cart } from "@/types/Carts";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 
 interface HomePageProps {
     carts: Cart[];
-    setCarts: Dispatch<SetStateAction<Cart[]>>
+    setCarts: Dispatch<SetStateAction<Cart[]>>;
+    popupLoading: boolean;
+    setPopupLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const HomePage = ({ carts, setCarts } : HomePageProps) => {
-    const [isLoading, setIsLoading] = useState(false);
+const HomePage = ({ carts, popupLoading } : HomePageProps) => {
 
-    if (isLoading) return (<div className="spinner-loader"></div>)
+    if (popupLoading) return (<div className="spinner-loader"></div>)
     return (
         <section 
             id="organization-section" 

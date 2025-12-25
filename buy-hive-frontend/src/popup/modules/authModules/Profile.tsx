@@ -11,7 +11,7 @@ const Profile = () => {
         const syncUser = async() => {
             if (isLoading || !isAuthenticated || !user) return;
 
-            const accessToken = await getAccessTokenSilently({
+            await getAccessTokenSilently({
                 authorizationParams: {
                     audience: AUTH0_AUDIENCE,
                 }

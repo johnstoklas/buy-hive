@@ -6,31 +6,38 @@ import { useEffect, useState } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import HomePage from "./pages/HomePage";
 import AddCart from "./modules/AddCart";
+import { useTokenResponder } from "./auth/tokenResponder";
+import type { Cart } from "@/types/Carts";
 
-const Extension = () => {
+const Popup = () => {
+  useTokenResponder();
   const [accountPageVisible, setAccountPageVisible] = useState(true);
   const [addCartVisible, setAddCartVisible] = useState(false);
+  const [popupLoading, setPopupLoading] = useState(false);
 
-  const [carts, setCarts] = useState([]);
+  const [carts, setCarts] = useState<Cart[]>([]);
 
-  const { getAccessTokenSilently } = useAuth0();
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
 
   useEffect(() => {
     const getUser = async() => {
-      const user = await chrome.storage.session.get("user");
+      const { user } = await chrome.storage.session.get("user");
       if (!user) return;
 
-      const accessToken = await getAccessTokenSilently({
+      await getAccessTokenSilently({
           authorizationParams: {
               audience: AUTH0_AUDIENCE,
           }
       });
 
+      console.log("user", user);
+
     }
 
     getUser();
   }, []);
+
   // const [organizationSections, setOrganizationSections] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
 
@@ -90,23 +97,34 @@ const Extension = () => {
   //   );
   // };
 
-  // const fetchOrganizationSections = () => {
-  //   if (userData?.email) {
-  //     setIsLoading(true);
-  //     chrome.runtime.sendMessage(
-  //       { action: "fetchData", data: { accessToken: userData } },
-  //       (response) => {
-  //         if (response?.status === "success") {
-  //           console.log(response.data);
-  //           setOrganizationSections(response.data.carts || []);
-  //         } else {
-  //           console.error("Error fetching data:", response?.message);
-  //         }
-  //         setIsLoading(false);
-  //       }
-  //     );
-  //   }
-  // };
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isAuthenticated) return;
+
+    handleGetCarts();
+  }, [isLoading, isAuthenticated]);
+
+  const handleGetCarts = () => {
+    if (isLoading || !isAuthenticated) return;
+    setPopupLoading(true);
+    chrome.runtime.sendMessage({ action: "getCarts" }, (response) => {
+      if (response?.status === "success" && response?.data) {
+          console.log(response.data);
+          setCarts(response.data.carts || []);
+          // showNotification("Succesfully Added Folder!", true);
+
+          // if (organizationSectionRef.current) {
+          //     organizationSectionRef.current.scrollTo({
+          //         top: organizationSectionRef.current.scrollHeight,
+          //         behavior: 'smooth'
+          //     });
+          // }
+      } else {
+          console.error(response?.message);
+      }
+    });
+    setPopupLoading(false);
+  };
 
   // useEffect(() => {
   //   fetchOrganizationSections();
@@ -121,6 +139,8 @@ const Extension = () => {
           {!accountPageVisible && <HomePage 
             carts={carts}
             setCarts={setCarts}
+            popupLoading={popupLoading}
+            setPopupLoading={setPopupLoading}
           />}
         </div>
         {addCartVisible && <AddCart 
@@ -181,4 +201,4 @@ const Extension = () => {
   );
 };
 
-export default Extension;
+export default Popup;

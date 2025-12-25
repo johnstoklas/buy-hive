@@ -8,7 +8,7 @@ interface FooterProps {
     addCartVisible: boolean;
     setAddCartVisible: Dispatch<SetStateAction<boolean>>;
 }
-const Footer = ({ accountPageVisible, setAccountPageVisible, addCartVisible, setAddCartVisible } : FooterProps) => {
+const Footer = ({ setAccountPageVisible, setAddCartVisible } : FooterProps) => {
     const togglePage = (type: string) => {
         setAccountPageVisible(false);
         setAddCartVisible(false);
