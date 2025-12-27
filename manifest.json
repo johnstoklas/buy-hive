@@ -16,16 +16,15 @@
     "activeTab",
     "scripting",
     "webNavigation",
-    "identity",
-    "http://127.0.0.1:8000/"
+    "identity"
   ],
   "host_permissions":["http://127.0.0.1:8000/"],
   
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["./dist/popup.bundle.js"],
-      "run_at": "document_end"
+      "js": ["content/index.js"],
+      "run_at": "document_idle"
     }
   ]
 }

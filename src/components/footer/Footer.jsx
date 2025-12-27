@@ -55,30 +55,21 @@ function Footer({
 
     // Gather text that is visible on the page for price and title
     const gatherPriceTitleData = () => {
-        chrome.scripting.executeScript({
-            target: {tabId: tabId},
-            func: () => {
-                return document.body.innerText;
-            }
-        }, (results) => {
-            const data = {
-                innerText: results[0].result,
-                accessToken: user,
-            }
-            chrome.runtime.sendMessage({ action: "scrapePage", data:data }, (response) => {
-                if(response?.status === 'success' && !error) {
-                    console.log("title/price: (status)", response.data.cart_items);
-                    if(!response.data.cart_items.price || !response.data.cart_items.product_name) {
-                        setError("invalid website");
-                        return;
-                    }
-                    setScrapedData(response.data.cart_items);
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const tabId = tabs[0]?.id;
+            if (!tabId) return;
+
+            chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
+                if (response?.success) {
+                console.log(response.data);
+                } else {
+                console.error(response?.error);
                 }
-                else {
-                    setError(response?.message);
-                }
-            });
-        });  
+            }
+            );
+        });
+
+
     }
 
     // Gathers all images from the page
@@ -187,12 +178,12 @@ function Footer({
             setSignInState(false);
             if(!addItemState) {
                 gatherPriceTitleData();
-                gatherImageData();
+                // gatherImageData();
             }
         }
-        else if(!isLocked && error && !alreadyIn) {
-            showNotification("Invalid website", false);
-        }
+        // else if(!isLocked && error && !alreadyIn) {
+        //     showNotification("Invalid website", false);
+        // }
         else if(!isLocked && !error && alreadyIn) {
             showNotification("Item has already been added", false);
         }
