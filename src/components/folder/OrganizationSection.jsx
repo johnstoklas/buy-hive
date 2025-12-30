@@ -76,8 +76,8 @@ function OrganizationSection({
         { action: "fetchItems", data: { accessToken: userData, cartId: sectionId } },
         (response) => {
           if (response?.status === "success") {
-            console.log(response.data);
-            setItemsInFolder(response.data);
+            console.log(response.data.items);
+            setItemsInFolder(response.data.items);
           } else {
             console.error("Error fetching data:", response?.message);
           }
@@ -87,7 +87,7 @@ function OrganizationSection({
     }
     setIsExpanded(true);
   };
-  
+
   const handleModifyClick = () => {
     if (!modOrgHidden && !isLocked) {
       setModifyOrgSec((prev) => !prev);
@@ -283,22 +283,19 @@ function OrganizationSection({
         )}
       </section>
       <div className="expand-section-expanded-display" ref={expandedSectionRef}>
-        {isExpanded ? (
-          isLoading ? [] : (
-            itemsInFolder.map((item) => (
-              <ExpandSection
-                key={item.item_id}
-                item={item}
-                cartId={sectionId}
-                itemId={item.item_id}
-                cartsArray={organizationSections}
-                itemsInFolder={itemsInFolder} // <- items live inside the matched section
-                setItemsInFolder={setItemsInFolder}
-                showNotification={showNotification}
-              />
-            ))
-          )
-        ) : []}
+        {itemsInFolder && itemsInFolder.map((item) => (
+          <ExpandSection
+            key={item.item_id}
+            item={item}
+            cartId={sectionId}
+            itemId={item.item_id}
+            cartsArray={organizationSections}
+            itemsInFolder={itemsInFolder} // <- items live inside the matched section
+            setItemsInFolder={setItemsInFolder}
+            showNotification={showNotification}
+          />
+        ))
+        }
       </div>
     </div>
   );

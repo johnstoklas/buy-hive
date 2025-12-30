@@ -71,3 +71,63 @@ export async function handleAddItem(message, sender, sendResponse) {
         sendResponse({ status: "error", error });
     }
 }
+
+// Edits the notes of an item
+export async function handleEditItem(message, sender, sendResponse) {
+    const { accessToken, notes, cartId, itemId } = message.data;
+    console.log(notes);
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "Invalid item data" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/items/${itemId}/edit-note`;
+    try {
+        const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: { 
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json" 
+        },
+        body: JSON.stringify({ new_note: notes }),
+        });
+
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error editing notes:", error);
+        sendResponse({ status: "error", message: error.message });
+    }
+}
+
+// Deletes an item from a cart
+export async function handleDeleteItem(message, sender, sendResponse) {
+    const { accessToken, cartId, itemId } = message.data;
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "Invalid item data" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/${cartId}/items/${itemId}`;
+    try {
+        const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}`, },
+        });
+
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error deleting item:", error);
+        sendResponse({ status: "error", message: error.message });
+    }
+}
+
