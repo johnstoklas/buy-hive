@@ -65,9 +65,27 @@ function OrganizationSection({
   }, [isEditing]);
 
   const handleExpandClick = () => {
-    if (!itemsInFolder || itemsInFolder.length === 0) return;
     if (isLocked) return;
-    setIsExpanded(!isExpanded);
+    if (isExpanded) {
+      setIsExpanded(false);
+      return;
+    }
+    if (userData) {
+      // setIsLoading(true);
+      chrome.runtime.sendMessage(
+        { action: "fetchItems", data: { accessToken: userData, cartId: sectionId } },
+        (response) => {
+          if (response?.status === "success") {
+            console.log(response.data);
+            setItemsInFolder(response.data);
+          } else {
+            console.error("Error fetching data:", response?.message);
+          }
+          // setIsLoading(false);
+        }
+      );
+    }
+    setIsExpanded(true);
   };
   
   const handleModifyClick = () => {
@@ -265,26 +283,22 @@ function OrganizationSection({
         )}
       </section>
       <div className="expand-section-expanded-display" ref={expandedSectionRef}>
-      {organizationSections
-        .filter(section => section.cart_id === sectionId)
-        .flatMap(section => (
-          isExpanded ? (
-            isLoading ? [] : (
-              section.items.map((item) => (
-                <ExpandSection
-                  key={item.item_id}
-                  item={item}
-                  cartId={sectionId}
-                  itemId={item.item_id}
-                  cartsArray={organizationSections}
-                  itemsInFolder={section.items} // <- items live inside the matched section
-                  setItemsInFolder={setItemsInFolder}
-                  showNotification={showNotification}
-                />
-              ))
-            )
-          ) : []
-      ))}
+        {isExpanded ? (
+          isLoading ? [] : (
+            itemsInFolder.map((item) => (
+              <ExpandSection
+                key={item.item_id}
+                item={item}
+                cartId={sectionId}
+                itemId={item.item_id}
+                cartsArray={organizationSections}
+                itemsInFolder={itemsInFolder} // <- items live inside the matched section
+                setItemsInFolder={setItemsInFolder}
+                showNotification={showNotification}
+              />
+            ))
+          )
+        ) : []}
       </div>
     </div>
   );

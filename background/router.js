@@ -1,5 +1,5 @@
-import { handleFetchData } from "./items/itemsService.js";
-import { handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
+import { handleFetchItems, handleAddItem } from "./items/itemsService.js";
+import { handleFetchCarts, handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
 
 export async function handleMessage(message, sender, sendResponse) {
     switch (message.action) {
@@ -9,8 +9,11 @@ export async function handleMessage(message, sender, sendResponse) {
         // case "sendImageData":
         //     handleScrapeImage(message, sender, sendResponse);
         //     return true;
-        case "fetchData":
-            handleFetchData(message, sender, sendResponse);
+        case "fetchCarts":
+            handleFetchCarts(message, sender, sendResponse);
+            return true;
+        case "fetchItems":
+            handleFetchItems(message, sender, sendResponse);
             return true;
         // case "fetchFolderItems":
         //     handleFetchItems(message, sender, sendResponse);
@@ -33,9 +36,9 @@ export async function handleMessage(message, sender, sendResponse) {
         // case "deleteItemAll":
         //     handleDeleteItemAll(message, sender, sendResponse);
         //     return true;
-        // case "addItem":
-        //     handleAddItem(message, sender, sendResponse);
-        //     return true;
+        case "addItem":
+            handleAddItem(message, sender, sendResponse);
+            return true;
         // case "moveItem":
         //     handleMoveItem(message, sender, sendResponse);
         //     return true;

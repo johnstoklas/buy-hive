@@ -61,71 +61,23 @@ function Footer({
 
             chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
                 if (response?.success) {
-                console.log(response.data);
+                    const res = response.data;
+                    const scraped_data = {
+                        product_name: res.name,
+                        price: res.price,
+
+                    }
+                    setScrapedData(scraped_data);
+                    setScrapedImage(res.image);
+                    
                 } else {
-                console.error(response?.error);
+                    console.error(response?.error);
                 }
             }
             );
         });
 
 
-    }
-
-    // Gathers all images from the page
-    const gatherImageData = () => {
-        console.log("CURRENT: ", currentUrl);
-        chrome.scripting.executeScript({
-            target: { tabId: tabId },
-            func: () => {
-                return Array.from(document.querySelectorAll("img")).map(img => ({
-                    src: img.src,
-                    width: img.naturalWidth,
-                    height: img.naturalHeight
-                }));
-            },
-        }, (results) => {
-            if (results && results[0]?.result) {
-                const imageSources = results[0].result;
-                //console.log("Images found, length of: ", imageSources.length, " , ", imageSources);
-
-                const imageSourcesLarge = [];
-
-                imageSources.forEach(img => {
-                    console.log(img.width);
-                    if (img.width > 20 && img.height > 20) { 
-                        imageSourcesLarge.push(img);
-                    }
-                });
-
-                //console.log("filtered for size, length of:", imageSourcesLarge.length, " , ", imageSourcesLarge)
-
-                let imagePlainText = "";
-                imageSources.map((img) => {
-                    imagePlainText += img.src;
-                    imagePlainText += ", ";
-                });
-
-                //console.log(imagePlainText)
-                const data = {
-                    imageData: imagePlainText,
-                    url: currentUrl,
-                }
-                chrome.runtime.sendMessage({action: "sendImageData", data:data }, (response) => {
-                    if(response?.status === 'success' && !error) {
-                        console.log("image data: ", response.data);
-                        setScrapedImage(response.data);
-                    }
-                    else {
-                        setError(response?.message);
-                    }
-                })
-            } else {
-                console.error("Failed to get images or no images found.");
-                setError("failed to get images")
-            }
-            }
-        );
     }
 
     // Handles adding a new folder
@@ -165,20 +117,22 @@ function Footer({
     };
 
     // Add Item Button
-    const handleScrapeClick = () => {     
-        const allUrls = organizationSections.flatMap(section => 
-            section.items.map(item => item.url)
-        );
+    const handleScrapeClick = () => {  
+        // var alreadyIn = false;
+        // console.log("org secs", organizationSections);
+        // if (organizationSections.length !== 0) {
+        //     const allUrls = organizationSections.flatMap(section => 
+        //         section.items.map(item => item.url)
+        //     );
+        //     alreadyIn = allUrls.includes(currentUrl);   
+        // }
 
-        const alreadyIn = allUrls.includes(currentUrl);
-
-        if(!isLocked && !error && !alreadyIn) {
+        if(!isLocked && !error) {
             setAddItemState(!addItemState);
             setAddFileState(false);
             setSignInState(false);
             if(!addItemState) {
                 gatherPriceTitleData();
-                // gatherImageData();
             }
         }
         // else if(!isLocked && error && !alreadyIn) {

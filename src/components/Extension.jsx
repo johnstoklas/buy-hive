@@ -106,7 +106,7 @@ const Extension = () => {
     if (userData) {
       setIsLoading(true);
       chrome.runtime.sendMessage(
-        { action: "fetchData", data: { accessToken: userData } },
+        { action: "fetchCarts", data: { accessToken: userData } },
         (response) => {
           if (response?.status === "success") {
             console.log(response.data);
