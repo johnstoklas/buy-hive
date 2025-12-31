@@ -5,28 +5,26 @@ export function useTokenResponder() {
   const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    const handler = async (
-      msg: any,
-      sender: chrome.runtime.MessageSender,
-      sendResponse: (res?: any) => void
-    ) => {
-      if (msg.action === "requestAccessToken" && sender.id === chrome.runtime.id) {
-        const accessToken = await getAccessTokenSilently({
-          authorizationParams: {
-            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-          }
-        });
-        sendResponse({ status: "success", data: accessToken });
-        return true;
-      }
-      else {
-        sendResponse({ status: "error", message: "Invalid request" });
-        return false;
-      }
-    };
+    const handler = (msg, sender, sendResponse) => {
+      if (msg.action !== "requestAccessToken") return;
 
+      (async () => {
+        try {
+          const token = await getAccessTokenSilently({
+            authorizationParams: {
+              audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+            },
+          });
+
+          sendResponse({ status: "success", data: token });
+        } catch (e) {
+          sendResponse({ status: "error", message: "Token failed" });
+        }
+      })();
+
+      return true;
+    };
 
     chrome.runtime.onMessage.addListener(handler);
     return () => chrome.runtime.onMessage.removeListener(handler);
-  }, [getAccessTokenSilently]);
-}
+  }, [getAccessTokenSilently]); }

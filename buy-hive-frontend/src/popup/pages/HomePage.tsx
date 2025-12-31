@@ -1,11 +1,12 @@
-import type { Cart } from "@/types/Carts";
+import type { CartType } from "@/types/CartType";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
+import Cart from "../modules/cartModules/Cart";
 
 interface HomePageProps {
-    carts: Cart[];
-    setCarts: Dispatch<SetStateAction<Cart[]>>;
+    carts: CartType[];
+    setCarts: Dispatch<SetStateAction<CartType[]>>;
     popupLoading: boolean;
     setPopupLoading: Dispatch<SetStateAction<boolean>>;
 }
@@ -15,23 +16,23 @@ const HomePage = ({ carts, popupLoading } : HomePageProps) => {
     if (popupLoading) return (<div className="spinner-loader"></div>)
     return (
         <section 
+            className="flex flex-col gap-2 w-full px-4 pt-2"
             id="organization-section" 
             // style={{ overflowY: 'auto', maxHeight: '400px' }}
             // ref={organizationSectionRef}
         >
             {carts.length > 0 ? (
                 carts.map((cart) => (
-                    cart.name
-                    // <
-                    // cart={cart}
-                    // organizationSections={organizationSections}
-                    // setOrganizationSections={setOrganizationSections}
-                    // handleUpdateItem={handleUpdateItem}
-                    // fetchOrganizationSections={fetchOrganizationSections}
-                    // isLoading={isLoading}
-                    // setIsLoading={setIsLoading}
-                    // showNotification={showNotification}
-                    // />
+                    <Cart
+                        cart={cart}
+                        // organizationSections={organizationSections}
+                        // setOrganizationSections={setOrganizationSections}
+                        // handleUpdateItem={handleUpdateItem}
+                        // fetchOrganizationSections={fetchOrganizationSections}
+                        // isLoading={isLoading}
+                        // setIsLoading={setIsLoading}
+                        // showNotification={showNotification}
+                    />
                 ))
                 ) : (
                 <div className="organization-section-empty">

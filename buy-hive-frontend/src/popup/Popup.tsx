@@ -7,7 +7,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import HomePage from "./pages/HomePage";
 import AddCart from "./modules/AddCart";
 import { useTokenResponder } from "./auth/tokenResponder";
-import type { Cart } from "@/types/Carts";
+import type { Cart } from "@/types/CartType";
 
 const Popup = () => {
   useTokenResponder();
@@ -97,13 +97,6 @@ const Popup = () => {
   //   );
   // };
 
-  useEffect(() => {
-    if (isLoading) return;
-    if (!isAuthenticated) return;
-
-    handleGetCarts();
-  }, [isLoading, isAuthenticated]);
-
   const handleGetCarts = () => {
     if (isLoading || !isAuthenticated) return;
     setPopupLoading(true);
@@ -125,6 +118,15 @@ const Popup = () => {
     });
     setPopupLoading(false);
   };
+  
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isAuthenticated) return;
+
+    handleGetCarts();
+  }, [isLoading, isAuthenticated]);
+
+  
 
   // useEffect(() => {
   //   fetchOrganizationSections();
@@ -134,7 +136,7 @@ const Popup = () => {
       // <LockedProvider>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <div className="flex flex-1 justify-center items-center pt-14 pb-14">
+        <div className="flex flex-1 justify-center pt-14 pb-14">
           {accountPageVisible && <AccountPage />}
           {!accountPageVisible && <HomePage 
             carts={carts}

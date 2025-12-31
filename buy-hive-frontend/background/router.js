@@ -1,5 +1,5 @@
-import { handleGetCarts } from "./items/itemsService.js";
-import { handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
+import { handleGetCarts, handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
+import { handleGetItems } from "./items/itemsService.js";
 
 export async function handleMessage(message, sender, sendResponse) {
     switch (message.action) {
@@ -12,9 +12,6 @@ export async function handleMessage(message, sender, sendResponse) {
         case "getCarts":
             handleGetCarts(message, sender, sendResponse);
             return true;
-        // case "fetchFolderItems":
-        //     handleFetchItems(message, sender, sendResponse);
-        //     return true;
         case "addNewCart":
             handleAddNewCart(message, sender, sendResponse);
             return true;
@@ -23,6 +20,9 @@ export async function handleMessage(message, sender, sendResponse) {
             return true;
         case "deleteFolder":
             handleDeleteCart(message, sender, sendResponse);
+            return true;
+        case "getItems":
+            handleGetItems(message, sender, sendResponse);
             return true;
         // case "editNotes":
         //     handleEditNotes(message, sender, sendResponse);

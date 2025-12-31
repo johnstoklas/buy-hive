@@ -1,13 +1,14 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import type { Cart } from '@/types/Carts';
+import type { Cart } from '@/types/CartType';
 import { useAuth0 } from '@auth0/auth0-react';
 
 interface AddFileProps {
     carts: Cart[]
     setCarts: Dispatch<SetStateAction<Cart[]>>;
 }
+
 const AddFile = ({carts, setCarts} : AddFileProps) => {
     const [cartName, setCartName] = useState("");
     // const [isAnimating, setIsAnimating] = useState(false);

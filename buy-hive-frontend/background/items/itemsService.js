@@ -2,15 +2,15 @@ import { getAccessToken } from "../auth/authService.js";
 
 const apiUrl = "https://buyhive-backend-production.up.railway.app"
 
-export async function handleGetCarts(message, sender, sendResponse) {
+export async function handleGetItems(message, sender, sendResponse) {
     const accessToken = await getAccessToken();
-    console.log("access token", accessToken);
+    const { cartId } = message.data;
     if (!accessToken) {
         sendResponse({ status: "error", message: "User must be signed in"});
         return;
     }
 
-    const endpoint = `${apiUrl}/carts`;
+    const endpoint = `${apiUrl}/carts/${cartId}/items`;
     try {
         const response = await fetch(endpoint, {
             method: "GET",
