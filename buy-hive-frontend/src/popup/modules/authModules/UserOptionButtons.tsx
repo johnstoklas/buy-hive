@@ -1,7 +1,11 @@
 import Button from '@/popup/ui/button';
 import { useAuth0 } from '@auth0/auth0-react';
+import type { Dispatch, SetStateAction } from 'react';
 
-const UserOptionButtons = () => {
+interface UserOptioButtonsProps {
+  setAccountPageVisible: Dispatch<SetStateAction<boolean>>,
+}
+const UserOptionButtons = ({setAccountPageVisible} : UserOptioButtonsProps) => {
   const { isAuthenticated, logout } = useAuth0();
   const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 
@@ -19,8 +23,8 @@ const UserOptionButtons = () => {
   };
 
   return (
-      <div className="flex flex-col">
-        <Button> 
+      <div className="flex flex-col gap-2">
+        <Button onClick={() => setAccountPageVisible(false)}> 
           View Items 
         </Button>
         <Button onClick={() => window.open('https://buyhive.dev/report', '_blank')}>

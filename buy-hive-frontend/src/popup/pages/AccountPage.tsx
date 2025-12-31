@@ -5,8 +5,12 @@ import LoginSignupButtons from '../modules/authModules/LoginSignupButtons';
 import UserOptioButtons from '../modules/authModules/UserOptionButtons';
 import Profile from '../modules/authModules/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
+import type { Dispatch, SetStateAction } from 'react';
 
-const AccountPage = () => {
+interface AccountPageProps {
+  setAccountPageVisible: Dispatch<SetStateAction<boolean>>,
+}
+const AccountPage = ({setAccountPageVisible} : AccountPageProps) => {
   const { isLoading, isAuthenticated } = useAuth0();
 
   return (
@@ -16,11 +20,15 @@ const AccountPage = () => {
           ) : (
             <>           
               {!isAuthenticated ? (
-                  <LoginSignupButtons />
+                  <LoginSignupButtons 
+                  
+                  />
                   ) : (
-                  <div className='flex flex-col'>
+                  <div className='flex flex-col gap-4'>
                       <Profile/>
-                      <UserOptioButtons />
+                      <UserOptioButtons 
+                        setAccountPageVisible={setAccountPageVisible}
+                      />
                   </div>
               )}
             </>

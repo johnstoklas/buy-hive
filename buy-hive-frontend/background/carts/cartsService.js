@@ -32,8 +32,8 @@ export async function handleGetCarts(message, sender, sendResponse) {
 };
 
 export async function handleAddNewCart(message, sender, sendResponse) {
+  const accessToken = await getAccessToken();
   const { cartName } = message.data;
-  const accessToken = getAccessToken();
 
   if (!accessToken) {
     sendResponse({ status: "error", message: "User must be signed in" });

@@ -8,11 +8,12 @@ interface FooterProps {
     addCartVisible: boolean;
     setAddCartVisible: Dispatch<SetStateAction<boolean>>;
 }
-const Footer = ({ setAccountPageVisible, setAddCartVisible } : FooterProps) => {
+const Footer = ({ accountPageVisible, setAccountPageVisible, addCartVisible, setAddCartVisible } : FooterProps) => {
     const togglePage = (type: string) => {
         setAccountPageVisible(false);
         setAddCartVisible(false);
-        if (type === "cart") setAddCartVisible(true);
+        if (type === "cart") setAddCartVisible(!addCartVisible);
+        if (type === "account") setAccountPageVisible(!accountPageVisible)
     }
     // const [addItemState, setAddItemState] = useState(false); // toggles visiblity for add item
     // const [signInState, setSignInState] = useState(false); // toggles visiblity for profile page
@@ -201,7 +202,7 @@ const Footer = ({ setAccountPageVisible, setAddCartVisible } : FooterProps) => {
             </button>
             <button 
                 className='hover:cursor-pointer'
-                onClick={() => setAccountPageVisible(true)}
+                onClick={() => togglePage("account")}
             >
                 <FontAwesomeIcon icon={faUser} />
             </button>

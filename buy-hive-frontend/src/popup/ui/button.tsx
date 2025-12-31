@@ -8,7 +8,7 @@ const Button = ({ className, ...props }: ButtonProps) => {
   return (
     <button
       {...props}
-      className={`bg-[var(--accent-color)] px-4 py-2 rounded-2xl hover:cursor-pointer ${className}`}
+      className={`bg-[var(--secondary-background)] px-4 py-2 rounded-2xl hover:cursor-pointer hover:bg-[var(--accent-color)] ${className}`}
     />
   );
 };

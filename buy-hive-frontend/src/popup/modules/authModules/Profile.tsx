@@ -32,10 +32,10 @@ const Profile = () => {
     }, [isLoading, isAuthenticated, user]);
 
     return (
-        <div className="flex flex-row">
-            {user?.picture && <img src={user.picture} alt={user?.name} className="profile-image"/>}
+        <div className="flex flex-row gap-2">
+            {user?.picture && <img src={user.picture} alt="" className="rounded-full w-16 h-16"/>}
             <div className="flex flex-col">
-                <h2> {user?.name} </h2>
+                <h2 className='font-bold'> {user?.name} </h2>
                 <h4> {user?.email} </h4>
             </div>                
         </div>

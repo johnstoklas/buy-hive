@@ -97,32 +97,31 @@ const Popup = () => {
   //   );
   // };
 
-  const handleGetCarts = () => {
-    if (isLoading || !isAuthenticated) return;
-    setPopupLoading(true);
-    chrome.runtime.sendMessage({ action: "getCarts" }, (response) => {
-      if (response?.status === "success" && response?.data) {
-          console.log(response.data);
-          setCarts(response.data.carts || []);
-          // showNotification("Succesfully Added Folder!", true);
-
-          // if (organizationSectionRef.current) {
-          //     organizationSectionRef.current.scrollTo({
-          //         top: organizationSectionRef.current.scrollHeight,
-          //         behavior: 'smooth'
-          //     });
-          // }
-      } else {
-          console.error(response?.message);
-      }
-    });
-    setPopupLoading(false);
-  };
+  
   
   useEffect(() => {
-    if (isLoading) return;
-    if (!isAuthenticated) return;
+    const handleGetCarts = () => {
+      if (isLoading || !isAuthenticated) return;
+      setPopupLoading(true);
+      chrome.runtime.sendMessage({ action: "getCarts" }, (response) => {
+        if (response?.status === "success" && response?.data) {
+            console.log(response.data);
+            setCarts(response.data.carts || []);
+            // showNotification("Succesfully Added Folder!", true);
 
+            // if (organizationSectionRef.current) {
+            //     organizationSectionRef.current.scrollTo({
+            //         top: organizationSectionRef.current.scrollHeight,
+            //         behavior: 'smooth'
+            //     });
+            // }
+        } else {
+            console.error(response?.message);
+        }
+        setPopupLoading(false);
+      });
+    };
+    
     handleGetCarts();
   }, [isLoading, isAuthenticated]);
 
@@ -137,7 +136,9 @@ const Popup = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <div className="flex flex-1 justify-center pt-14 pb-14">
-          {accountPageVisible && <AccountPage />}
+          {accountPageVisible && <AccountPage
+            setAccountPageVisible={setAccountPageVisible}
+          />}
           {!accountPageVisible && <HomePage 
             carts={carts}
             setCarts={setCarts}

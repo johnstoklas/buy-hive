@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import Button from '../../ui/button';
 
-const LoginSignupButtons = () => {
+const LoginSignupButtons = ({}) => {
     const { loginWithPopup } = useAuth0();
 
     const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;

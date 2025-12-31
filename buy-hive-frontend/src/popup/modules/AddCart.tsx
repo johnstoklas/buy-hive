@@ -1,15 +1,15 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import type { Cart } from '@/types/CartType';
+import type { CartType } from '@/types/CartType';
 import { useAuth0 } from '@auth0/auth0-react';
 
 interface AddFileProps {
-    carts: Cart[]
-    setCarts: Dispatch<SetStateAction<Cart[]>>;
+    carts: CartType[]
+    setCarts: Dispatch<SetStateAction<CartType[]>>;
 }
 
-const AddFile = ({carts, setCarts} : AddFileProps) => {
+const AddCart = ({carts, setCarts} : AddFileProps) => {
     const [cartName, setCartName] = useState("");
     // const [isAnimating, setIsAnimating] = useState(false);
 
@@ -20,37 +20,32 @@ const AddFile = ({carts, setCarts} : AddFileProps) => {
 
     // Handles adding a new folder
     const handleAddCart = (cartName: string) => {  
-        if(isLoading) return;
-        if(!isAuthenticated) {
-            // showNotification("Error Adding Folder", false);
-            return;
-        } 
+        if(isLoading || !isAuthenticated) return;
 
         const trimmedCartName = cartName.trim();
-        const isDuplicate = carts.some((cart) => cart.name === trimmedCartName);
+        const isDuplicate = carts.some((cart) => cart.cart_name === trimmedCartName);
         if (isDuplicate || !trimmedCartName) {
             // showNotification("Invalid Folder Name", false);
             return;
         }
 
         const data = { cartName: trimmedCartName };
-        console.log("sending data to the backend", data);
         chrome.runtime.sendMessage({ action: "addNewCart", data }, (response) => {
-        if (response?.status === "success" && response?.data) {
-            setCarts((prev) => [...prev, response.data]);
-            setCartName("");
-            // showNotification("Succesfully Added Folder!", true);
+            if (response?.status === "success" && response?.data) {
+                setCarts((prev) => [...prev, response.data]);
+                setCartName("");
+                // showNotification("Succesfully Added Folder!", true);
 
-            // if (organizationSectionRef.current) {
-            //     organizationSectionRef.current.scrollTo({
-            //         top: organizationSectionRef.current.scrollHeight,
-            //         behavior: 'smooth'
-            //     });
-            // }
-        } else {
-            console.error(response?.message);
-            // showNotification("Error Adding Folder", false);
-        }
+                // if (organizationSectionRef.current) {
+                //     organizationSectionRef.current.scrollTo({
+                //         top: organizationSectionRef.current.scrollHeight,
+                //         behavior: 'smooth'
+                //     });
+                // }
+            } else {
+                console.error(response?.message);
+                // showNotification("Error Adding Folder", false);
+            }
         });
     };
 
@@ -82,8 +77,7 @@ const AddFile = ({carts, setCarts} : AddFileProps) => {
 //   return (isVisible || isAnimating) ? (
     return (
         <div 
-            // id="add-file-section"
-            className="flex mx-1 py-2 fixed bottom-14 w-full bg-[var(--secondary-background)] text-var(--text-color) justify-center"
+            className="flex my-2 py-2 px-2 gap-2 fixed bottom-14 w-full bg-[var(--secondary-background)] text-var(--text-color)"
             //   className={isVisible ? "slide-in-add-file" : "slide-out-add-file"} 
             //   ref={addFile}
             //   onAnimationEnd={() => {
@@ -92,8 +86,7 @@ const AddFile = ({carts, setCarts} : AddFileProps) => {
         > 
             <input 
                 type="text" 
-                // id="file-title" 
-                className="max-w-5xl mx-auto bg-[#eaeaea] p-1"
+                className="flex-1 bg-[#eaeaea] p-1"
                 placeholder="Cart Name" 
                 value={cartName} 
                 onChange={(e) => setCartName(e.target.value)}
@@ -101,8 +94,7 @@ const AddFile = ({carts, setCarts} : AddFileProps) => {
             />
             <button 
                 type="button" 
-                // id="submit-file" 
-                className="max-w-xl mx-auto bg-[var(--accent-color)] p-1"
+                className="shrink-0 bg-[var(--accent-color)] p-1 hover:cursor-pointer"
                 onClick={() => handleAddCart(cartName)} 
             >
                 <FontAwesomeIcon icon={faCheck} />
@@ -111,4 +103,4 @@ const AddFile = ({carts, setCarts} : AddFileProps) => {
     )
 };
 
-export default AddFile;
+export default AddCart;
