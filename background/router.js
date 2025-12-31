@@ -1,4 +1,4 @@
-import { handleFetchItems, handleAddItem, handleEditItem, handleDeleteItem, handleMoveItem} from "./items/itemsService.js";
+import { handleFetchItems, handleAddItem, handleEditItem, handleDeleteItem, handleMoveItem, handleDeleteItemAll} from "./items/itemsService.js";
 import { handleFetchCarts, handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
 
 export async function handleMessage(message, sender, sendResponse) {
@@ -30,9 +30,9 @@ export async function handleMessage(message, sender, sendResponse) {
         case "editItem":
             handleEditItem(message, sender, sendResponse);
             return true;
-        // case "deleteItemAll":
-        //     handleDeleteItemAll(message, sender, sendResponse);
-        //     return true;
+        case "deleteItemAll":
+            handleDeleteItemAll(message, sender, sendResponse);
+            return true;
         case "addItem":
             handleAddItem(message, sender, sendResponse);
             return true;

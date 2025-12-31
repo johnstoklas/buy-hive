@@ -170,3 +170,30 @@ export async function handleMoveItem(message, sender, sendResponse) {
     }
 }
 
+// Deletes all item from a cart
+export async function handleDeleteItemAll(message, sender, sendResponse) {
+    const { accessToken, itemId } = message.data;
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "Invalid item data" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/items/${itemId}/nuke`;
+    try {
+        const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}`, }
+        });
+
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error deleting item all:", error);
+        sendResponse({ status: "error", message: error.message });
+    }
+}
+
