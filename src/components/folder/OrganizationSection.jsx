@@ -12,7 +12,7 @@ function OrganizationSection({
   fetchOrganizationSections,
   showNotification,
 }) {
-  const { cart_id: sectionId, cart_name: title, items } = cart;
+  const { cart_id: sectionId, cart_name: title, items, item_count: item_count } = cart;
   
   const [sectionHeight, setSectionHeight] = useState("45px");
   const [sectionTitle, setSectionTitle] = useState(title);
@@ -65,11 +65,29 @@ function OrganizationSection({
   }, [isEditing]);
 
   const handleExpandClick = () => {
-    if (!itemsInFolder || itemsInFolder.length === 0) return;
     if (isLocked) return;
-    setIsExpanded(!isExpanded);
+    if (isExpanded) {
+      setIsExpanded(false);
+      return;
+    }
+    if (userData) {
+      // setIsLoading(true);
+      chrome.runtime.sendMessage(
+        { action: "fetchItems", data: { accessToken: userData, cartId: sectionId } },
+        (response) => {
+          if (response?.status === "success") {
+            console.log(response.data.items);
+            setItemsInFolder(response.data.items);
+            setIsExpanded(true);
+          } else {
+            console.error("Error fetching data:", response?.message);
+          }
+          // setIsLoading(false);
+        }
+      );
+    }
   };
-  
+
   const handleModifyClick = () => {
     if (!modOrgHidden && !isLocked) {
       setModifyOrgSec((prev) => !prev);
@@ -240,7 +258,7 @@ function OrganizationSection({
             </h4>
           )}
 
-          <h4 className="expand-section-items">{itemsInFolder ? itemsInFolder.length : 0}</h4>
+          <h4 className="expand-section-items">{item_count}</h4>
           <button 
             className={!isLocked ? "expand-section-modify" : "expand-section-modify disabled-hover-modify"} 
             onClick={handleModifyClick}>
@@ -265,26 +283,19 @@ function OrganizationSection({
         )}
       </section>
       <div className="expand-section-expanded-display" ref={expandedSectionRef}>
-      {organizationSections
-        .filter(section => section.cart_id === sectionId)
-        .flatMap(section => (
-          isExpanded ? (
-            isLoading ? [] : (
-              section.items.map((item) => (
-                <ExpandSection
-                  key={item.item_id}
-                  item={item}
-                  cartId={sectionId}
-                  itemId={item.item_id}
-                  cartsArray={organizationSections}
-                  itemsInFolder={section.items} // <- items live inside the matched section
-                  setItemsInFolder={setItemsInFolder}
-                  showNotification={showNotification}
-                />
-              ))
-            )
-          ) : []
-      ))}
+        {itemsInFolder && itemsInFolder.map((item) => (
+          <ExpandSection
+            key={item.item_id}
+            item={item}
+            cartId={sectionId}
+            itemId={item.item_id}
+            cartsArray={organizationSections}
+            itemsInFolder={itemsInFolder} // <- items live inside the matched section
+            setItemsInFolder={setItemsInFolder}
+            showNotification={showNotification}
+          />
+        ))
+        }
       </div>
     </div>
   );

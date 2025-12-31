@@ -1,5 +1,5 @@
-import { handleFetchData } from "./items/itemsService.js";
-import { handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
+import { handleFetchItems, handleAddItem, handleEditItem, handleDeleteItem, handleMoveItem, handleDeleteItemAll} from "./items/itemsService.js";
+import { handleFetchCarts, handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
 
 export async function handleMessage(message, sender, sendResponse) {
     switch (message.action) {
@@ -9,12 +9,9 @@ export async function handleMessage(message, sender, sendResponse) {
         // case "sendImageData":
         //     handleScrapeImage(message, sender, sendResponse);
         //     return true;
-        case "fetchData":
-            handleFetchData(message, sender, sendResponse);
+        case "fetchCarts":
+            handleFetchCarts(message, sender, sendResponse);
             return true;
-        // case "fetchFolderItems":
-        //     handleFetchItems(message, sender, sendResponse);
-        //     return true;
         case "addNewCart":
             handleAddNewCart(message, sender, sendResponse);
             return true;
@@ -24,21 +21,24 @@ export async function handleMessage(message, sender, sendResponse) {
         case "deleteFolder":
             handleDeleteCart(message, sender, sendResponse);
             return true;
-        // case "editNotes":
-        //     handleEditNotes(message, sender, sendResponse);
-        //     return true;
-        // case "deleteItem":
-        //     handleDeleteItem(message, sender, sendResponse);
-        //     return true;
-        // case "deleteItemAll":
-        //     handleDeleteItemAll(message, sender, sendResponse);
-        //     return true;
-        // case "addItem":
-        //     handleAddItem(message, sender, sendResponse);
-        //     return true;
-        // case "moveItem":
-        //     handleMoveItem(message, sender, sendResponse);
-        //     return true;
+        case "fetchItems":
+            handleFetchItems(message, sender, sendResponse);
+            return true;
+        case "editItem":
+            handleEditItem(message, sender, sendResponse);
+            return true;
+        case "deleteItemAll":
+            handleDeleteItemAll(message, sender, sendResponse);
+            return true;
+        case "addItem":
+            handleAddItem(message, sender, sendResponse);
+            return true;
+        case "deleteItem":
+            handleDeleteItem(message, sender, sendResponse);
+            return true;
+        case "moveItem":
+            handleMoveItem(message, sender, sendResponse);
+            return true;
         // case "updateItems":
         //     updateItems(message, sender, sendResponse);
         //     return true;

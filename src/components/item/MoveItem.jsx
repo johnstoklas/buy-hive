@@ -36,13 +36,12 @@ const MoveItem = ({
     }
 
     // Moves item to carts
-    const handleMoveItem = (itemId, selectedCarts, unselectedCarts) => {
+    const handleMoveItem = (itemId, selectedCarts) => {
 
         const data = {
             accessToken: userData,
             itemId: itemId,
             selectedCarts: selectedCarts,
-            unselectedCarts: unselectedCarts,
         }
 
         chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
@@ -64,29 +63,8 @@ const MoveItem = ({
 
     const submitMoveItem = () => {
         if(selectedFolders) {
-            
-            const unselectedFolders = [];
-            console.log(cartsArray);
-
-            cartsArray.forEach(cart => {
-                if (cart.cart_id === cartId) {
-                    cart.items.forEach(item => {
-                        if (item.item_id === itemId) {
-                            // Get all selected cart IDs where the item is present
-                            const selectedCartIds = new Set(item.selected_cart_ids);
-                            
-                            // Collect carts where the item is NOT present
-                            cartsArray.forEach(c => {
-                                if (!selectedCartIds.has(c.cart_id)) {
-                                    unselectedFolders.push(c.cart_id);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-            
-            handleMoveItem(itemId, selectedFolders, unselectedFolders);
+            console.log("carts: ", cartsArray);
+            handleMoveItem(itemId, selectedFolders);
             closeMoveItemPopup();
         }
     }

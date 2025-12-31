@@ -10,11 +10,16 @@ const redirectUri = process.env.REACT_APP_REDIRECT_URI;
 ReactDOM.render(
   <React.StrictMode>
     <Auth0Provider
-    domain={domain}
-    clientId={clientId}
-    authorizationParams={{redirect_uri: `chrome-extension:${redirectUri}/popup.html`}}
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={{
+          redirect_uri: `chrome-extension:${redirectUri}/popup.html`,
+          scope: 'openid profile email offline_access',
+        }}
+        useRefreshTokens={true}
+        cacheLocation='localstorage'
     >
-    <Popup />
+      <Popup />
     </Auth0Provider>
   </React.StrictMode>,
   document.getElementById('root') // Ensure this matches your 'popup.html'
