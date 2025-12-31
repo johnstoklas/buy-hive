@@ -12,9 +12,6 @@ export async function handleMessage(message, sender, sendResponse) {
         case "fetchCarts":
             handleFetchCarts(message, sender, sendResponse);
             return true;
-        // case "fetchFolderItems":
-        //     handleFetchItems(message, sender, sendResponse);
-        //     return true;
         case "addNewCart":
             handleAddNewCart(message, sender, sendResponse);
             return true;
