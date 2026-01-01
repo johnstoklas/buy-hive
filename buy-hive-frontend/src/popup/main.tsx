@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import Popup from './Popup.tsx';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { LockedProvider } from './context/LockedProvider.tsx';
+import { CartsProvider } from './context/CartsProvider.tsx';
 // import { UserProvider } from './context/UserProvider.tsx';
 
 const AUTH0_DOMAIN = import.meta.env.VITE_AUTH0_DOMAIN;
@@ -24,7 +25,9 @@ createRoot(document.getElementById('root')!).render(
     >
       {/* <UserProvider> */}
       <LockedProvider>
-        <Popup />
+        <CartsProvider>
+          <Popup />
+        </CartsProvider>
       </LockedProvider>
       {/* </UserProvider> */}
     </Auth0Provider>

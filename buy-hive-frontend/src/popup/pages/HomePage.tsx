@@ -1,17 +1,17 @@
-import type { CartType } from "@/types/CartType";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
+import { useCarts } from "../context/CartsProvider";
 
 interface HomePageProps {
-    carts: CartType[];
-    setCarts: Dispatch<SetStateAction<CartType[]>>;
     popupLoading: boolean;
     setPopupLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const HomePage = ({ carts, popupLoading } : HomePageProps) => {
+const HomePage = ({ popupLoading } : HomePageProps) => {
+
+    const { carts } = useCarts();
 
     if (popupLoading) return (<div className="spinner-loader"></div>)
     return (

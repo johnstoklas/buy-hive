@@ -1,25 +1,22 @@
 import { useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import type { CartType } from '@/types/CartType';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useClickOutside } from '../hooks/useClickOutside';
+import { useCarts } from '../context/CartsProvider';
 
-interface AddCartProps {
-    carts: CartType[];
-    setCarts: Dispatch<SetStateAction<CartType[]>>;
+interface AddCartModalProps {
     addCartVisible: boolean;
     setAddCartVisibile: Dispatch<SetStateAction<boolean>>;
     addCartButtonRef: React.RefObject<HTMLElement | null>;
 }
 
-const AddCart = ({
-    carts, 
-    setCarts, 
+const AddCartModal = ({ 
     addCartVisible, 
     setAddCartVisibile, 
     addCartButtonRef
-} : AddCartProps) => {
+} : AddCartModalProps) => {
+    const { carts, setCarts } = useCarts();
     const { isAuthenticated, isLoading } = useAuth0();
 
     const [cartName, setCartName] = useState("");
@@ -32,19 +29,23 @@ const AddCart = ({
         const trimmedCartName = cartName.trim();
         const isDuplicate = carts.some((cart) => cart.cart_name === trimmedCartName);
         if (isDuplicate || !trimmedCartName) {
-            // showNotification("Invalid Folder Name", false);
+            // showNotification("Invalid Cart Name", false);
             return;
         }
 
         const data = { cartName: trimmedCartName };
         chrome.runtime.sendMessage({ action: "addNewCart", data }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+                return;
+            }
+            
             if (response?.status === "success" && response?.data) {
                 setCarts((prev) => [...prev, response.data]);
                 setCartName("");
-                // showNotification("Succesfully Added Folder!", true);
             } else {
                 console.error(response?.message);
-                // showNotification("Error Adding Folder", false);
+                // showNotification("Error Adding Cart", false);
             }
         });
     };
@@ -52,7 +53,7 @@ const AddCart = ({
     // Handles if user clicks outside of the component
     useClickOutside(addCartRef, addCartVisible, setAddCartVisibile, [addCartButtonRef]);
 
-    // Handles if user presses enter instead of check
+    // Handles if user presses enter instead of presses submit button
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             handleAddCart(cartName);
@@ -88,4 +89,4 @@ const AddCart = ({
     )
 };
 
-export default AddCart;
+export default AddCartModal;

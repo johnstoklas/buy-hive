@@ -5,9 +5,10 @@ import AccountPage from "./pages/AccountPage";
 import { useEffect, useRef, useState } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import HomePage from "./pages/HomePage";
-import AddCart from "./modules/AddCart";
+import AddCart from "./modals/AddCartModal";
 import { useTokenResponder } from "./hooks/tokenResponder";
 import type { Cart } from "@/types/CartType";
+import { useCarts } from "./context/CartsProvider";
 
 const Popup = () => {
   useTokenResponder();
@@ -15,7 +16,7 @@ const Popup = () => {
   const [addCartVisible, setAddCartVisible] = useState(false);
   const [popupLoading, setPopupLoading] = useState(false);
 
-  const [carts, setCarts] = useState<Cart[]>([]);
+  const { setCarts } = useCarts();
 
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
@@ -106,19 +107,23 @@ const Popup = () => {
       if (isLoading || !isAuthenticated) return;
       setPopupLoading(true);
       chrome.runtime.sendMessage({ action: "getCarts" }, (response) => {
-        if (response?.status === "success" && response?.data) {
-            console.log(response.data);
-            setCarts(response.data.carts || []);
-            // showNotification("Succesfully Added Folder!", true);
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
 
-            // if (organizationSectionRef.current) {
-            //     organizationSectionRef.current.scrollTo({
-            //         top: organizationSectionRef.current.scrollHeight,
-            //         behavior: 'smooth'
-            //     });
-            // }
+        if (response.status === "success") {
+          console.log(response.data);
+          setCarts(response.data.carts || []);
+          // if (organizationSectionRef.current) {
+          //     organizationSectionRef.current.scrollTo({
+          //         top: organizationSectionRef.current.scrollHeight,
+          //         behavior: 'smooth'
+          //     });
+          // }
         } else {
-            console.error(response?.message);
+          console.error(response.message);
+          // showNotification("Error Loading Data", false);
         }
         setPopupLoading(false);
       });
@@ -142,14 +147,10 @@ const Popup = () => {
             setAccountPageVisible={setAccountPageVisible}
           />}
           {!accountPageVisible && <HomePage 
-            carts={carts}
-            setCarts={setCarts}
             popupLoading={popupLoading}
             setPopupLoading={setPopupLoading}
           />}
           {addCartVisible && <AddCart 
-            carts={carts}
-            setCarts={setCarts}
             addCartVisible={addCartVisible}
             setAddCartVisibile={setAddCartVisible}
             addCartButtonRef={addCartButtonRef}

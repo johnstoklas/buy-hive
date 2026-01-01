@@ -15,7 +15,7 @@ export async function handleMessage(message, sender, sendResponse) {
         case "addNewCart":
             handleAddNewCart(message, sender, sendResponse);
             return true;
-        case "editFolder":
+        case "editCartName":
             handleEditCart(message, sender, sendResponse);
             return true;
         case "deleteFolder":

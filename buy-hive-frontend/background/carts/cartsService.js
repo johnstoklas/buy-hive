@@ -73,9 +73,14 @@ export async function handleAddNewCart(message, sender, sendResponse) {
 }
 
 export async function handleEditCart(message, sender, sendResponse) {
-  const { accessToken, cartId, newCartName } = message.data;
-  
-  if (!accessToken || !newCartName) {
+  const accessToken = await getAccessToken();
+  const { cartId, newCartName } = message.data;
+
+  if (!accessToken) {
+    sendResponse({ status: "error", message: "User must be signed in" });
+    return;
+  }
+  if (!newCartName) {
     sendResponse({ status: "error", message: "Invalid folder data" });
     return;
   }

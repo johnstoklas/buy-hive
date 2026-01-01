@@ -4,9 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useLocked } from '../../context/LockedProvider';
 import { useClickOutside } from '@/popup/hooks/useClickOutside';
+import type { CartType } from '@/types/CartType';
+import DeleteCartModal from '@/popup/modals/DeleteCartModal';
 // import ShareFolder from './ShareFolder.jsx';
 
 interface CartDropdownProps {
+    cart: CartType;
     cartDropdownVisible: boolean;
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     cartDropdownButtonRef: React.RefObject<HTMLElement | null>;
@@ -14,14 +17,16 @@ interface CartDropdownProps {
 }
 
 const CartDropdown = ({
+    cart,
     cartDropdownVisible, 
     setCartDropdownVisible, 
     cartDropdownButtonRef, 
     handleCartTitleSelect
 } : CartDropdownProps) => {
 
-    const [deletePopupVisible, setDeletePopupVisible] = useState(false);
+    const [deleteCartModal, setDeleteCartModal] = useState(false);
     const [sharePopupVisible, setSharePopupVisible] = useState(false);
+    const [cartDropdownHidden, setCartDropdownHidden] = useState(false);
 
     const { isLocked, setIsLocked } = useLocked();
 
@@ -31,8 +36,8 @@ const CartDropdown = ({
     useClickOutside(cartDropdownRef, cartDropdownVisible, setCartDropdownVisible, [cartDropdownButtonRef]);
 
     useEffect(() => {
-        setIsLocked(deletePopupVisible || sharePopupVisible);
-    }, [deletePopupVisible, sharePopupVisible]);
+        setIsLocked(deleteCartModal || sharePopupVisible);
+    }, [deleteCartModal, sharePopupVisible]);
   
     // Updates if modification screen should be visible when another popup appears
     //   useEffect(() => {
@@ -57,9 +62,14 @@ const CartDropdown = ({
             type={"folder"}
             setOrganizationSections={setOrganizationSections}
             />} */}
+            {deleteCartModal && <DeleteCartModal
+                cart={cart}
+                setCartDropdownHidden={setCartDropdownHidden}
+                setDeleteCartModal={setDeleteCartModal}
+            />}
 
             <div 
-                className="flex flex-col absolute gap-1 py-1 right-0 my-1 rounded-md bg-[var(--secondary-background)]" 
+                className={`flex flex-col absolute gap-1 py-1 right-0 my-1 rounded-md bg-[var(--secondary-background)] ${cartDropdownHidden ? "hidden" : ""}`} 
                 // ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }
                 ref={cartDropdownRef} 
             >
@@ -79,7 +89,7 @@ const CartDropdown = ({
                 </button>
                 <button     
                     className="flex flex-row items-center px-2 py-1 hover:bg-[var(--secondary-background-hover)] hover:cursor-pointer"
-                    onClick={() => setDeletePopupVisible(!deletePopupVisible)}
+                    onClick={() => setDeleteCartModal(!deleteCartModal)}
                 >
                     <FontAwesomeIcon icon={faTrashCan} />
                     <p> Delete </p>

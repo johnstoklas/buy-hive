@@ -2,6 +2,7 @@ import type { CartType } from "@/types/CartType";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import CartDropdown from "./CartDropdown";
+import { useCarts } from "@/popup/context/CartsProvider";
 
 interface CartTitleProps {
     cart: CartType;
@@ -14,7 +15,9 @@ interface CartTitleProps {
 
 const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderRef} : CartTitleProps) => {
 
-    const { isAuthenticated } = useAuth0();
+    const { carts, setCarts } = useCarts();
+    const { isLoading, isAuthenticated } = useAuth0();
+
     const { cart_id: cartId, cart_name, item_count } = cart;
     const [isEditing, setIsEditing] = useState(false); 
     const [cartTitle, setCartTitle] = useState(cart_name);
@@ -52,39 +55,50 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
         );
     };
 
-    
     // Handles editing a cart name
-    // const handleEditCartName = (newCartName, cartId) => {
-    //     if (!isAuthenticated || !cartId) return;
-    //     if (!newCartName.trim()) return;
+    const handleEditCartName = () => {
+        if (isLoading || !isAuthenticated || !cartId) return;
+        if (!cartTitle.trim()) return;
 
-    //     const isDuplicate = carts.some(
-    //         (cart) => cart.cart_name === newCartName.trim() && cart.cart_id !== cartId
-    //     );
-    //     if (isDuplicate) return;
+        const isDuplicate = carts.some(
+            (cart) => cart.cart_name === cartTitle.trim() && cart.cart_id !== cartId
+        );
+        if (isDuplicate) {
+            // showNotification("Invalid Cart Name", false);
+            return;
+        }
 
-    //     const data = {
-    //         cartName: newCartName.trim(),
-    //         cartId: cartId,
-    //     };
+        const data = {
+            newCartName: cartTitle.trim(),
+            cartId: cartId,
+        };
 
-    //     chrome.runtime.sendMessage({ action: "editCartName", data }, (response) => {
-    //         if (chrome.runtime.lastError) {
-    //             console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-    //             return;
-    //         }
+        chrome.runtime.sendMessage({ action: "editCartName", data }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+                return;
+            }
 
-    //         if (response?.status === "success") {
-    //             setCarts((prev) =>
-    //                 prev.map((cart) =>
-    //                     cart.cart_id === cartId ? { ...cart, cart_name: newCartName.trim() } : cart
-    //                 )
-    //             );
-    //         } else {
-    //             console.error("Error updating cart name:", response?.message);
-    //         }
-    //     });
-    // };
+            if (response.status === "success") {
+                setCarts((prev) =>
+                    prev.map((cart) =>
+                        cart.cart_id === cartId ? { ...cart, cart_name: cartTitle.trim() } : cart
+                    )
+                );
+            } else {
+                console.error("Error updating cart name:", response?.message);
+                // showNotification("Error Editing Cart Name", false);
+            }
+        });
+    };
+
+    // Handles when user presses enter to submit edit name
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            setIsEditing(false);
+            handleEditCartName();
+        }
+    };
 
     // const handleModifyClick = () => {
     //     if (!modOrgHidden && !isLocked) {
@@ -115,13 +129,13 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
 
                     {isEditing ? (
                         <input
-                        ref={inputRef}
-                        type="text"
-                        className="expand-section-title-input"
-                        value={cartTitle}
-                        onChange={(e) => {setCartTitle(e.target.value)}}
-                        //   onBlur={handleTitleBlur}
-                        //   onKeyDown={handleTitleKeyDown}
+                            ref={inputRef}
+                            type="text"
+                            className="expand-section-title-input"
+                            value={cartTitle}
+                            onChange={(e) => {setCartTitle(e.target.value)}}
+                            //   onBlur={handleTitleBlur}
+                              onKeyDown={handleKeyDown}
                         />
                     ) : (
                         <h4 className="expand-section-title" onDoubleClick={handleCartTitleSelect}>
@@ -142,6 +156,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
                 </div>
             </div>
             {cartDropdownVisible && <CartDropdown 
+                cart={cart}
                 cartDropdownVisible={cartDropdownVisible}
                 setCartDropdownVisible={setCartDropdownVisible}
                 cartDropdownButtonRef={cartDropdownButtonRef}
