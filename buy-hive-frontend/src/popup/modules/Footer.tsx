@@ -7,8 +7,16 @@ interface FooterProps {
     setAccountPageVisible: Dispatch<SetStateAction<boolean>>;
     addCartVisible: boolean;
     setAddCartVisible: Dispatch<SetStateAction<boolean>>;
+    addCartButtonRef: React.RefObject<HTMLElement | null>;
 }
-const Footer = ({ accountPageVisible, setAccountPageVisible, addCartVisible, setAddCartVisible } : FooterProps) => {
+
+const Footer = ({ 
+    accountPageVisible, 
+    setAccountPageVisible, 
+    addCartVisible, 
+    setAddCartVisible, 
+    addCartButtonRef 
+} : FooterProps) => {
     const togglePage = (type: string) => {
         setAccountPageVisible(false);
         setAddCartVisible(false);
@@ -197,6 +205,7 @@ const Footer = ({ accountPageVisible, setAccountPageVisible, addCartVisible, set
             <button 
                 className='hover:cursor-pointer'
                 onClick={() => togglePage("cart")}
+                ref={addCartButtonRef}
             >
                 <FontAwesomeIcon icon={faFolder} />
             </button>

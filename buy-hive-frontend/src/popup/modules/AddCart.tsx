@@ -1,22 +1,29 @@
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { CartType } from '@/types/CartType';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useClickOutside } from '../hooks/useClickOutside';
 
-interface AddFileProps {
-    carts: CartType[]
+interface AddCartProps {
+    carts: CartType[];
     setCarts: Dispatch<SetStateAction<CartType[]>>;
+    addCartVisible: boolean;
+    setAddCartVisibile: Dispatch<SetStateAction<boolean>>;
+    addCartButtonRef: React.RefObject<HTMLElement | null>;
 }
 
-const AddCart = ({carts, setCarts} : AddFileProps) => {
-    const [cartName, setCartName] = useState("");
-    // const [isAnimating, setIsAnimating] = useState(false);
-
+const AddCart = ({
+    carts, 
+    setCarts, 
+    addCartVisible, 
+    setAddCartVisibile, 
+    addCartButtonRef
+} : AddCartProps) => {
     const { isAuthenticated, isLoading } = useAuth0();
-    // const addFile = useRef(null);
 
-    // const {userData} = userDataContext();
+    const [cartName, setCartName] = useState("");
+    const addCartRef = useRef(null);
 
     // Handles adding a new folder
     const handleAddCart = (cartName: string) => {  
@@ -35,13 +42,6 @@ const AddCart = ({carts, setCarts} : AddFileProps) => {
                 setCarts((prev) => [...prev, response.data]);
                 setCartName("");
                 // showNotification("Succesfully Added Folder!", true);
-
-                // if (organizationSectionRef.current) {
-                //     organizationSectionRef.current.scrollTo({
-                //         top: organizationSectionRef.current.scrollHeight,
-                //         behavior: 'smooth'
-                //     });
-                // }
             } else {
                 console.error(response?.message);
                 // showNotification("Error Adding Folder", false);
@@ -49,44 +49,28 @@ const AddCart = ({carts, setCarts} : AddFileProps) => {
         });
     };
 
-//   useEffect(() => {
-//     if (isVisible) {
-//       setIsAnimating(true);
-//     }
-//   }, [isVisible]);
+    // Handles if user clicks outside of the component
+    useClickOutside(addCartRef, addCartVisible, setAddCartVisibile, [addCartButtonRef]);
 
-//   const handleClickOutside = (event) => {
-//     if (isVisible && addFile.current && !addFile.current.contains(event.target)) {
-//       setIsVisible(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     document.addEventListener("click", handleClickOutside);
-//     return () => {
-//       document.removeEventListener("click", handleClickOutside);
-//     };
-//   }, [isVisible]);
-
-  const handleKeyDown = (e: any) => {
-    if (e.key === 'Enter') {
-      handleAddCart(cartName)
-    }
-  };
+    // Handles if user presses enter instead of check
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleAddCart(cartName);
+        }
+    };
   
-//   return (isVisible || isAnimating) ? (
     return (
+        <div className="fixed bottom-14 left-0 right-0 px-4 my-3">
         <div 
-            className="flex my-2 py-2 px-2 gap-2 fixed bottom-14 w-full bg-[var(--secondary-background)] text-var(--text-color)"
-            //   className={isVisible ? "slide-in-add-file" : "slide-out-add-file"} 
-            //   ref={addFile}
-            //   onAnimationEnd={() => {
-            //     if (!isVisible) setIsAnimating(false);
-            //   }}
+            className={
+                `flex py-2 px-3 gap-2 w-full bg-[var(--secondary-background)] rounded-lg shadow-bottom 
+                ${addCartVisible ? "slide-in-add-file" : "slide-out-add-file"}`
+            }
+            ref={addCartRef}
         > 
             <input 
                 type="text" 
-                className="flex-1 bg-[#eaeaea] p-1"
+                className="flex-1 bg-[#eaeaea] p-1 rounded-md"
                 placeholder="Cart Name" 
                 value={cartName} 
                 onChange={(e) => setCartName(e.target.value)}
@@ -94,11 +78,12 @@ const AddCart = ({carts, setCarts} : AddFileProps) => {
             />
             <button 
                 type="button" 
-                className="shrink-0 bg-[var(--accent-color)] p-1 hover:cursor-pointer"
+                className="shrink-0 bg-[var(--accent-color)] px-2 py-1 rounded-md hover:cursor-pointer"
                 onClick={() => handleAddCart(cartName)} 
             >
                 <FontAwesomeIcon icon={faCheck} />
             </button>
+        </div>
         </div>
     )
 };

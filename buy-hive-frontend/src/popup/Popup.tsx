@@ -2,11 +2,11 @@ import Header from "./modules/Header";
 import Footer from "./modules/Footer";
 import "../styles/main.css"
 import AccountPage from "./pages/AccountPage";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import HomePage from "./pages/HomePage";
 import AddCart from "./modules/AddCart";
-import { useTokenResponder } from "./auth/tokenResponder";
+import { useTokenResponder } from "./hooks/tokenResponder";
 import type { Cart } from "@/types/CartType";
 
 const Popup = () => {
@@ -19,6 +19,8 @@ const Popup = () => {
 
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
+
+  const addCartButtonRef = useRef(null);
 
   useEffect(() => {
     const getUser = async() => {
@@ -135,7 +137,7 @@ const Popup = () => {
       // <LockedProvider>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <div className="flex flex-1 justify-center pt-14 pb-14">
+        <div className="flex flex-1 justify-center pt-14 pb-14 px-4">
           {accountPageVisible && <AccountPage
             setAccountPageVisible={setAccountPageVisible}
           />}
@@ -145,11 +147,15 @@ const Popup = () => {
             popupLoading={popupLoading}
             setPopupLoading={setPopupLoading}
           />}
+          {addCartVisible && <AddCart 
+            carts={carts}
+            setCarts={setCarts}
+            addCartVisible={addCartVisible}
+            setAddCartVisibile={setAddCartVisible}
+            addCartButtonRef={addCartButtonRef}
+          />}
         </div>
-        {addCartVisible && <AddCart 
-          carts={carts}
-          setCarts={setCarts}
-        />}
+        
         {/* <section id="organization-section" 
         style={{ overflowY: 'auto', maxHeight: '400px' }}
         ref={organizationSectionRef}>
@@ -190,6 +196,7 @@ const Popup = () => {
           setAccountPageVisible={setAccountPageVisible}
           addCartVisible={addCartVisible}
           setAddCartVisible={setAddCartVisible}
+          addCartButtonRef={addCartButtonRef}
           // organizationSections={organizationSections}
           // setOrganizationSections={setOrganizationSections}
           // cartsArray={organizationSections}
