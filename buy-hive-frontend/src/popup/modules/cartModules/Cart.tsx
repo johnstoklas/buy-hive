@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type Dispatch, type SetStateAction } from "react";
 // import ExpandSection from "../item/ExpandSection.jsx";
 // import ModifyOrgSec from "./ModifyOrgSec.jsx";
 // import { useLocked } from '../contexts/LockedProvider.jsx'
@@ -7,9 +7,11 @@ import type { CartType } from "@/types/CartType.js";
 import { useAuth0 } from "@auth0/auth0-react";
 import CartTitle from "./CartTitle";
 import ItemsList from "../itemModules/ItemsList";
+import { useLocked } from "@/popup/context/LockedProvider";
+import CartDropdown from "./CartDropdown";
 
 interface CartProps {
-    cart: CartType
+  cart: CartType;
 }
 
 const Cart = ({cart} : CartProps) => {
@@ -17,7 +19,6 @@ const Cart = ({cart} : CartProps) => {
     const [items, setItems] = useState([]);
   
     const [sectionHeight, setSectionHeight] = useState("45px");
-    const [modifyOrgSec, setModifyOrgSec] = useState(false);
     const [modOrgHidden, setModOrgHidden] = useState(false);
     const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
     const [isLoading, setIsLoading] = useState(false);
@@ -28,8 +29,7 @@ const Cart = ({cart} : CartProps) => {
     const inputRef = useRef(null);
     // const folderTitleRef = useRef(title);
 
-    const isLocked = false;
-    //   const { isLocked } = useLocked();
+      const { isLocked } = useLocked();
     //   const { userData } = userDataContext();
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -57,59 +57,12 @@ const Cart = ({cart} : CartProps) => {
 //     setSectionTitle(title);
 //   }, [title]);
 
-  const handleModifyClick = () => {
-    if (!modOrgHidden && !isLocked) {
-      setModifyOrgSec((prev) => !prev);
-      if (folderRef.current) {
-        const parentRect = folderRef.current.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - parentRect.bottom;
-
-        setModifyOrgSecPosition(spaceBelow < 150 ? "above" : "below");
-      }
-    }
-  };
-
   //handles editing name of a folder
 
 
   const handleTitleChange = (e) => {
     setSectionTitle(e.target.value);
   };
-
-  // Edits an existing folder
-//   const handleEditSection = (newFileName, cartId) => {
-//       if (!isAuthenticated) return;
-//       if (!cartId) return; 
-//       if (!newFileName.trim()) return;
-  
-//       const isDuplicate = organizationSections.some(
-//         (section) => section.cart_name === newFileName.trim() && section.cart_id !== cartId
-//       );
-//       if (isDuplicate) return;
-  
-//       const data = {
-//         accessToken: userData,
-//         newCartName: newFileName.trim(),
-//         cartId: cartId,
-//       };
-  
-//       chrome.runtime.sendMessage({ action: "editFolder", data }, (response) => {
-//         if (chrome.runtime.lastError) {
-//           console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-//           return;
-//         }
-  
-//         if (response?.status === "success") {
-//           setOrganizationSections((prev) =>
-//             prev.map((section) =>
-//               section.cart_id === cartId ? { ...section, cart_name: newFileName.trim() } : section
-//             )
-//           );
-//         } else {
-//           console.error("Error updating folder:", response?.message);
-//         }
-//       });
-//   };
 
 //   const handleTitleBlur = () => {
 //     setIsEditing(false);

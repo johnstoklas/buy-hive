@@ -1,3 +1,4 @@
+import { useLocked } from '@/popup/context/LockedProvider';
 import type { ItemType } from '@/types/ItemType';
 import { useState, useEffect, useRef } from 'react';
 // import ModifyItemSec from './ModifyItemSec.jsx';
@@ -16,8 +17,7 @@ const Item = ({item} : ItemProp) => {
   const inputRef = useRef(null);
   const noteRef = useRef(notes || "");
 
-  const isLocked = false;
-  // const { isLocked } = useLocked();
+  const { isLocked } = useLocked();
   // const { userData } = userDataContext(); 
 
   useEffect(() => {

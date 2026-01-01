@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Popup from './Popup.tsx';
 import { Auth0Provider } from '@auth0/auth0-react';
+import { LockedProvider } from './context/LockedProvider.tsx';
 // import { UserProvider } from './context/UserProvider.tsx';
 
 const AUTH0_DOMAIN = import.meta.env.VITE_AUTH0_DOMAIN;
@@ -22,7 +23,9 @@ createRoot(document.getElementById('root')!).render(
       cacheLocation='localstorage'
     >
       {/* <UserProvider> */}
-              <Popup />
+      <LockedProvider>
+        <Popup />
+      </LockedProvider>
       {/* </UserProvider> */}
     </Auth0Provider>
   </React.StrictMode>,

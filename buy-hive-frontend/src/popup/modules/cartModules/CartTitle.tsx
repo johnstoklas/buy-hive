@@ -1,14 +1,15 @@
 import type { CartType } from "@/types/CartType";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import CartDropdown from "./CartDropdown";
 
 interface CartTitleProps {
     cart: CartType;
     isExpanded: boolean;
-    setIsExpanded;
+    setIsExpanded: Dispatch<SetStateAction<boolean>>;
     isLocked: boolean;
-    setItems;
-    folderRef;
+    setItems: Dispatch<SetStateAction<CartType[]>>;
+    folderRef: React.RefObject<HTMLElement | null>;
 }
 
 const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderRef} : CartTitleProps) => {
@@ -18,6 +19,9 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
     const [isEditing, setIsEditing] = useState(false); 
     const [cartTitle, setCartTitle] = useState(cart_name);
 
+    const [cartDropdownVisible, setCartDropdownVisible] = useState(false);
+    const cartDropdownButtonRef = useRef(null);
+
     const inputRef = useRef(null);
 
     useEffect(() => {
@@ -26,7 +30,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
         }
     }, [isEditing]);
 
-    const handleTitleClick = () => {
+    const handleCartTitleSelect = () => {
         if (isLocked) return;
         setIsEditing(true);
         // setModifyOrgSec(false);
@@ -48,47 +52,102 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
         );
     };
 
+    
+    // Handles editing a cart name
+    // const handleEditCartName = (newCartName, cartId) => {
+    //     if (!isAuthenticated || !cartId) return;
+    //     if (!newCartName.trim()) return;
+
+    //     const isDuplicate = carts.some(
+    //         (cart) => cart.cart_name === newCartName.trim() && cart.cart_id !== cartId
+    //     );
+    //     if (isDuplicate) return;
+
+    //     const data = {
+    //         cartName: newCartName.trim(),
+    //         cartId: cartId,
+    //     };
+
+    //     chrome.runtime.sendMessage({ action: "editCartName", data }, (response) => {
+    //         if (chrome.runtime.lastError) {
+    //             console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+    //             return;
+    //         }
+
+    //         if (response?.status === "success") {
+    //             setCarts((prev) =>
+    //                 prev.map((cart) =>
+    //                     cart.cart_id === cartId ? { ...cart, cart_name: newCartName.trim() } : cart
+    //                 )
+    //             );
+    //         } else {
+    //             console.error("Error updating cart name:", response?.message);
+    //         }
+    //     });
+    // };
+
+    // const handleModifyClick = () => {
+    //     if (!modOrgHidden && !isLocked) {
+    //         setModifyOrgSec((prev) => !prev);
+    //         if (folderRef.current) {
+    //             const parentRect = folderRef.current.getBoundingClientRect();
+    //             const spaceBelow = window.innerHeight - parentRect.bottom;
+
+    //             setModifyOrgSecPosition(spaceBelow < 150 ? "above" : "below");
+    //         }
+    //     }
+    // };
+
     return (
-        <div 
-            className="flex flex-row gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full shadow-bottom rounded-lg" 
-            key={cartId} 
-            ref={folderRef}
-        >
-            <div className="flex flex-row gap-2 items-center">
-                <button
-                    className={`hover:cursor-pointer ${isExpanded ? "rotate" : ""} ${isLocked ? "disabled-hover-modify" : ""}`}          
-                    onClick={handleOpenCart}
-                >
-                    ▶
-                </button>
+        <>
+            <div 
+                className="flex flex-row gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full shadow-bottom rounded-lg" 
+                key={cartId} 
+                ref={folderRef}
+            >
+                <div className="flex flex-row gap-2 items-center">
+                    <button
+                        className={`hover:cursor-pointer ${isExpanded ? "rotate" : ""} ${isLocked ? "disabled-hover-modify" : ""}`}          
+                        onClick={handleOpenCart}
+                    >
+                        ▶
+                    </button>
 
-                {isEditing ? (
-                    <input
-                    ref={inputRef}
-                    type="text"
-                    className="expand-section-title-input"
-                    value={cartTitle}
-                    onChange={(e) => {setCartTitle(e.target.value)}}
-                    //   onBlur={handleTitleBlur}
-                    //   onKeyDown={handleTitleKeyDown}
-                    />
-                ) : (
-                    <h4 className="expand-section-title" onDoubleClick={handleTitleClick}>
-                        {cartTitle}
-                    </h4>
-                )}
-            </div>
+                    {isEditing ? (
+                        <input
+                        ref={inputRef}
+                        type="text"
+                        className="expand-section-title-input"
+                        value={cartTitle}
+                        onChange={(e) => {setCartTitle(e.target.value)}}
+                        //   onBlur={handleTitleBlur}
+                        //   onKeyDown={handleTitleKeyDown}
+                        />
+                    ) : (
+                        <h4 className="expand-section-title" onDoubleClick={handleCartTitleSelect}>
+                            {cartTitle}
+                        </h4>
+                    )}
+                </div>
 
-            <div className="flex flex-row gap-2 items-center">
-                <h4 className="bg-[var(--accent-color)] px-3 py-1 rounded-md">{item_count}</h4>
-                <button 
-                    className={!isLocked ? "text-base hover:cursor-pointer" : "expand-section-modify disabled-hover-modify"} 
-                    // onClick={handleModifyClick}
-                >
-                    &#8942;
-                </button>
+                <div className="flex flex-row gap-2 items-center">
+                    <h4 className="bg-[var(--accent-color)] px-3 py-1 rounded-md">{item_count}</h4>
+                    <button 
+                        className={`text-base w-6 h-6 rounded-full hover:cursor-pointer hover:bg-[var(--secondary-background-hover)] ${isLocked ? "disabled-hover-modify" : ""}`} 
+                        onClick={() => setCartDropdownVisible(!cartDropdownVisible)}
+                        ref={cartDropdownButtonRef}
+                    >
+                        &#8942;
+                    </button>
+                </div>
             </div>
-        </div>
+            {cartDropdownVisible && <CartDropdown 
+                cartDropdownVisible={cartDropdownVisible}
+                setCartDropdownVisible={setCartDropdownVisible}
+                cartDropdownButtonRef={cartDropdownButtonRef}
+                handleCartTitleSelect={handleCartTitleSelect}
+            />}
+        </>
     )
 }
 
