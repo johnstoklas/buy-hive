@@ -100,6 +100,12 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
         }
     };
 
+    // Handles when user selects off of input
+    const handleTitleBlur = () => {
+        setIsEditing(false);
+        handleEditCartName();
+    };
+
     // const handleModifyClick = () => {
     //     if (!modOrgHidden && !isLocked) {
     //         setModifyOrgSec((prev) => !prev);
@@ -134,8 +140,8 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
                             className="bg-[#eaeaea] rounded-sm px-2 py-1"
                             value={cartTitle}
                             onChange={(e) => {setCartTitle(e.target.value)}}
-                            //   onBlur={handleTitleBlur}
-                              onKeyDown={handleKeyDown}
+                            onBlur={handleTitleBlur}
+                            onKeyDown={handleKeyDown}
                         />
                     ) : (
                         <h4 className="px-2 py-1" onDoubleClick={handleCartTitleSelect}>
