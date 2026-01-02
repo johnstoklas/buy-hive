@@ -5,7 +5,7 @@ import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/fr
 import { useLocked } from '../../context/LockedProvider';
 import { useClickOutside } from '@/popup/hooks/useClickOutside';
 import type { CartType } from '@/types/CartType';
-import DeleteCartModal from '@/popup/modals/DeleteCartModal';
+import CartModals from './CartModals';
 // import ShareFolder from './ShareFolder.jsx';
 
 interface CartDropdownProps {
@@ -25,19 +25,21 @@ const CartDropdown = ({
 } : CartDropdownProps) => {
 
     const [deleteCartModal, setDeleteCartModal] = useState(false);
-    const [sharePopupVisible, setSharePopupVisible] = useState(false);
+    const [shareCartModal, setShareCartModal] = useState(false);
     const [cartDropdownHidden, setCartDropdownHidden] = useState(false);
 
-    const { isLocked, setIsLocked } = useLocked();
+    const { setIsLocked } = useLocked();
 
     const cartDropdownRef = useRef(null);
+    const deleteCartModalRef = useRef(null);
+    const shareCartModalRef = useRef(null);
 
     // Handles if user clicks outside of the component
-    useClickOutside(cartDropdownRef, cartDropdownVisible, setCartDropdownVisible, [cartDropdownButtonRef]);
+    useClickOutside(cartDropdownRef, cartDropdownVisible, setCartDropdownVisible, [cartDropdownButtonRef, deleteCartModalRef, shareCartModalRef]);
 
     useEffect(() => {
-        setIsLocked(deleteCartModal || sharePopupVisible);
-    }, [deleteCartModal, sharePopupVisible]);
+        setIsLocked(deleteCartModal || shareCartModal);
+    }, [deleteCartModal, shareCartModal]);
   
     // Updates if modification screen should be visible when another popup appears
     //   useEffect(() => {
@@ -46,31 +48,21 @@ const CartDropdown = ({
 
     return (
         <>
-            {/* {sharePopupVisible && <ShareFolder 
-            setIsVisible={setSharePopupVisible}
-            setSec={setModifyOrgSec}
-            setSecHidden={setModOrgHidden}
-            cartId={cartId}
-            cartName={cartName}
-            showNotification={showNotification}
-            />}
-            {deletePopupVisible && <DeletePopup 
-            setIsVisible={setDeletePopupVisible}
-            setSec={setModifyOrgSec}
-            setSecHidden={setModOrgHidden}
-            cartId={cartId}
-            type={"folder"}
-            setOrganizationSections={setOrganizationSections}
-            />} */}
-            {deleteCartModal && <DeleteCartModal
+            <CartModals 
                 cart={cart}
+                setCartDropdownVisible={setCartDropdownVisible}
                 setCartDropdownHidden={setCartDropdownHidden}
+                deleteCartModal={deleteCartModal}
                 setDeleteCartModal={setDeleteCartModal}
-            />}
+                deleteCartModalRef={deleteCartModalRef}
+                shareCartModal={shareCartModal}
+                setShareCartModal={setShareCartModal}
+                shareCartModalRef={shareCartModalRef}
+            />
 
             <div 
-                className={`flex flex-col absolute gap-1 py-1 right-0 my-1 rounded-md bg-[var(--secondary-background)] ${cartDropdownHidden ? "hidden" : ""}`} 
-                // ${modOrgHidden ? "hidden" : ""} ${position === 'above' ? "above" : "" }
+                className={`flex flex-col absolute gap-1 py-1 right-0 my-1 mx-4 rounded-md bg-[var(--secondary-background)] shadow-bottom ${cartDropdownHidden ? "hidden" : ""}`} 
+                // ${position === 'above' ? "above" : "" }
                 ref={cartDropdownRef} 
             >
                 <button 
@@ -82,7 +74,7 @@ const CartDropdown = ({
                 </button>
                 <button 
                     className="flex flex-row items-center px-2 py-1 hover:bg-[var(--secondary-background-hover)] hover:cursor-pointer"
-                    onClick={() => setSharePopupVisible(!sharePopupVisible)}
+                    onClick={() => setShareCartModal(!shareCartModal)}
                 >
                     <FontAwesomeIcon icon={faArrowUpFromBracket} />
                     <p> Share </p>

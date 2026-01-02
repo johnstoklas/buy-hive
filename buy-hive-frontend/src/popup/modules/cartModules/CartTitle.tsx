@@ -131,14 +131,14 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
                         <input
                             ref={inputRef}
                             type="text"
-                            className="expand-section-title-input"
+                            className="bg-[#eaeaea] rounded-sm px-2 py-1"
                             value={cartTitle}
                             onChange={(e) => {setCartTitle(e.target.value)}}
                             //   onBlur={handleTitleBlur}
                               onKeyDown={handleKeyDown}
                         />
                     ) : (
-                        <h4 className="expand-section-title" onDoubleClick={handleCartTitleSelect}>
+                        <h4 className="px-2 py-1" onDoubleClick={handleCartTitleSelect}>
                             {cartTitle}
                         </h4>
                     )}

@@ -9,6 +9,7 @@ import AddCart from "./modals/AddCartModal";
 import { useTokenResponder } from "./hooks/tokenResponder";
 import type { Cart } from "@/types/CartType";
 import { useCarts } from "./context/CartsProvider";
+import { useLocked } from "./context/LockedProvider";
 
 const Popup = () => {
   useTokenResponder();
@@ -142,7 +143,7 @@ const Popup = () => {
       // <LockedProvider>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <div className="flex flex-1 justify-center pt-14 pb-14 px-4">
+        <div className="flex flex-1 justify-center py-14 px-4">
           {accountPageVisible && <AccountPage
             setAccountPageVisible={setAccountPageVisible}
           />}

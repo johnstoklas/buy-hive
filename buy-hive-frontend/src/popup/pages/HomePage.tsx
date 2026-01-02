@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
 import { useCarts } from "../context/CartsProvider";
+import { useLocked } from "../context/LockedProvider";
 
 interface HomePageProps {
     popupLoading: boolean;
@@ -12,6 +13,7 @@ interface HomePageProps {
 const HomePage = ({ popupLoading } : HomePageProps) => {
 
     const { carts } = useCarts();
+    // const { isLocked } = useLocked();
 
     if (popupLoading) return (<div className="spinner-loader"></div>)
     return (
@@ -21,6 +23,7 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
             // style={{ overflowY: 'auto', maxHeight: '400px' }}
             // ref={organizationSectionRef}
         >
+            {/* {isLocked && <div className="absolute inset-0 bg-black/50"/>} */}
             {carts.length > 0 ? (
                 carts.map((cart) => (
                     <Cart

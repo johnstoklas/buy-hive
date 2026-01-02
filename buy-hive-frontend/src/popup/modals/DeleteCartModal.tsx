@@ -1,27 +1,28 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cloneElement, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { useLocked } from '../context/LockedProvider';
 import { useAuth0 } from '@auth0/auth0-react';
 import type { CartType } from '@/types/CartType';
 import { useCarts } from '../context/CartsProvider';
+import ModalOutline from '../ui/modalOutline';
+import { useEffect, type Dispatch, type SetStateAction } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../ui/button';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 interface DeletePopupProps {
-    cart: CartType,
+    cart: CartType;
+    setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     setCartDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setDeleteCartModal: Dispatch<SetStateAction<boolean>>;
+    deleteCartModalRef: React.RefObject<HTMLElement | null>;
 }
 
-const DeletePopup = ({ cart, setCartDropdownHidden, setDeleteCartModal } : DeletePopupProps) => {
+const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setDeleteCartModal, deleteCartModalRef } : DeletePopupProps) => {
 
     const { cart_id: cartId } = cart;
 
-    const { setIsLocked } = useLocked();
     const { isAuthenticated } = useAuth0(); 
     const { setCarts } = useCarts();
 
-    // HARD CODED FIX THIS
+    // TODO: REMOVE HARD CODING
     const type = "folder"
 
     const handleDeleteSection = () => {
@@ -43,6 +44,22 @@ const DeletePopup = ({ cart, setCartDropdownHidden, setDeleteCartModal } : Delet
             }
         });
     };
+
+    useEffect(() => {
+        setCartDropdownHidden(true);
+    }, [setCartDropdownHidden]);
+    
+    const closePopup = () => {
+        setCartDropdownVisible(false);
+        setCartDropdownHidden(false);
+        setIsLocked(false);
+        setDeleteCartModal(false);
+    }
+    
+    const handleSubmit = () => {
+        handleDeleteSection();
+        closePopup();
+    }
 
   // Delete an item
 //   const handleDeleteItem = (cartId, itemId) => {
@@ -105,46 +122,49 @@ const DeletePopup = ({ cart, setCartDropdownHidden, setDeleteCartModal } : Delet
 //       }
 //     });
 //   }
-
-    useEffect(() => {
-        setCartDropdownHidden(true);
-    }, [setDeleteCartModal]);
-
-    const closePopup = () => {
-        // setSec(false);
-        setCartDropdownHidden(false);
-        setIsLocked(false);
-        setDeleteCartModal(false);
-    }
-
-    const submitDelete = () => {
-        if (type === "folder") handleDeleteSection();
-        // else if(type === "item") {
-        //   handleDeleteItem(cartId, itemId);  
-        // }
-        // else if(type === "move") {
-        //   handleDeleteItemAll(itemId);
-        // }
-        closePopup();
-    }
   
   return (
-    <div className="flex flex-col fixed text-center px-2 py-2 rounded-lg bg-[var(--secondary-background)] shadow-bottom"> 
-        <p id="close-delete-popup" onClick={closePopup}> &#10005; </p>
-        <FontAwesomeIcon icon={faTrashCan} id="trash-icon" />
-        {type === "folder" ? (
-          <p> Are you sure you want to delete this folder? </p>
-        ) : type === "item" ? (
-          <p> Are you sure you want to delete this item? </p>
-        ) : (
-          <p>Are you sure you want to delete this item permanently?</p>
-        )}
-        <div id="dps-button-section">
-          <Button id="dps-delete-button" onClick={submitDelete}> Yes, I'm sure </Button>
-          <Button id="dps-cancel-button" onClick={closePopup}> No, cancel </Button>
+    <div className="fixed inset-0 flex items-center justify-center px-4">
+        <div 
+            className="flex flex-1 flex-col relative justify-center text-center py-3 gap-2 rounded-lg bg-[var(--secondary-background)] shadow-bottom"
+            ref={deleteCartModalRef}
+        > 
+            <p className="absolute right-3 top-2 hover:cursor-pointer hover:font-bold" onClick={closePopup}> &#10005; </p>
+            <div className="mt-4 mb-2">
+                <FontAwesomeIcon 
+                    icon={faTrashCan} 
+                    className="text-base"
+                />
+            </div>
+            {type === "folder" ? (
+            <p> Are you sure you want to delete this folder? </p>
+            ) : type === "item" ? (
+            <p> Are you sure you want to delete this item? </p>
+            ) : (
+            <p>Are you sure you want to delete this item permanently?</p>
+            )}
+            <div className="flex gap-2 justify-center">
+                <Button 
+                    onClick={handleSubmit}
+                    isDelete={true}
+                    isModal={true}
+                > 
+                    Yes, I'm sure 
+                </Button>
+                <Button 
+                    onClick={closePopup}
+                    isModal={true}
+                > 
+                    No, cancel 
+                </Button>
+            </div>
         </div>
-    </div>
+    </div> 
   )
 };
 
 export default DeletePopup;
+function setIsLocked(arg0: boolean) {
+    throw new Error('Function not implemented.');
+}
+
