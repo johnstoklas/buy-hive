@@ -3,13 +3,15 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import CartDropdown from "./CartDropdown";
 import { useCarts } from "@/popup/context/CartsProvider";
+import DropdownButton from "@/popup/ui/dropdownButton";
+import type { ItemType } from "@/types/ItemType";
 
 interface CartTitleProps {
     cart: CartType;
     isExpanded: boolean;
     setIsExpanded: Dispatch<SetStateAction<boolean>>;
     isLocked: boolean;
-    setItems: Dispatch<SetStateAction<CartType[]>>;
+    setItems: Dispatch<SetStateAction<ItemType[]>>;
     folderRef: React.RefObject<HTMLElement | null>;
 }
 
@@ -23,13 +25,13 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
     const [cartTitle, setCartTitle] = useState(cart_name);
 
     const [cartDropdownVisible, setCartDropdownVisible] = useState(false);
+    
     const cartDropdownButtonRef = useRef(null);
-
-    const inputRef = useRef(null);
+    const cartTitleRef = useRef(null);
 
     useEffect(() => {
-        if (isEditing && inputRef.current) {
-            inputRef.current.focus();
+        if (isEditing && cartTitleRef.current) {
+            cartTitleRef.current.focus();
         }
     }, [isEditing]);
 
@@ -38,6 +40,11 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
         setIsEditing(true);
         // setModifyOrgSec(false);
     };
+
+    useEffect(() => {
+        const itemIds = new Set(cart.item_ids);
+        setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
+    }, [cart]);
 
     const handleOpenCart = () => {
         if (isLocked || !isAuthenticated) return;
@@ -121,13 +128,20 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
     return (
         <>
             <div 
-                className="flex flex-row gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full shadow-bottom rounded-lg" 
+                className={
+                    `flex flex-row gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full rounded-lg 
+                    ${isExpanded ? "" : "shadow-bottom"}`
+                }
                 key={cartId} 
-                ref={folderRef}
+                ref={cartTitleRef}
             >
                 <div className="flex flex-row gap-2 items-center">
                     <button
-                        className={`hover:cursor-pointer ${isExpanded ? "rotate" : ""} ${isLocked ? "disabled-hover-modify" : ""}`}          
+                        className={
+                            `hover:cursor-pointer transition-transform duration-500 ease-in-out
+                            ${isExpanded ? "rotate-open-cart" : ""} 
+                            ${isLocked ? "disabled-hover-modify" : ""}`
+                        }          
                         onClick={handleOpenCart}
                     >
                         ▶
@@ -135,9 +149,9 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
 
                     {isEditing ? (
                         <input
-                            ref={inputRef}
+                            ref={cartTitleRef}
                             type="text"
-                            className="bg-[#eaeaea] rounded-sm px-2 py-1"
+                            className="bg-[var(--input-color)] rounded-sm px-2 py-1"
                             value={cartTitle}
                             onChange={(e) => {setCartTitle(e.target.value)}}
                             onBlur={handleTitleBlur}
@@ -152,13 +166,11 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
 
                 <div className="flex flex-row gap-2 items-center">
                     <h4 className="bg-[var(--accent-color)] px-3 py-1 rounded-md">{item_count}</h4>
-                    <button 
-                        className={`text-base w-6 h-6 rounded-full hover:cursor-pointer hover:bg-[var(--secondary-background-hover)] ${isLocked ? "disabled-hover-modify" : ""}`} 
-                        onClick={() => setCartDropdownVisible(!cartDropdownVisible)}
-                        ref={cartDropdownButtonRef}
-                    >
-                        &#8942;
-                    </button>
+                    <DropdownButton
+                        dropdownVisible={cartDropdownVisible}
+                        setDropdownVisible={setCartDropdownVisible}
+                        buttonRef={cartDropdownButtonRef}
+                    />
                 </div>
             </div>
             {cartDropdownVisible && <CartDropdown 

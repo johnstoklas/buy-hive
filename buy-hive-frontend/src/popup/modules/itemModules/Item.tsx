@@ -1,34 +1,44 @@
 import { useLocked } from '@/popup/context/LockedProvider';
+import DropdownButton from '@/popup/ui/dropdownButton';
 import type { ItemType } from '@/types/ItemType';
 import { useState, useEffect, useRef } from 'react';
+import ItemDropdown from './ItemDropdown';
+import type { CartType } from '@/types/CartType';
+import Image from '@/popup/ui/image';
+import ItemHeader from '@/popup/ui/itemHeader';
 // import ModifyItemSec from './ModifyItemSec.jsx';
 // import { useLocked } from '../contexts/LockedProvider.jsx'
 // import { userDataContext } from '../contexts/UserProvider.jsx';
 
 interface ItemProp {
-  item: ItemType
+  cart: CartType;
+  item: ItemType;
+  updateCarts;
 }
-const Item = ({item} : ItemProp) => {
 
-  const [modifyVisible, setModifyVisible] = useState(false);
-  const [notes, setNotes] = useState(item.notes || "");
+const Item = ({ cart, item, updateCarts } : ItemProp) => {
+
+  const [itemDropdownVisible, setItemDropdownVisible] = useState(false);
+  const [itemNote, setItemNote] = useState(item.notes || "");
   const [isEditing, setIsEditing] = useState(false); // Track if editing
 
-  const inputRef = useRef(null);
-  const noteRef = useRef(notes || "");
+  const itemNoteRef = useRef(null);
+  const prevNoteRef = useRef(item.notes || "");
+  const itemDropdownButtonRef = useRef(null);
 
   const { isLocked } = useLocked();
-  // const { userData } = userDataContext(); 
 
   useEffect(() => {
-    console.log("item: ", item);
-  }, []);
-
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
+    if (isEditing && itemNoteRef.current) {
+      itemNoteRef.current.focus();
     }
   }, [isEditing]);
+
+  const handleItemNoteSelect = () => {
+    if (isLocked) return;
+    setIsEditing(true);
+    // setModifyOrgSec(false);
+  };
   
   // const openModifyItem = () => {
   //   if(!isLocked) {
@@ -42,35 +52,28 @@ const Item = ({item} : ItemProp) => {
   //   setModifyVisible(false);
   // };
 
-  // const handleNoteChange = (e) => {
-  //   setNotes(e.target.value);
-  // };
-
   // Edit item notes
-  // const handleEditNotes = (notes, cartId, itemId) => {
-  //     const data = {
-  //       accessToken: userData,
-  //       notes: notes.trim(),
-  //       cartId,
-  //       itemId,
-  //     };
+  const handleEditNotes = () => {
+      const data = {
+        notes: itemNote.trim(),
+        cartId: cart.cart_id,
+        itemId: item.item_id,
+      };
 
-  //     chrome.runtime.sendMessage(
-  //       { action: "editItem", data: data },
-  //       (response) => {
-  //         if (chrome.runtime.lastError) {
-  //           console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-  //           return;
-  //         }
+      chrome.runtime.sendMessage({ action: "editItem", data: data }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+            return;
+          }
 
-  //         if (response?.status === "success") {
-  //           chrome.runtime.sendMessage({action: "editItem", data: response.data});
-  //         } else {
-  //           console.error("Error editing notes:", response?.message);
-  //         }
-  //       }
-  //     );
-  // };
+          if (response?.status === "success") {
+            chrome.runtime.sendMessage({action: "editItem", data: response.data});
+          } else {
+            console.error("Error editing notes:", response?.message);
+          }
+        }
+      );
+  };
 
   // useEffect(() => {
   //   if (isEditing && inputRef.current) {
@@ -80,77 +83,74 @@ const Item = ({item} : ItemProp) => {
   //   }
   // }, [isEditing]);
 
-  // const handleOffNoteClick = () => {
-  //   console.log("curr", notes);
-  //   console.log("old", noteRef.current)
-  //   if (notes.trim() !== noteRef.current.trim()) {
-  //     handleEditNotes(notes, cartId, itemId);
-  //   }
-  //   setIsEditing(false);
-  // };
+  const handleNoteBlur = () => {
+    if (itemNote.trim() === prevNoteRef.current.trim()) return;
+    handleEditNotes();
+    setIsEditing(false);
+  };
 
-  const imageContent = (
-    <div className="w-20 h-20">
-      <img 
-        src={item.image} 
-        alt="" 
-        className="w-full h-full object-cover"
-      />
-    </div>
-  );
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      if (itemNote.trim() === prevNoteRef.current.trim()) return;
+      e.preventDefault();   
+      handleEditNotes();    
+      setIsEditing(false);
+    }
+  };
 
 
   return (
-    <div className="flex flex-row bg-[var(--seconday-background)] px-2 py-1 gap-2">
+    <div className="flex flex-row px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md">
       {!isLocked ? (
         <a href={item.url} target="_blank" rel="noopener noreferrer">
-          {imageContent}
+          {<Image 
+            item={item}
+          />}
         </a>
       ) : (
-        imageContent
+        <Image 
+          item={item}
+        />
       )}
 
       <div className='overflow-hidden'>
-        <div className='overflow-hidden'>
-          <div className="overflow-hidden">
-            <h4 className="whitespace-nowrap text-ellipsis overflow-hidden"> {item.name} </h4>
-            <h4 className="shopping-item-price">  {item.price} </h4>
-          </div>
-          <div className="shopping-item-button-container">
-            {/* <button className={isLocked ? "disabled-hover-modify" : ""} onClick={openModifyItem}> &#8942; </button> */}
-          </div>
+        <div className='flex flex-row gap-1'>
+          <ItemHeader
+            item={item}
+          />
+          <DropdownButton
+            dropdownVisible={itemDropdownVisible}
+            setDropdownVisible={setItemDropdownVisible}
+            buttonRef={itemDropdownButtonRef}
+          />
         </div>
-            {/* {modifyVisible && <ModifyItemSec 
-              notesContent={notes}
-              setNotes={setNotes}
-              cartId={cartId}
-              itemId={itemId}
-              handleNoteClick={handleNoteClick}
-              setModifyItemSec={setModifyVisible}
-              cartsArray={cartsArray}
-              item={item}
-              itemsInFolder={itemsInFolder}
-              setItemsInFolder={setItemsInFolder}
-              showNotification={showNotification}
-            />} 
-
             {isEditing ? (
               <textarea
-                ref={inputRef}
+                ref={itemNoteRef}
                 className="shopping-item-notes"
-                value={notes}
-                onChange={handleNoteChange}
-                onBlur={handleOffNoteClick}
+                value={itemNote}
+                onChange={(e) => {setItemNote(e.target.value)}}
+                onBlur={handleNoteBlur}
+                onKeyDown={handleKeyDown}
               />              
             ) : (
               <div 
-                className="shopping-item-notes" 
-                style={{ color: notes ? "black" : "gray" }}
+                className="flex flex-1 px-1 py-1 bg-[var(--input-color)] rounded-md text-xs"
+                onDoubleClick={handleItemNoteSelect} 
               >
-                {(notes || (notes && notes.trim() !== "")) ? notes : "None"}
+                {(itemNote || (itemNote && itemNote.trim() !== "")) ? itemNote : "None"}
               </div>
-            )} */}
+            )}
         </div>
+        {itemDropdownVisible && <ItemDropdown 
+          cart={cart}
+          item={item}
+          itemDropdownVisible={itemDropdownVisible}
+          setItemDropdownVisible={setItemDropdownVisible}
+          itemDropdownButtonRef={itemDropdownButtonRef}
+          handleItemNoteSelect={handleItemNoteSelect}
+          updateCarts={updateCarts}
+        />}
     </div>
   )
 };

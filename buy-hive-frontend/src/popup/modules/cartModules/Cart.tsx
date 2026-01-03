@@ -9,12 +9,15 @@ import CartTitle from "./CartTitle";
 import ItemsList from "../itemModules/ItemsList";
 import { useLocked } from "@/popup/context/LockedProvider";
 import CartDropdown from "./CartDropdown";
+import type { ItemType } from "@/types/ItemType";
+import { useCarts } from "@/popup/context/CartsProvider";
 
 interface CartProps {
   cart: CartType;
+  updateCarts;
 }
 
-const Cart = ({cart} : CartProps) => {
+const Cart = ({cart, updateCarts} : CartProps) => {
 
     const [items, setItems] = useState([]);
   
@@ -30,21 +33,22 @@ const Cart = ({cart} : CartProps) => {
     // const folderTitleRef = useRef(title);
 
       const { isLocked } = useLocked();
+      const { setCarts } = useCarts();
     //   const { userData } = userDataContext();
 
     const [isExpanded, setIsExpanded] = useState(false);
 
-  const updateScreenSize = () => {
-    if (expandedSectionRef.current) {
-      const expandedDisplayHeight = expandedSectionRef.current.scrollHeight;
-      setSectionHeight(
-        isExpanded && expandedDisplayHeight
-          ? `${expandedDisplayHeight + 60}px`
-          : "45px"
-      );
-    }
-    if(items && items.length == 0 ) setIsExpanded(false); 
-  };
+    const updateScreenSize = () => {
+      if (expandedSectionRef.current) {
+        const expandedDisplayHeight = expandedSectionRef.current.scrollHeight;
+        setSectionHeight(
+          isExpanded && expandedDisplayHeight
+            ? `${expandedDisplayHeight + 60}px`
+            : "45px"
+        );
+      }
+      if(items && items.length == 0 ) setIsExpanded(false); 
+    };
 
   useEffect(() => {
       // Allow animation only after loading is done
@@ -149,7 +153,9 @@ const Cart = ({cart} : CartProps) => {
         folderRef={folderRef}
       />
       {isExpanded && <ItemsList 
+        cart={cart}
         items={items}
+        updateCarts={updateCarts}
       />}
     </div>
 //          {modifyOrgSec && (

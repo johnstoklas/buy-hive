@@ -36,7 +36,7 @@ const Popup = () => {
       });
 
       console.log("user", user);
-
+      setAccountPageVisible(false);
     }
 
     getUser();

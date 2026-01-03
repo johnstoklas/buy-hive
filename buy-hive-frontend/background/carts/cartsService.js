@@ -81,7 +81,7 @@ export async function handleEditCart(message, sender, sendResponse) {
     return;
   }
   if (!newCartName) {
-    sendResponse({ status: "error", message: "Invalid folder data" });
+    sendResponse({ status: "error", message: "Invalid payload" });
     return;
   }
 
@@ -109,10 +109,15 @@ export async function handleEditCart(message, sender, sendResponse) {
 }
 
 export async function handleDeleteCart(message, sender, sendResponse) {
-  const { accessToken, cartId } = message.data;
+  const accessToken = await getAccessToken();
+  const { cartId } = message.data;
 
   if (!accessToken) {
-    sendResponse({ status: "error", message: "Invalid folder data" });
+    sendResponse({ status: "error", message: "User must be signed in" });
+    return;
+  }
+  if (!cartId) {
+    sendResponse({ status: "error", message: "Invalid payload" });
     return;
   }
 

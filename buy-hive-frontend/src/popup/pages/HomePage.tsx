@@ -4,6 +4,7 @@ import { type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
 import { useCarts } from "../context/CartsProvider";
 import { useLocked } from "../context/LockedProvider";
+import type { ItemType } from "@/types/ItemType";
 
 interface HomePageProps {
     popupLoading: boolean;
@@ -12,8 +13,35 @@ interface HomePageProps {
 
 const HomePage = ({ popupLoading } : HomePageProps) => {
 
-    const { carts } = useCarts();
+    const { carts, setCarts } = useCarts();
     // const { isLocked } = useLocked();
+
+    const updateCarts = (newItem: ItemType) => {
+        const cartIdSet = new Set(newItem.selected_cart_ids);
+        const itemId = newItem.item_id;
+
+        setCarts(prev =>
+            prev.map(cart => {
+                const shouldContainItem = cartIdSet.has(cart.cart_id);
+                const currentlyHasItem = cart.item_ids.includes(itemId);
+
+                if (shouldContainItem === currentlyHasItem) {
+                    return cart;
+                }
+
+                const newItemIds = shouldContainItem ? [...cart.item_ids, itemId] : cart.item_ids.filter(id => id !== itemId);
+                console.log(newItemIds)
+
+                return {
+                    ...cart,
+                    item_ids: newItemIds,
+                    item_count: String(newItemIds.length)
+                };
+            })
+        );
+
+        console.log(carts)
+    };
 
     if (popupLoading) return (<div className="spinner-loader"></div>)
     return (
@@ -28,6 +56,7 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
                 carts.map((cart) => (
                     <Cart
                         cart={cart}
+                        updateCarts={updateCarts}
                         // organizationSections={organizationSections}
                         // setOrganizationSections={setOrganizationSections}
                         // handleUpdateItem={handleUpdateItem}

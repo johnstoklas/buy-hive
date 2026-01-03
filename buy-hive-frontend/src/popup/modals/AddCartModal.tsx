@@ -71,7 +71,7 @@ const AddCartModal = ({
         > 
             <input 
                 type="text" 
-                className="flex-1 bg-[#eaeaea] p-1 rounded-md"
+                className="flex-1 bg-[var(--input-color)] p-1 rounded-md"
                 placeholder="Cart Name" 
                 value={cartName} 
                 onChange={(e) => setCartName(e.target.value)}

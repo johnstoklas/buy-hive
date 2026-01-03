@@ -74,7 +74,7 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
             <p className="absolute right-3 top-2 hover:cursor-pointer hover:font-bold" onClick={closePopup}> &#10005; </p>
             <p> Enter a valid email to share cart </p>
             <input 
-                className="bg-[#eaeaea] px-2 py-1 mx-4 rounded-sm"
+                className="bg-[var(--input-color)] px-2 py-1 mx-4 rounded-sm"
                 type="text" 
                 placeholder="Enter Email" 
                 value={email}

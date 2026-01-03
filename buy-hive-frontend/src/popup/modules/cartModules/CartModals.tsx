@@ -1,4 +1,4 @@
-import DeleteCartModal from "@/popup/modals/DeleteCartModal";
+import DeleteModal from "@/popup/modals/DeleteModal";
 import ShareCartModal from "@/popup/modals/ShareCartModal";
 import type { CartType } from "@/types/CartType";
 import type { Dispatch, SetStateAction } from "react";
@@ -30,12 +30,13 @@ const CartModals = ({
 } : CartModalsProps) => {
     return (
         <>
-            {deleteCartModal && <DeleteCartModal
+            {deleteCartModal && <DeleteModal
                 cart={cart}
-                setCartDropdownVisible={setCartDropdownVisible}
-                setCartDropdownHidden={setCartDropdownHidden}
-                setDeleteCartModal={setDeleteCartModal}
-                deleteCartModalRef={deleteCartModalRef}
+                setDropdownVisible={setCartDropdownVisible}
+                setDropdownHidden={setCartDropdownHidden}
+                setDeleteModal={setDeleteCartModal}
+                deleteModalRef={deleteCartModalRef}
+                type="folder"
             />}
             {shareCartModal && <ShareCartModal 
                 cart={cart}

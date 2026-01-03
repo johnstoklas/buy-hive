@@ -1,9 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./checkbox.css";
 
 :root { 
   --background-color: hsl(0,0,95%,100%);
+  --input-color: #eaeaea;
   --secondary-background: hsl(0, 0%, 95%);
   --secondary-background-hover: #bfbfbf;
   --accent-color: hsl(42,95%,66%,100%);
@@ -60,3 +62,8 @@
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(100%); opacity: 0; }
 }
+
+.rotate-open-cart {
+  transform: rotate(90deg); 
+}
+

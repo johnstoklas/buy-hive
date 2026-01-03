@@ -1,0 +1,125 @@
+import type { ItemType } from '@/types/ItemType';
+import{ useState, useEffect, type SetStateAction, type Dispatch } from 'react';
+import { useCarts } from '../context/CartsProvider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+
+interface ListProps {
+    item: ItemType;
+    selectedCarts: string[];
+    setSelectedCarts: Dispatch<SetStateAction<string[]>>;
+}
+const List = ({ item, selectedCarts, setSelectedCarts } : ListProps) => {
+    const [selectedCartIds, setSelectedCartIds] = useState<string[]>(item.selected_cart_ids ?? [])
+    const [isAddingFolder, setIsAddingFolder] = useState(false); 
+    const [newFolderName, setNewFolderName] = useState(''); 
+
+    const { carts } = useCarts();
+
+    useEffect(() => {
+        const selectedNames: string[] = [];
+        const selectedIds: string[] = [];
+
+        item.selected_cart_ids.forEach(selectedCartId => {
+            const selectedCart = carts.find(c => c.cart_id === selectedCartId);
+            if(selectedCart) {
+                selectedNames.push(selectedCart.cart_name);
+                selectedIds.push(selectedCart.cart_id);
+            }
+        });
+
+        setSelectedCarts(selectedNames);
+        setSelectedCartIds(selectedIds);
+    }, [item]);
+
+    const handleCheckboxChange = (cartName: string) => {
+        setSelectedCarts((prev) => {
+        const newSelectedNames = prev.includes(cartName)
+            ? prev.filter(name => name !== cartName) 
+            : [...prev, cartName];
+
+        const selectedIds = carts
+            .filter(cart => newSelectedNames.includes(cart.cart_name))
+            .map(cart => cart.cart_id);
+
+        console.log(newSelectedNames)
+
+        setSelectedCarts(newSelectedNames);
+        setSelectedCartIds(selectedIds);
+        return newSelectedNames;
+        });
+    };
+
+  const handleInputChange = (e) => {
+    setNewFolderName(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleAddSection(newFolderName);
+    }
+  };
+
+  const closeKeyDown = () => {
+    setNewFolderName("");
+    setIsAddingFolder(false);
+  };
+
+  return (
+    <div className="bg-[var(--input-color)] rounded-md p-2">
+      <div>
+        <p>Select Folders</p>
+        {/* {!moveItem && (
+          <button onClick={() => setIsAddingFolder(true)}>New Folder</button>
+        )} */}
+      </div>
+      <hr className="bg-[var(--input-color)] mt-1 mb-2" />
+      <div id="select-folders-section">
+        <div id="sf-dropdown">
+          <ul className="flex flex-col gap-1">
+            {carts.map((cart) => (
+              <li key={cart.cart_id}>
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    value={cart.cart_name}
+                    checked={selectedCarts.includes(cart.cart_name)}
+                    onChange={() => handleCheckboxChange(cart.cart_name)}
+                  />
+                  {/* <span className="checkmark">
+                    <FontAwesomeIcon icon={faCheck} />
+                  </span> */}
+                  {cart.cart_name}
+                </label>
+              </li>
+            ))}
+            {isAddingFolder && (
+              <li key="new-folder">
+                <label className="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={false}
+                    disabled
+                  />
+                  <span className="checkmark"></span>
+                  <input
+                    type="text"
+                    value={newFolderName}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onBlur={closeKeyDown}
+                    placeholder="Folder name"
+                    id="add-folder-input"
+                    autoFocus
+                  />
+                </label>
+              </li>
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default List;

@@ -6,6 +6,7 @@ import { useLocked } from '../../context/LockedProvider';
 import { useClickOutside } from '@/popup/hooks/useClickOutside';
 import type { CartType } from '@/types/CartType';
 import CartModals from './CartModals';
+import { DropdownMenu } from '@/popup/ui/dropdownMenu';
 // import ShareFolder from './ShareFolder.jsx';
 
 interface CartDropdownProps {
@@ -34,17 +35,30 @@ const CartDropdown = ({
     const deleteCartModalRef = useRef(null);
     const shareCartModalRef = useRef(null);
 
+    const cartActions = [
+        {
+            label: "Edit",
+            icon: faPenToSquare,
+            onClick: handleCartTitleSelect,
+        },
+        {
+            label: "Share",
+            icon: faArrowUpFromBracket,
+            onClick: () => setShareCartModal(true),
+        },
+        {
+            label: "Delete",
+            icon: faTrashCan,
+            onClick: () => setDeleteCartModal(true),
+        },
+    ];
+
     // Handles if user clicks outside of the component
     useClickOutside(cartDropdownRef, cartDropdownVisible, setCartDropdownVisible, [cartDropdownButtonRef, deleteCartModalRef, shareCartModalRef]);
 
     useEffect(() => {
         setIsLocked(deleteCartModal || shareCartModal);
     }, [deleteCartModal, shareCartModal]);
-  
-    // Updates if modification screen should be visible when another popup appears
-    //   useEffect(() => {
-    //       setModOrgHidden(deletePopupVisible || sharePopupVisible);
-    //   }, [deletePopupVisible, sharePopupVisible]);
 
     return (
         <>
@@ -59,34 +73,11 @@ const CartDropdown = ({
                 setShareCartModal={setShareCartModal}
                 shareCartModalRef={shareCartModalRef}
             />
-
-            <div 
-                className={`flex flex-col absolute gap-1 py-1 right-0 my-1 mx-4 rounded-md bg-[var(--secondary-background)] shadow-bottom ${cartDropdownHidden ? "hidden" : ""}`} 
-                // ${position === 'above' ? "above" : "" }
-                ref={cartDropdownRef} 
-            >
-                <button 
-                    className="flex flex-row items-center px-2 py-1 hover:bg-[var(--secondary-background-hover)] hover:cursor-pointer"
-                    onClick={() => handleCartTitleSelect()}
-                >
-                    <FontAwesomeIcon icon={faPenToSquare} />
-                    <p> Edit </p>
-                </button>
-                <button 
-                    className="flex flex-row items-center px-2 py-1 hover:bg-[var(--secondary-background-hover)] hover:cursor-pointer"
-                    onClick={() => setShareCartModal(!shareCartModal)}
-                >
-                    <FontAwesomeIcon icon={faArrowUpFromBracket} />
-                    <p> Share </p>
-                </button>
-                <button     
-                    className="flex flex-row items-center px-2 py-1 hover:bg-[var(--secondary-background-hover)] hover:cursor-pointer"
-                    onClick={() => setDeleteCartModal(!deleteCartModal)}
-                >
-                    <FontAwesomeIcon icon={faTrashCan} />
-                    <p> Delete </p>
-                </button>
-            </div>
+            <DropdownMenu
+                actions={cartActions}
+                hidden={cartDropdownHidden}
+                dropdownRef={cartDropdownRef}
+            />
         </>
     );
 };
