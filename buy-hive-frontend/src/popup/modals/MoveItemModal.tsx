@@ -9,6 +9,10 @@ import DeleteModal from './DeleteModal';
 import type { CartType } from '@/types/CartType';
 import CloseButton from '../ui/closeButton';
 import ItemNote from '../ui/itemUI/itemNote';
+import ContainerHeader from '../ui/containerUI/containerHeader';
+import CenterContainer from '../ui/containerUI/centerContainer';
+import Container from '../ui/containerUI/container';
+import { useCarts } from '../context/CartsProvider';
 
 interface MoveItemModalProps {
     cart: CartType;
@@ -19,7 +23,6 @@ interface MoveItemModalProps {
     setMoveItemModal: Dispatch<SetStateAction<boolean>>;
     moveItemModalRef: React.RefObject<HTMLElement | null>;
     deleteItemAllModalRef: React.RefObject<HTMLElement | null>;
-    updateCarts;
 }
 const MoveItemModal = ({
     cart,
@@ -30,13 +33,13 @@ const MoveItemModal = ({
     setMoveItemModal,
     moveItemModalRef,
     deleteItemAllModalRef,
-    updateCarts,
 } : MoveItemModalProps) => {
 
     const [deleteItemAllModal, setDeleteItemAllModal] = useState(false);
     const [selectedCartIds, setSelectedCartIds] = useState<string[]>(item.selected_cart_ids ?? []);
 
-    const { setIsLocked } = useLocked();    
+    const { setIsLocked } = useLocked(); 
+    const { updateCarts } = useCarts();   
 
     useEffect(() => {
         setItemDropdownHidden(true);
@@ -56,14 +59,15 @@ const MoveItemModal = ({
         }
     
         if (response?.status === "success") {
-            const updatedItem = {
+            const updatedItem: ItemType = {
                 image: item.image,
                 item_id: item.item_id,
                 name: item.name,
                 notes: item.notes,
                 price: item.price,
                 selected_cart_ids: selectedCartIds,
-                url: item.url
+                url: item.url,
+                added_at: "",
             };
             updateCarts(updatedItem);
             // showNotification("Item succesfully moved!", true);
@@ -90,13 +94,16 @@ const MoveItemModal = ({
     
     return (
         <>
-            <div className="fixed inset-0 flex items-center justify-center px-4">
-                <div 
-                    className="flex flex-col flex-1 relative w-full bg-[var(--secondary-background)] px-2 py-2 rounded-md gap-2"
+            <CenterContainer>
+                <Container 
+                    className="!flex-col flex-1 relative w-full shadow-bottom"
                     ref={moveItemModalRef}
                 >
-                    <CloseButton onClick={closePopup} />
-                    <div className="flex flex-row gap-2 pt-4">
+                    <div className="flex">
+                        <ContainerHeader> Move Item </ContainerHeader>
+                        <CloseButton onClick={closePopup} />
+                    </div>
+                    <div className="flex flex-row gap-2">
                         <Image 
                             item={item}
                         />
@@ -136,8 +143,8 @@ const MoveItemModal = ({
                             Confirm Move 
                         </Button>
                     )}
-                </div>
-            </div>
+                </Container>
+            </CenterContainer>
             {deleteItemAllModal && <DeleteModal
                 cart={cart}
                 item={item}

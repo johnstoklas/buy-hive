@@ -1,5 +1,5 @@
 import { useLocked } from '@/popup/context/LockedProvider';
-import DropdownButton from '@/popup/ui/dropdownButton';
+import DropdownButton from '@/popup/ui/dropdownUI/dropdownButton';
 import type { ItemType } from '@/types/ItemTypes';
 import { useState, useEffect, useRef } from 'react';
 import ItemDropdown from './ItemDropdown';
@@ -14,10 +14,9 @@ import ItemNote from '@/popup/ui/itemUI/itemNote';
 interface ItemProp {
   cart: CartType;
   item: ItemType;
-  updateCarts;
 }
 
-const Item = ({ cart, item, updateCarts } : ItemProp) => {
+const Item = ({ cart, item } : ItemProp) => {
 
   const [itemDropdownVisible, setItemDropdownVisible] = useState(false);
   const [itemNote, setItemNote] = useState(item.notes || "");
@@ -38,7 +37,7 @@ const Item = ({ cart, item, updateCarts } : ItemProp) => {
   const handleItemNoteSelect = () => {
     if (isLocked) return;
     setIsEditing(true);
-    // setModifyOrgSec(false);
+    setItemDropdownVisible(false);
   };
   
   // const openModifyItem = () => {
@@ -114,7 +113,7 @@ const Item = ({ cart, item, updateCarts } : ItemProp) => {
         />
       )}
 
-      <div className='flex flex-col overflow-hidden'>
+      <div className='flex flex-col overflow-hidden gap-1'>
         <div className='flex flex-row gap-1'>
           <ItemHeader
             item={item}
@@ -142,7 +141,6 @@ const Item = ({ cart, item, updateCarts } : ItemProp) => {
           setItemDropdownVisible={setItemDropdownVisible}
           itemDropdownButtonRef={itemDropdownButtonRef}
           handleItemNoteSelect={handleItemNoteSelect}
-          updateCarts={updateCarts}
         />}
     </div>
   )

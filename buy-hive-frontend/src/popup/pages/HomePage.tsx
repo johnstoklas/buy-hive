@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
 import { useCarts } from "../context/CartsProvider";
-import type { ItemType } from "@/types/ItemTypes";
+import { useLocked } from "../context/LockedProvider";
 
 interface HomePageProps {
     popupLoading: boolean;
@@ -12,49 +12,20 @@ interface HomePageProps {
 
 const HomePage = ({ popupLoading } : HomePageProps) => {
 
-    const { carts, setCarts } = useCarts();
-    // const { isLocked } = useLocked();
-
-    const updateCarts = (newItem: ItemType) => {
-        const cartIdSet = new Set(newItem.selected_cart_ids);
-        const itemId = newItem.item_id;
-
-        setCarts(prev =>
-            prev.map(cart => {
-                const shouldContainItem = cartIdSet.has(cart.cart_id);
-                const currentlyHasItem = cart.item_ids.includes(itemId);
-
-                if (shouldContainItem === currentlyHasItem) {
-                    return cart;
-                }
-
-                const newItemIds = shouldContainItem ? [...cart.item_ids, itemId] : cart.item_ids.filter(id => id !== itemId);
-                console.log(newItemIds)
-
-                return {
-                    ...cart,
-                    item_ids: newItemIds,
-                    item_count: String(newItemIds.length)
-                };
-            })
-        );
-
-        console.log(carts)
-    };
+    const { carts } = useCarts();
+    const { isLocked } = useLocked();
 
     if (popupLoading) return (<div className="spinner-loader"></div>)
     return (
         <section 
             className="flex flex-col gap-2 w-full pt-2"
-            id="organization-section" 
             // ref={organizationSectionRef}
         >
-            {/* {isLocked && <div className="absolute inset-0 bg-black/50"/>} */}
+            {isLocked && <div className="absolute inset-0 bg-black/25 my-14"/>}
             {carts.length > 0 ? (
                 carts.map((cart) => (
                     <Cart
                         cart={cart}
-                        updateCarts={updateCarts}
                     />
                 ))
                 ) : (

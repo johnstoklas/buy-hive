@@ -1,26 +1,44 @@
-import { useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+
 import { useAuth0 } from '@auth0/auth0-react';
-import { useClickOutside } from '../hooks/useClickOutside';
 import { useCarts } from '../context/CartsProvider';
+
+import { useClickOutside } from '../../hooks/useClickOutside';
+import { onEnter } from '../../utils/keyboard';
+
+import FixedContainer from '../ui/containerUI/fixedContainer';
+import Container from '../ui/containerUI/container';
 
 interface AddCartModalProps {
     addCartVisible: boolean;
     setAddCartVisibile: Dispatch<SetStateAction<boolean>>;
     addCartButtonRef: React.RefObject<HTMLElement | null>;
+    setAddCartAnimating: Dispatch<SetStateAction<boolean>>;
 }
 
 const AddCartModal = ({ 
     addCartVisible, 
     setAddCartVisibile, 
-    addCartButtonRef
+    addCartButtonRef,
+    setAddCartAnimating
 } : AddCartModalProps) => {
     const { carts, setCarts } = useCarts();
     const { isAuthenticated, isLoading } = useAuth0();
 
     const [cartName, setCartName] = useState("");
+
     const addCartRef = useRef(null);
+    
+    // Handles if user clicks outside of the component
+    useClickOutside(addCartRef, addCartVisible, setAddCartVisibile, [addCartButtonRef]);
+
+    // On mount set the cart to animating
+    useEffect(() => {
+        setAddCartAnimating(true);
+    }, []);
 
     // Handles adding a new folder
     const handleAddCart = (cartName: string) => {  
@@ -49,25 +67,15 @@ const AddCartModal = ({
             }
         });
     };
-
-    // Handles if user clicks outside of the component
-    useClickOutside(addCartRef, addCartVisible, setAddCartVisibile, [addCartButtonRef]);
-
-    // Handles if user presses enter instead of presses submit button
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            handleAddCart(cartName);
-        }
-    };
   
     return (
-        <div className="fixed bottom-14 left-0 right-0 px-4 my-3">
-            <div 
-                className={
-                    `flex py-2 px-3 gap-2 w-full bg-[var(--secondary-background)] rounded-lg shadow-bottom 
-                    ${addCartVisible ? "slide-in-add-file" : "slide-out-add-file"}`
-                }
+        <FixedContainer>
+            <Container 
+                className={`!px-3 w-full !rounded-lg shadow-bottom ${addCartVisible ? "slide-in" : "slide-out"}`}
                 ref={addCartRef}
+                onAnimationEnd={() => {
+                    if (!addCartVisible) setAddCartAnimating(false);
+                }}
             > 
                 <input 
                     type="text" 
@@ -75,7 +83,7 @@ const AddCartModal = ({
                     placeholder="Cart Name" 
                     value={cartName} 
                     onChange={(e) => setCartName(e.target.value)}
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={(e) => onEnter(e, () => handleAddCart(cartName))}
                 />
                 <button 
                     type="button" 
@@ -84,8 +92,8 @@ const AddCartModal = ({
                 >
                     <FontAwesomeIcon icon={faCheck} />
                 </button>
-            </div>
-        </div>
+            </Container>
+        </FixedContainer>
     )
 };
 

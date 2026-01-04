@@ -6,9 +6,9 @@ interface itemHeaderProps {
 
 const itemHeader = ({ item } : itemHeaderProps) => {
     return (
-        <div className="flex flex-col flex-1 overflow-hidden">
-            <h4 className="whitespace-nowrap text-ellipsis overflow-hidden text-xs font-medium"> {item.name} </h4>
-            <h4 className="text-xs">  {item.price} </h4>
+        <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+            <p className="whitespace-nowrap text-ellipsis overflow-hidden text-xs font-medium"> {item.name} </p>
+            <p className="text-xs">  {item.price} </p>
         </div>
     )
 }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { DropdownMenu } from '@/popup/ui/dropdownMenu.js';
+import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu.js';
 import type { ItemType } from '@/types/ItemTypes.js';
-import { useClickOutside } from '@/popup/hooks/useClickOutside.js';
+import { useClickOutside } from '@/hooks/useClickOutside.js';
 import { useLocked } from '@/popup/context/LockedProvider';
 import type { CartType } from '@/types/CartType';
 import DeleteModal from '@/popup/modals/DeleteModal';
@@ -15,7 +15,6 @@ interface ItemDropdownProps {
     setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
     itemDropdownButtonRef: React.RefObject<HTMLElement | null>;
     handleItemNoteSelect;
-    updateCarts;
 }
 
 const ItemDropdown = ({
@@ -25,7 +24,6 @@ const ItemDropdown = ({
     setItemDropdownVisible,
     itemDropdownButtonRef,
     handleItemNoteSelect,
-    updateCarts,
 } : ItemDropdownProps) => {  
         
     const [moveItemModal, setMoveItemModal] = useState(false);
@@ -75,7 +73,6 @@ const ItemDropdown = ({
                 setMoveItemModal={setMoveItemModal}
                 moveItemModalRef={moveItemModalRef}
                 deleteItemAllModalRef={deleteItemAllModalRef}
-                updateCarts={updateCarts}
             />}
             {deleteItemModal && <DeleteModal 
                 cart={cart}
@@ -85,7 +82,6 @@ const ItemDropdown = ({
                 setDeleteModal={setDeleteItemModal}
                 deleteModalRef={deleteItemModalRef}
                 type="item"
-                updateCarts={updateCarts}
             />}
             <DropdownMenu
                 actions={itemActions}

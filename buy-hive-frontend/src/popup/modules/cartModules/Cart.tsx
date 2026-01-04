@@ -14,10 +14,9 @@ import { useCarts } from "@/popup/context/CartsProvider";
 
 interface CartProps {
   cart: CartType;
-  updateCarts;
 }
 
-const Cart = ({cart, updateCarts} : CartProps) => {
+const Cart = ({cart} : CartProps) => {
 
     const [items, setItems] = useState<ItemType[]>([]);
   
@@ -160,7 +159,6 @@ const Cart = ({cart, updateCarts} : CartProps) => {
       {isExpanded && <ItemsList 
         cart={cart}
         items={items}
-        updateCarts={updateCarts}
       />}
     </div>
 //          {modifyOrgSec && (

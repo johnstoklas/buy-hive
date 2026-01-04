@@ -6,7 +6,7 @@ interface ImageProps {
 
 const ItemImage = ({ item } : ImageProps) => {
     return (
-        <div className="w-20 h-20 rounded-md">
+        <div className="w-20 h-20 rounded-md flex-shrink-0">
         <img 
             src={item.image} 
             alt="" 

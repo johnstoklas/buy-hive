@@ -8,6 +8,8 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import type { ItemType } from '@/types/ItemTypes';
 import { useLocked } from '../context/LockedProvider';
 import CloseButton from '../ui/closeButton';
+import Container from '../ui/containerUI/container';
+import CenterContainer from '../ui/containerUI/centerContainer';
 
 interface DeleteModalProps {
     cart: CartType;
@@ -19,8 +21,6 @@ interface DeleteModalProps {
 
     deleteModalRef: React.RefObject<HTMLElement | null>;
     type: string;
-
-    updateCarts?;
 }
 
 const DeleteModal = ({ 
@@ -31,13 +31,12 @@ const DeleteModal = ({
     setDeleteModal, 
     deleteModalRef, 
     type,
-    updateCarts,
 } : DeleteModalProps) => {
 
     const { cart_id: cartId } = cart;
 
     const { isAuthenticated } = useAuth0(); 
-    const { setCarts } = useCarts();
+    const { setCarts, updateCarts } = useCarts();
     const { setIsLocked } = useLocked();
 
     const handleDeleteCart = () => {
@@ -84,14 +83,15 @@ const DeleteModal = ({
 
       if (response?.status === "success") {
         const newSelectedCarts = item.selected_cart_ids = item.selected_cart_ids.filter(id=> id !== cartId);
-        const updatedItem = {
+        const updatedItem: ItemType = {
           image: item.image,
           item_id: item.item_id,
           name: item.name,
           notes: item.notes,
           price: item.price,
           selected_cart_ids: newSelectedCarts,
-          url: item.url
+          url: item.url,
+          added_at: "",
         }
         updateCarts(updatedItem);
       } else {
@@ -117,7 +117,8 @@ const DeleteModal = ({
           notes: item.notes,
           price: item.price,
           selected_cart_ids: [],
-          url: item.url
+          url: item.url,
+          added_at: "",
         }
         updateCarts(updatedItem);
         // showNotification("Succesfully deleted item everywhere!", true);
@@ -155,9 +156,9 @@ const DeleteModal = ({
     }
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center px-4">
-            <div 
-                className="flex flex-1 flex-col relative justify-center text-center py-3 gap-2 rounded-lg bg-[var(--secondary-background)] shadow-bottom"
+        <CenterContainer>
+            <Container 
+                className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom"
                 ref={deleteModalRef}
             > 
                 <CloseButton onClick={closePopup} />
@@ -183,8 +184,8 @@ const DeleteModal = ({
                         No, cancel 
                     </Button>
                 </div>
-            </div>
-        </div> 
+            </Container>
+        </CenterContainer> 
     )
 };
 

@@ -80,7 +80,7 @@ export async function handleEditCart(message, sender, sendResponse) {
     sendResponse({ status: "error", message: "User must be signed in" });
     return;
   }
-  if (!newCartName) {
+  if (!cartId || !newCartName) {
     sendResponse({ status: "error", message: "Invalid payload" });
     return;
   }

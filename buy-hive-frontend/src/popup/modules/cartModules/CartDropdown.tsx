@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, type SetStateAction, type Dispatch } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useLocked } from '../../context/LockedProvider';
-import { useClickOutside } from '@/popup/hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import type { CartType } from '@/types/CartType';
-import { DropdownMenu } from '@/popup/ui/dropdownMenu';
+import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu';
 import ShareCartModal from '@/popup/modals/ShareCartModal';
 import DeleteModal from '@/popup/modals/DeleteModal';
 

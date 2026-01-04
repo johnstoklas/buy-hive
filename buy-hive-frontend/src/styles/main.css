@@ -3,6 +3,7 @@
 @import "tw-animate-css";
 @import "./checkbox.css";
 @import "./loading.css";
+@import "./animations.css";
 
 :root { 
   --background-color: hsl(0,0,95%,100%);
@@ -35,24 +36,6 @@
 
 .shadow-top {
   box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1)
-}
-
-.slide-in-add-file {
-  animation: slideInAddFile 0.5s forwards;
-}
-
-.slide-out-add-file {
-  animation: slideOutAddFile 0.5s forwards;
-}
-
-@keyframes slideInAddFile {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1;}
-}
-
-@keyframes slideOutAddFile {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(100%); opacity: 0; }
 }
 
 .rotate-open-cart {

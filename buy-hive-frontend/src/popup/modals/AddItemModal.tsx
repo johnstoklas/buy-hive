@@ -1,25 +1,32 @@
 import { useEffect, useState, useRef, type Dispatch, type SetStateAction } from 'react';
-import { standardizePrice } from '../../../utils/standardizePrice';
-import { useClickOutside } from '../hooks/useClickOutside';
+import { standardizePrice } from '../../utils/standardizePrice';
+import { useClickOutside } from '../../hooks/useClickOutside';
 import Button from '../ui/button';
-import Container from '../ui/container';
+import Container from '../ui/containerUI/container';
 import CloseButton from '../ui/closeButton';
-import ContainerHeader from '../ui/containerHeader';
+import ContainerHeader from '../ui/containerUI/containerHeader';
 import Image from '../ui/itemUI/itemImage';
 import ItemHeader from '../ui/itemUI/itemHeader';
 import LoadingBar from '../ui/loadingBar';
 import List from '../ui/list';
 import type { ScrapedItemType } from '@/types/ItemTypes';
 import ItemNote from '../ui/itemUI/itemNote';
+import FixedContainer from '../ui/containerUI/fixedContainer';
 
 interface AddItemModalProps {
     addItemVisible: boolean;
     setAddItemVisible: Dispatch<SetStateAction<boolean>>;
     addItemButtonRef: React.RefObject<HTMLElement | null>;
+    setAddItemAnimating: Dispatch<SetStateAction<boolean>>;
 }
 
 
-const AddItemModal = ({ addItemVisible, setAddItemVisible, addItemButtonRef} : AddItemModalProps) => {
+const AddItemModal = ({ 
+  addItemVisible, 
+  setAddItemVisible, 
+  addItemButtonRef, 
+  setAddItemAnimating
+} : AddItemModalProps) => {
   const [scrapedItem, setScrapedItem] = useState<ScrapedItemType>({
     name: "",
     price: "",
@@ -28,21 +35,16 @@ const AddItemModal = ({ addItemVisible, setAddItemVisible, addItemButtonRef} : A
     notes: "",
     selected_cart_ids: [],
   });
-
-  const [itemNotes, setItemNotes] = useState(""); 
-  const [selectedCartIds, setSelectedCartIds] = useState<string[]>([]);
-  // const [isAnimating, setIsAnimating] = useState(false);
   
-  //   useEffect(() => {
-  //     if (isVisible) {
-  //       setIsAnimating(true);
-  //     }
-  //   }, [isVisible]);
-
   const addItemRef = useRef(null);
 
   // Handles if user clicks outside of the component
   useClickOutside(addItemRef, addItemVisible, setAddItemVisible, [addItemButtonRef]);
+
+  // On mount set the cart to animating
+  useEffect(() => {
+      setAddItemAnimating(true);
+  }, []);
 
   // Gathers price, title, image, and url data for current page
   useEffect(() => {
@@ -95,15 +97,14 @@ const AddItemModal = ({ addItemVisible, setAddItemVisible, addItemButtonRef} : A
       });
   }
 
-  // return (isVisible || isAnimating) ? (
   return (
-    <div className="fixed bottom-14 left-0 right-0 px-4 my-3">
+    <FixedContainer>
       <Container
         ref={addItemRef}
-        className="!flex-col"
-        // onAnimationEnd={() => {
-        //   if (!isVisible) setIsAnimating(false);
-        // }}
+        className={`!flex-col relative ${addItemVisible ? "slide-in" : "slide-out"}`}
+        onAnimationEnd={() => {
+          if (!addItemVisible) setAddItemAnimating(false);
+        }}
       >
             <div className="flex">
               <ContainerHeader> Add Item </ContainerHeader>
@@ -147,13 +148,13 @@ const AddItemModal = ({ addItemVisible, setAddItemVisible, addItemButtonRef} : A
             </Container>
             <List
               item={scrapedItem}
-              setSelectedCartIds={setSelectedCartIds}
+              setSelectedCartIds={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
             /> 
             <Button onClick={() => handleAddItem}>
               Add Item
             </Button>
       </Container>
-    </div>
+    </FixedContainer>
   )
 };
 

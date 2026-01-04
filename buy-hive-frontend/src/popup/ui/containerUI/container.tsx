@@ -1,11 +1,11 @@
 import { forwardRef, type ReactNode } from "react";
 
-interface ContainerProps {
+interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   className?: string;
 }
 
-const Container = forwardRef<HTMLDivElement, ContainerProps>(({ children, className }, ref) => {
+const Container = forwardRef<HTMLDivElement, ContainerProps>(({ children, className, ...props }, ref) => {
     return (
       <div 
         className={`
@@ -13,6 +13,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(({ children, classN
           ${className ?? ""}
         `}
         ref={ref}
+        {...props}
       >
         {children}
       </div>
