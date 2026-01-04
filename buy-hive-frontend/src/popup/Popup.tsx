@@ -9,6 +9,7 @@ import AddCart from "./modals/AddCartModal";
 import { useTokenResponder } from "../hooks/tokenResponder";
 import { useCarts } from "./context/CartsProvider";
 import AddItemModal from "./modals/AddItemModal";
+import useCartActions from "@/hooks/useCartActions";
 
 const Popup = () => {
   useTokenResponder();
@@ -23,7 +24,6 @@ const Popup = () => {
 
   const [popupLoading, setPopupLoading] = useState(false);
 
-  const { setCarts } = useCarts();
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
 
@@ -47,35 +47,11 @@ const Popup = () => {
 
     getUser();
   }, []);
-  
-  useEffect(() => {
-    const handleGetCarts = () => {
-      if (isLoading || !isAuthenticated) return;
-      setPopupLoading(true);
-      chrome.runtime.sendMessage({ action: "getCarts" }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-          return;
-        }
 
-        if (response.status === "success") {
-          console.log(response.data);
-          setCarts(response.data.carts || []);
-          // if (organizationSectionRef.current) {
-          //     organizationSectionRef.current.scrollTo({
-          //         top: organizationSectionRef.current.scrollHeight,
-          //         behavior: 'smooth'
-          //     });
-          // }
-        } else {
-          console.error(response.message);
-          // showNotification("Error Loading Data", false);
-        }
-        setPopupLoading(false);
-      });
-    };
-    
-    handleGetCarts();
+  const { getCarts } = useCartActions({setPopupLoading});
+  
+  useEffect(() => {  
+    getCarts();
   }, [isLoading, isAuthenticated]);
 
   return (

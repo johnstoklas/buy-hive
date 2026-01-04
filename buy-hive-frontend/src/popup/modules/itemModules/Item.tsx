@@ -7,6 +7,8 @@ import type { CartType } from '@/types/CartType';
 import Image from '@/popup/ui/itemUI/itemImage';
 import ItemHeader from '@/popup/ui/itemUI/itemHeader';
 import ItemNote from '@/popup/ui/itemUI/itemNote';
+import useItemActions from '@/hooks/useItemActions';
+import { onNotShiftEnter } from '@/utils/keyboard';
 // import ModifyItemSec from './ModifyItemSec.jsx';
 // import { useLocked } from '../contexts/LockedProvider.jsx'
 // import { userDataContext } from '../contexts/UserProvider.jsx';
@@ -18,6 +20,7 @@ interface ItemProp {
 
 const Item = ({ cart, item } : ItemProp) => {
 
+  const {item_id: itemId} = item;
   const [itemDropdownVisible, setItemDropdownVisible] = useState(false);
   const [itemNote, setItemNote] = useState(item.notes || "");
   const [isEditing, setIsEditing] = useState(false); // Track if editing
@@ -39,65 +42,23 @@ const Item = ({ cart, item } : ItemProp) => {
     setIsEditing(true);
     setItemDropdownVisible(false);
   };
-  
-  // const openModifyItem = () => {
-  //   if(!isLocked) {
-  //     setModifyVisible(!modifyVisible);
-  //   }
-  // }
-
-  // const handleNoteClick = () => {
-  //   noteRef.current = notes; 
-  //   setIsEditing(true);
-  //   setModifyVisible(false);
-  // };
 
   // Edit item notes
-  const handleEditNotes = () => {
-      const data = {
-        notes: itemNote.trim(),
-        itemId: item.item_id,
-      };
+  const { editItem } = useItemActions();
 
-      chrome.runtime.sendMessage({ action: "editItem", data: data }, (response) => {
-          if (chrome.runtime.lastError) {
-            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-            return;
-          }
-
-          if (response?.status === "success") {
-            // showNotification("Item succesfully moved!", true);
-          } else {
-            console.error("Error editing notes:", response?.message);
-            // showNotification("Item succesfully moved!", true);
-          }
-        }
-      );
-  };
-
-  // useEffect(() => {
-  //   if (isEditing && inputRef.current) {
-  //     const length = inputRef.current.value.length;
-  //     inputRef.current.setSelectionRange(length, length); // Move cursor to the end
-  //     inputRef.current.focus();
-  //   }
-  // }, [isEditing]);
-
-  const handleNoteBlur = () => {
-    if (itemNote.trim() === prevNoteRef.current.trim()) return;
-    handleEditNotes();
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      if (itemNote.trim() === prevNoteRef.current.trim()) return;
-      e.preventDefault();   
-      handleEditNotes();    
-      setIsEditing(false);
+  useEffect(() => {
+    if (isEditing && itemNoteRef.current) {
+      const length = itemNoteRef.current.value.length;
+      itemNoteRef.current.setSelectionRange(length, length); 
+      itemNoteRef.current.focus();
     }
-  };
+  }, [isEditing]);
 
+  const handleSubmit = () => {
+    if (itemNote.trim() === prevNoteRef.current.trim()) return;
+    editItem(itemNote, itemId);
+    setIsEditing(false);
+  }
 
   return (
     <div className="flex flex-row px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md">
@@ -129,8 +90,8 @@ const Item = ({ cart, item } : ItemProp) => {
           noteRef={itemNoteRef}
           noteValue={itemNote}
           setNoteValue={setItemNote}
-          handleBlur={handleNoteBlur}
-          onKeyDown={handleKeyDown}
+          handleBlur={() => handleSubmit}
+          onKeyDown={(e) => onNotShiftEnter(e, () => handleSubmit())}
           handleNoteSelect={handleItemNoteSelect}
         />
         </div>

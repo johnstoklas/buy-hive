@@ -1,7 +1,5 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect, type Dispatch, type RefObject, type SetStateAction } from 'react';
 import type { CartType } from '@/types/CartType';
-import { useCarts } from '../context/CartsProvider';
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../ui/button';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +8,8 @@ import { useLocked } from '../context/LockedProvider';
 import CloseButton from '../ui/closeButton';
 import Container from '../ui/containerUI/container';
 import CenterContainer from '../ui/containerUI/centerContainer';
+import useCartActions from '@/hooks/useCartActions';
+import useItemActions from '@/hooks/useItemActions';
 
 interface DeleteModalProps {
     cart: CartType;
@@ -19,7 +19,7 @@ interface DeleteModalProps {
     setDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setDeleteModal: Dispatch<SetStateAction<boolean>>;
 
-    deleteModalRef: React.RefObject<HTMLElement | null>;
+    deleteModalRef: RefObject<HTMLElement | null>;
     type: string;
 }
 
@@ -34,30 +34,10 @@ const DeleteModal = ({
 } : DeleteModalProps) => {
 
     const { cart_id: cartId } = cart;
-
-    const { isAuthenticated } = useAuth0(); 
-    const { setCarts, updateCarts } = useCarts();
     const { setIsLocked } = useLocked();
 
-    const handleDeleteCart = () => {
-        if (!isAuthenticated) return;
-
-        chrome.runtime.sendMessage({ action: "deleteCart", data: { cartId } }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-                return;
-            }
-
-            if (response.status === "success") {
-                setCarts((prev) => prev.filter((section) => section.cart_id !== cartId));
-                // itemsInFolder.forEach((item) => {
-                //     const newSelectedCarts = item.selected_cart_ids = item.selected_cart_ids.filter(id=> id !== cartId);
-                // });
-            } else {
-                console.error("Error deleting cart:", response?.message);
-            }
-        });
-    };
+    const { deleteCart } = useCartActions();
+    const { deleteItem, deleteItemAll } = useItemActions();
 
     useEffect(() => {
         setDropdownHidden(true);
@@ -69,65 +49,6 @@ const DeleteModal = ({
         setIsLocked(false);
         setDeleteModal(false);
     }
-
-  // Delete an item
-  const handleDeleteItem = () => {
-    if(!item || !updateCarts) return;
-    const data = {cartId: cart.cart_id, itemId: item.item_id};
-
-    chrome.runtime.sendMessage({action: "deleteItem", data: data}, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-        return;
-      }
-
-      if (response?.status === "success") {
-        const newSelectedCarts = item.selected_cart_ids = item.selected_cart_ids.filter(id=> id !== cartId);
-        const updatedItem: ItemType = {
-          image: item.image,
-          item_id: item.item_id,
-          name: item.name,
-          notes: item.notes,
-          price: item.price,
-          selected_cart_ids: newSelectedCarts,
-          url: item.url,
-          added_at: "",
-        }
-        updateCarts(updatedItem);
-      } else {
-        console.error("Error deleting item:", response?.message);
-      }
-    });
-  }
-
-  // Deletes item from all carts
-  const handleDeleteItemAll = () => {
-    if(!item) return;
-    chrome.runtime.sendMessage({action: "deleteItemAll", data: {itemId: item.item_id}}, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-        return;
-      }
-
-      if (response?.status === "success") {
-        const updatedItem = {
-          image: item.image,
-          item_id: item.item_id,
-          name: item.name,
-          notes: item.notes,
-          price: item.price,
-          selected_cart_ids: [],
-          url: item.url,
-          added_at: "",
-        }
-        updateCarts(updatedItem);
-        // showNotification("Succesfully deleted item everywhere!", true);
-      } else {
-        console.error("Error deleting item:", response?.message);
-        // showNotification("Error deleting item everywhere", false);
-      }
-    });
-  }
   
     const getDeleteMessage = () => {
         switch (type) {
@@ -143,13 +64,15 @@ const DeleteModal = ({
     const handleSubmit = () => {
         switch (type) {
             case "folder":
-                handleDeleteCart();
+                deleteCart(cartId);
                 break;
             case "item":
-                handleDeleteItem();   
+                if(!item) return;
+                deleteItem(cartId, item);   
                 break;
             case "item-all":
-                handleDeleteItemAll();   
+                if(!item) return;
+                deleteItemAll(item);   
                 break;            
         }
         closePopup();
@@ -168,7 +91,7 @@ const DeleteModal = ({
                         className="text-base"
                     />
                 </div>
-                <p> {getDeleteMessage(type)} </p>
+                <p> {getDeleteMessage()} </p>
                 <div className="flex gap-2 justify-center">
                     <Button 
                         onClick={handleSubmit}

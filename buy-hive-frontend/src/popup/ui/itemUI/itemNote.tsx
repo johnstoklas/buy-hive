@@ -51,7 +51,7 @@ const ItemNote = ({
             className="flex flex-1 px-1 py-1 bg-[var(--input-color)] rounded-md text-xs"
             onDoubleClick={handleNoteSelect} 
         >
-            {noteValue.trim() || "None"}
+            {(noteValue && noteValue.trim()) || "None"}
         </div>
     )
 }

@@ -13,6 +13,7 @@ import ContainerHeader from '../ui/containerUI/containerHeader';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import Container from '../ui/containerUI/container';
 import { useCarts } from '../context/CartsProvider';
+import useItemActions from '@/hooks/useItemActions';
 
 interface MoveItemModalProps {
     cart: CartType;
@@ -41,42 +42,11 @@ const MoveItemModal = ({
     const { setIsLocked } = useLocked(); 
     const { updateCarts } = useCarts();   
 
+    const { moveItem } = useItemActions();
+
     useEffect(() => {
         setItemDropdownHidden(true);
     }, [setItemDropdownHidden]);
-    
-    // Moves item to carts
-    const handleMoveItem = () => {
-        const data = {
-            itemId: item.item_id,
-            selectedCarts: selectedCartIds,
-        }
-
-        chrome.runtime.sendMessage({action: "moveItem", data: data}, (response) => {
-        if (chrome.runtime.lastError) {
-            console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-            return;
-        }
-    
-        if (response?.status === "success") {
-            const updatedItem: ItemType = {
-                image: item.image,
-                item_id: item.item_id,
-                name: item.name,
-                notes: item.notes,
-                price: item.price,
-                selected_cart_ids: selectedCartIds,
-                url: item.url,
-                added_at: "",
-            };
-            updateCarts(updatedItem);
-            // showNotification("Item succesfully moved!", true);
-        } else {
-            // showNotification("Failed to move item", false);
-            console.error("Error moving item:", response?.message);
-        }
-        });
-    }
 
     const closePopup = () => {
         setItemDropdownVisible(false);
@@ -86,10 +56,9 @@ const MoveItemModal = ({
     }
 
     const submitMoveItem = () => {
-        if(selectedCartIds) {
-            handleMoveItem();
-            closePopup();
-        }
+        if(selectedCartIds) return;
+        moveItem(item, selectedCartIds);
+        closePopup();
     }
     
     return (

@@ -4,8 +4,8 @@ import CartDropdown from "./CartDropdown";
 import DropdownButton from "@/popup/ui/dropdownUI/dropdownButton";
 import type { ItemType } from "@/types/ItemTypes";
 import { onEnter } from "@/utils/keyboard";
-import useEditCartName from "@/hooks/useCartActions";
-import useGetItems from "@/hooks/useItemActions";
+import useCartActions from "@/hooks/useCartActions";
+import useItemActions from "@/hooks/useItemActions";
 
 interface CartTitleProps {
     cart: CartType;
@@ -25,9 +25,9 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
     const cartTitleRef = useRef(null);
 
     // Handles submitting a new cart name
-    const { handleEditCartName } = useEditCartName({ setIsEditing });
+    const { renameCart } = useCartActions({ setIsEditing });
     // Handles getting items for a cart
-    const { handleGetItems } = useGetItems({isExpanded, setIsExpanded, setItems});
+    const { getItems } = useItemActions({isExpanded, setIsExpanded, setItems});
 
     useEffect(() => {
         if (isEditing && cartTitleRef.current) {
@@ -58,7 +58,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
                             ${isExpanded ? "rotate-open-cart" : ""} 
                             ${isLocked ? "disabled-hover-modify" : ""}`
                         }          
-                        onClick={() => handleGetItems({cartId: cart.cart_id})}
+                        onClick={() => getItems(cart.cart_id)}
                     >
                         ▶
                     </button>
@@ -70,8 +70,8 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
                             className="bg-[var(--input-color)] rounded-sm px-2 py-1"
                             value={cartTitle}
                             onChange={(e) => {setCartTitle(e.target.value)}}
-                            onBlur={() => handleEditCartName({cartId: cart.cart_id, cartTitle})}
-                            onKeyDown={(e) => onEnter(e, () => handleEditCartName({cartId: cart.cart_id, cartTitle}))}
+                            onBlur={() => renameCart(cart.cart_id, cartTitle)}
+                            onKeyDown={(e) => onEnter(e, () => renameCart(cart.cart_id, cartTitle))}
                         />
                     ) : (
                         <h4 className="px-2 py-1" onDoubleClick={handleCartTitleSelect}>

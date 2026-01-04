@@ -1,14 +1,12 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import type { CartType } from '@/types/CartType';
-import { useCarts } from '../context/CartsProvider';
 import Button from '../ui/button';
 import { useLocked } from '../context/LockedProvider';
 import CloseButton from '../ui/closeButton';
 import ContainerHeader from '../ui/containerUI/containerHeader';
 import Container from '../ui/containerUI/container';
-import FixedContainer from '../ui/containerUI/fixedContainer';
 import CenterContainer from '../ui/containerUI/centerContainer';
+import useCartActions from '@/hooks/useCartActions';
 
 interface DeletePopupProps {
     cart: CartType;
@@ -21,37 +19,8 @@ interface DeletePopupProps {
 const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setShareCartModal, shareCartModalRef } : DeletePopupProps) => {
 
     const { cart_id: cartId } = cart;
-
-    const { isAuthenticated } = useAuth0(); 
-    const { setCarts } = useCarts();
     const { setIsLocked } = useLocked();
-
     const [email, setEmail] = useState("");
-
-    const handleSendCart = () => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(emailRegex.test(email)) {
-
-        const data = { cartId: cartId, recipient: email}
-
-        // setIsLoading(true);
-        chrome.runtime.sendMessage({ action: "sendEmail", data }, (response) => {
-            console.log(response);
-            if (response?.status === "success") {
-            // setIsLoading(false);
-            closePopup();  
-            // showNotification("Email succesfully sent!", true);
-            } else {
-            console.error("message: ", response);
-            // setIsLoading(false);
-            // showNotification("Error sending email", false);
-            }
-        });
-        } else {
-            console.log("invalid email");
-            // showNotification("Invalid email", false);
-        }
-    }
 
     useEffect(() => {
         setCartDropdownHidden(true);
@@ -63,6 +32,8 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
         setIsLocked(false);
         setShareCartModal(false);
     }
+
+    const { shareCart } = useCartActions({closePopup});
 
     // const handleKeyDown = (e) => {
     //     if (e.key === 'Enter') {
@@ -91,7 +62,7 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
             />
             <div className="flex gap-2 justify-center">
                 <Button 
-                    onClick={handleSendCart}
+                    onClick={() => shareCart(email, cartId)}
                     isModal={true}
                 > 
                     Send

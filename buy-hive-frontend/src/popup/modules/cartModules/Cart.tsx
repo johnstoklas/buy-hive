@@ -31,9 +31,7 @@ const Cart = ({cart} : CartProps) => {
     const inputRef = useRef(null);
     // const folderTitleRef = useRef(title);
 
-      const { isLocked } = useLocked();
-      const { setCarts } = useCarts();
-    //   const { userData } = userDataContext();
+    const { isLocked } = useLocked();
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -50,149 +48,32 @@ const Cart = ({cart} : CartProps) => {
     };
 
     useEffect(() => {
-      const itemIds = new Set(cart.item_ids);
-      setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
-    }, [cart]);
-
-  useEffect(() => {
       // Allow animation only after loading is done
       if(!isLoading) {
         updateScreenSize();
       }
-  }, [isLoading, isExpanded, items]); // Trigger when loading or expanded state changes
+    }, [isLoading, isExpanded, items]); // Trigger when loading or expanded state changes
 
-//   useEffect(() => {
-//     setSectionTitle(title);
-//   }, [title]);
-
-  //handles editing name of a folder
-
-
-  const handleTitleChange = (e) => {
-    setSectionTitle(e.target.value);
-  };
-
-//   const handleTitleBlur = () => {
-//     setIsEditing(false);
-//     if(sectionTitle) {
-//       folderTitleRef.current = sectionTitle;
-//       handleEditSection(sectionTitle, sectionId);
-//     }
-//     else {
-//       setSectionTitle(folderTitleRef.current);
-//     }
-//   };
-
-//   const handleTitleKeyDown = (e) => {
-//     if (e.key === "Enter") {
-//       setIsEditing(false);
-//       if(sectionTitle) {
-//         folderTitleRef.current = sectionTitle;
-//         handleEditSection(sectionTitle, sectionId);
-//       }
-//       else {
-//         setSectionTitle(folderTitleRef.current);
-//       }
-//     }
-//   };
-
-//   useEffect(() => {
-//     const listener = (message) => {
-//         if (message.action === "cartUpdate") {
-//             const data = message.data;
-
-//             setItemsInFolder((prevItems) => {
-//                 const existingItem = prevItems.find(item => item.item_id === data.item_id);
-//                 const isInSelectedCarts = data.selected_cart_ids.includes(sectionId);
-
-//                 let updatedItems;
-
-//                 if (isInSelectedCarts) {
-//                     if (existingItem) {
-//                         // Update the item if it already exists
-//                         updatedItems = prevItems.map(item =>
-//                             item.item_id === data.item_id ? { ...item, ...data } : item
-//                         );
-//                     } else {
-//                         // Add the item if it doesn't exist
-//                         updatedItems = [...prevItems, data];
-//                     }
-//                 } else {
-//                     // Remove the item if the cart is no longer selected
-//                     updatedItems = prevItems.filter(item => item.item_id !== data.item_id);
-//                 }
-
-//                 console.log("updated items: ", updatedItems);
-
-//                 setIsLoading(true);
-
-//                 // After updating itemsInFolder, update organizationSections
-//                 setOrganizationSections((prevSections) =>
-//                     prevSections.map(section =>
-//                         section.cart_id === sectionId
-//                             ? { ...section, items: updatedItems }
-//                             : section
-//                     )
-//                 );
-//                 setIsLoading(false);
-
-//                 return updatedItems;  // Return for setItemsInFolder
-//             });
-//         }
-//     };
-
-//     chrome.runtime.onMessage.addListener(listener);
-
-//     return () => chrome.runtime.onMessage.removeListener(listener);
-//   }, []);
+    useEffect(() => {
+      const itemIds = new Set(cart.item_ids);
+      setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
+    }, [cart]);
 
   return (
-    <div className="bg-[var(--seconday-background)]">
-      <CartTitle 
-        cart={cart}
-        isExpanded={isExpanded}
-        setIsExpanded={setIsExpanded}
-        isLocked={isLocked}
-        setItems={setItems}
-        folderRef={folderRef}
-      />
-      {isExpanded && <ItemsList 
-        cart={cart}
-        items={items}
-      />}
-    </div>
-//          {modifyOrgSec && (
-//           <ModifyOrgSec
-//             newFileName={sectionTitle}
-//             setModifyOrgSec={setModifyOrgSec}
-//             modOrgHidden={modOrgHidden}
-//             setModOrgHidden={setModOrgHidden}
-//             position={modifyOrgSecPosition}
-//             ref={folderRef}
-//             handleEditSection={handleEditSection}
-//             cartId={sectionId}
-//             handleTitleClick={handleTitleClick}
-//             setOrganizationSections={setOrganizationSections}
-//             cartName={sectionTitle}
-//             showNotification={showNotification}
-//           />
-//         )} 
-//       </div> 
-//       <div className="expand-section-expanded-display" ref={expandedSectionRef}>
-//         {itemsInFolder && itemsInFolder.map((item) => (
-//           <ExpandSection
-//             key={item.item_id}
-//             item={item}
-//             cartId={sectionId}
-//             itemId={item.item_id}
-//             cartsArray={organizationSections}
-//             itemsInFolder={itemsInFolder} // <- items live inside the matched section
-//             setItemsInFolder={setItemsInFolder}
-//             showNotification={showNotification}
-//           />
-//         ))
-//         }
-//       </div> 
+      <div className="bg-[var(--seconday-background)]">
+        <CartTitle 
+          cart={cart}
+          isExpanded={isExpanded}
+          setIsExpanded={setIsExpanded}
+          isLocked={isLocked}
+          setItems={setItems}
+          folderRef={folderRef}
+        />
+        {isExpanded && <ItemsList 
+          cart={cart}
+          items={items}
+        />}
+      </div>
     );
 }
 
