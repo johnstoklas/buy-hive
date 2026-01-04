@@ -7,7 +7,11 @@ export async function handleGetItems(message, sender, sendResponse) {
     const { cartId } = message.data;
 
     if (!accessToken) {
-        sendResponse({ status: "error", message: "User must be signed in"});
+        sendResponse({ status: "error", message: "User must be signed in" });
+        return;
+    }
+    if (!cartId) {
+        sendResponse({ status: "error", message: "Invalid payload" });
         return;
     }
 
@@ -32,6 +36,43 @@ export async function handleGetItems(message, sender, sendResponse) {
         sendResponse({ status: "error", message: error.message });
     }
 };
+
+// Edits the notes of an item
+export async function handleEditItem(message, sender, sendResponse) {
+    const accessToken = await getAccessToken();
+    const { notes, itemId } = message.data;
+    
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "User must be signed in" });
+        return;
+    }
+    if (!notes || !itemId) {
+        sendResponse({ status: "error", message: "Invalid payload" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/items/${itemId}/edit-note`;
+    try {
+        const response = await fetch(endpoint, {
+            method: "PUT",
+            headers: { 
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify({ new_note: notes }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error editing notes:", error);
+        sendResponse({ status: "error", message: error.message });
+    }
+}
 
 // Deletes an item from a cart
 export async function handleDeleteItem(message, sender, sendResponse) {
@@ -62,6 +103,76 @@ export async function handleDeleteItem(message, sender, sendResponse) {
         sendResponse({ status: "success", data });
     } catch (error) {
         console.error("Error deleting item:", error);
+        sendResponse({ status: "error", message: error.message });
+    }
+}
+
+// Moves an item between carts
+export async function handleMoveItem(message, sender, sendResponse) {
+    const accessToken = await getAccessToken();
+    const { itemId, selectedCarts } = message.data;
+
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "User must be signed in" });
+        return;
+    }
+    if (!itemId || !selectedCarts) {
+        sendResponse({ status: "error", message: "Invalid payload" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/items/${itemId}/move`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "PUT",
+            headers: { 
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ selected_cart_ids: selectedCarts })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // const data = await response.json();
+        sendResponse({ status: "success" });
+    } catch (error) {
+        console.error("Error modifying item:", error);
+        sendResponse({ status: "error", message: error.message });
+    }
+}
+
+// Deletes an item from every cart it is in
+export async function handleDeleteItemAll(message, sender, sendResponse) {
+    const accessToken = await getAccessToken();
+    const { itemId } = message.data;
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "User must be signed in" });
+        return;
+    }
+    if (!itemId) {
+        sendResponse({ status: "error", message: "Invalid payload" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/items/${itemId}/nuke`;
+    try {
+        const response = await fetch(endpoint, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${accessToken}`, }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error deleting item all:", error);
         sendResponse({ status: "error", message: error.message });
     }
 }

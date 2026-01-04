@@ -100,32 +100,32 @@ const DeleteModal = ({
   }
 
   // Deletes item from all carts
-//   const handleDeleteItemAll = (itemId) => {
-//     const data = {
-//       accessToken: userData,
-//       itemId: itemId,
-//     };
+  const handleDeleteItemAll = () => {
+    if(!item) return;
+    chrome.runtime.sendMessage({action: "deleteItemAll", data: {itemId: item.item_id}}, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+        return;
+      }
 
-//     chrome.runtime.sendMessage({action: "deleteItemAll", data: data}, (response) => {
-//       if (chrome.runtime.lastError) {
-//         console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-//         return;
-//       }
-
-//       if (response?.status === "success") {
-//         setItemsInFolder((prev) => prev.filter((section) => section.item_id !== itemId));
-//         const sentData = {
-//           item_id: itemId,
-//           selected_cart_ids: [],
-//         }
-//         chrome.runtime.sendMessage({action: "updateItems", data: sentData});
-//         showNotification("Succesfully deleted item everywhere!", true);
-//       } else {
-//         showNotification("Error deleting item everywhere", false);
-//         console.error("Error deleting item:", response?.message);
-//       }
-//     });
-//   }
+      if (response?.status === "success") {
+        const updatedItem = {
+          image: item.image,
+          item_id: item.item_id,
+          name: item.name,
+          notes: item.notes,
+          price: item.price,
+          selected_cart_ids: [],
+          url: item.url
+        }
+        updateCarts(updatedItem);
+        // showNotification("Succesfully deleted item everywhere!", true);
+      } else {
+        console.error("Error deleting item:", response?.message);
+        // showNotification("Error deleting item everywhere", false);
+      }
+    });
+  }
   
     const getDeleteMessage = () => {
         switch (type) {
@@ -133,7 +133,7 @@ const DeleteModal = ({
                 return "Are you sure you want to delete this folder?";
             case "item":
                 return "Are you sure you want to delete this item?";
-            default:
+            case "item-all":
                 return "Are you sure you want to delete this item permanently?";
         }
     }
@@ -146,8 +146,9 @@ const DeleteModal = ({
             case "item":
                 handleDeleteItem();   
                 break;
-            default:
-                return;             
+            case "item-all":
+                handleDeleteItemAll();   
+                break;            
         }
         closePopup();
     }

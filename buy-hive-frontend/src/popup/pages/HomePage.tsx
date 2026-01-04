@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
 import { useCarts } from "../context/CartsProvider";
-import { useLocked } from "../context/LockedProvider";
 import type { ItemType } from "@/types/ItemType";
 
 interface HomePageProps {
@@ -48,7 +47,6 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
         <section 
             className="flex flex-col gap-2 w-full pt-2"
             id="organization-section" 
-            // style={{ overflowY: 'auto', maxHeight: '400px' }}
             // ref={organizationSectionRef}
         >
             {/* {isLocked && <div className="absolute inset-0 bg-black/50"/>} */}
@@ -57,13 +55,6 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
                     <Cart
                         cart={cart}
                         updateCarts={updateCarts}
-                        // organizationSections={organizationSections}
-                        // setOrganizationSections={setOrganizationSections}
-                        // handleUpdateItem={handleUpdateItem}
-                        // fetchOrganizationSections={fetchOrganizationSections}
-                        // isLoading={isLoading}
-                        // setIsLoading={setIsLoading}
-                        // showNotification={showNotification}
                     />
                 ))
                 ) : (

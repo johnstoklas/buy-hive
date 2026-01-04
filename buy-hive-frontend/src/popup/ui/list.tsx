@@ -6,11 +6,14 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 interface ListProps {
     item: ItemType;
-    selectedCarts: string[];
-    setSelectedCarts: Dispatch<SetStateAction<string[]>>;
+    // selectedCarts: string[];
+    // setSelectedCarts: Dispatch<SetStateAction<string[]>>;
+    // selectedCartIds: string[];
+    setSelectedCartIds: Dispatch<SetStateAction<string[]>>;
 }
-const List = ({ item, selectedCarts, setSelectedCarts } : ListProps) => {
-    const [selectedCartIds, setSelectedCartIds] = useState<string[]>(item.selected_cart_ids ?? [])
+const List = ({ item, setSelectedCartIds } : ListProps) => {
+    
+    const [selectedCarts, setSelectedCarts] = useState<string[]>([]);
     const [isAddingFolder, setIsAddingFolder] = useState(false); 
     const [newFolderName, setNewFolderName] = useState(''); 
 

@@ -19,7 +19,7 @@ interface CartProps {
 
 const Cart = ({cart, updateCarts} : CartProps) => {
 
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState<ItemType[]>([]);
   
     const [sectionHeight, setSectionHeight] = useState("45px");
     const [modOrgHidden, setModOrgHidden] = useState(false);
@@ -49,6 +49,11 @@ const Cart = ({cart, updateCarts} : CartProps) => {
       }
       if(items && items.length == 0 ) setIsExpanded(false); 
     };
+
+    useEffect(() => {
+      const itemIds = new Set(cart.item_ids);
+      setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
+    }, [cart]);
 
   useEffect(() => {
       // Allow animation only after loading is done

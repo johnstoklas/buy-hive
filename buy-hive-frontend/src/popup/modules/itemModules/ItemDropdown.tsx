@@ -4,8 +4,9 @@ import { DropdownMenu } from '@/popup/ui/dropdownMenu.js';
 import type { ItemType } from '@/types/ItemType.js';
 import { useClickOutside } from '@/popup/hooks/useClickOutside.js';
 import { useLocked } from '@/popup/context/LockedProvider';
-import ItemModals from './ItemModals';
 import type { CartType } from '@/types/CartType';
+import DeleteModal from '@/popup/modals/DeleteModal';
+import MoveItemModal from '@/popup/modals/MoveItemModal';
 
 interface ItemDropdownProps {
     cart: CartType;
@@ -36,6 +37,7 @@ const ItemDropdown = ({
     const itemDropdownRef = useRef(null);
     const moveItemModalRef = useRef(null);
     const deleteItemModalRef = useRef(null);
+    const deleteItemAllModalRef = useRef(null);
 
     const itemActions = [
         {
@@ -56,7 +58,7 @@ const ItemDropdown = ({
     ];
 
     // If the user clicks out of the modification pop-up it disappears
-    useClickOutside(itemDropdownRef, itemDropdownVisible, setItemDropdownVisible, [itemDropdownButtonRef, moveItemModalRef, deleteItemModalRef]);
+    useClickOutside(itemDropdownRef, itemDropdownVisible, setItemDropdownVisible, [itemDropdownButtonRef, moveItemModalRef, deleteItemModalRef, deleteItemAllModalRef]);
 
     useEffect(() => {
         setIsLocked(deleteItemModal || moveItemModal);
@@ -64,19 +66,27 @@ const ItemDropdown = ({
 
     return (
         <>
-            <ItemModals
+            {moveItemModal && <MoveItemModal 
                 cart={cart}
                 item={item}
-                setItemDropdownVisible={setItemDropdownVisible}
                 setItemDropdownHidden={setItemDropdownHidden}
+                setItemDropdownVisible={setItemDropdownVisible}
                 moveItemModal={moveItemModal}
                 setMoveItemModal={setMoveItemModal}
                 moveItemModalRef={moveItemModalRef}
-                deleteItemModal={deleteItemModal}
-                setDeleteItemModal={setDeleteItemModal}
-                deleteItemModalRef={deleteItemModalRef}
+                deleteItemAllModalRef={deleteItemAllModalRef}
                 updateCarts={updateCarts}
-            /> 
+            />}
+            {deleteItemModal && <DeleteModal 
+                cart={cart}
+                item={item}
+                setDropdownVisible={setItemDropdownVisible}
+                setDropdownHidden={setItemDropdownHidden}
+                setDeleteModal={setDeleteItemModal}
+                deleteModalRef={deleteItemModalRef}
+                type="item"
+                updateCarts={updateCarts}
+            />}
             <DropdownMenu
                 actions={itemActions}
                 hidden={itemDropdownHidden}

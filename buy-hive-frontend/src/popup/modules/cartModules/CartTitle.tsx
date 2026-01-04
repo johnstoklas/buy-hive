@@ -41,11 +41,6 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
         // setModifyOrgSec(false);
     };
 
-    useEffect(() => {
-        const itemIds = new Set(cart.item_ids);
-        setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
-    }, [cart]);
-
     const handleOpenCart = () => {
         if (isLocked || !isAuthenticated) return;
         if (isExpanded) { setIsExpanded(false); return; }

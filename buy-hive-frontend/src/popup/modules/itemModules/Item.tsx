@@ -56,7 +56,6 @@ const Item = ({ cart, item, updateCarts } : ItemProp) => {
   const handleEditNotes = () => {
       const data = {
         notes: itemNote.trim(),
-        cartId: cart.cart_id,
         itemId: item.item_id,
       };
 
@@ -67,9 +66,10 @@ const Item = ({ cart, item, updateCarts } : ItemProp) => {
           }
 
           if (response?.status === "success") {
-            chrome.runtime.sendMessage({action: "editItem", data: response.data});
+            // showNotification("Item succesfully moved!", true);
           } else {
             console.error("Error editing notes:", response?.message);
+            // showNotification("Item succesfully moved!", true);
           }
         }
       );

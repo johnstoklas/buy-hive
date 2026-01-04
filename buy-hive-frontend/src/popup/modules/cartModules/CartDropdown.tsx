@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef, type SetStateAction, type Dispatch } from 'react';
-// import DeletePopup from './DeletePopup.jsx';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useLocked } from '../../context/LockedProvider';
 import { useClickOutside } from '@/popup/hooks/useClickOutside';
 import type { CartType } from '@/types/CartType';
-import CartModals from './CartModals';
 import { DropdownMenu } from '@/popup/ui/dropdownMenu';
-// import ShareFolder from './ShareFolder.jsx';
+import ShareCartModal from '@/popup/modals/ShareCartModal';
+import DeleteModal from '@/popup/modals/DeleteModal';
 
 interface CartDropdownProps {
     cart: CartType;
@@ -62,17 +60,21 @@ const CartDropdown = ({
 
     return (
         <>
-            <CartModals 
+            {deleteCartModal && <DeleteModal
+                cart={cart}
+                setDropdownVisible={setCartDropdownVisible}
+                setDropdownHidden={setCartDropdownHidden}
+                setDeleteModal={setDeleteCartModal}
+                deleteModalRef={deleteCartModalRef}
+                type="folder"
+            />}
+            {shareCartModal && <ShareCartModal 
                 cart={cart}
                 setCartDropdownVisible={setCartDropdownVisible}
                 setCartDropdownHidden={setCartDropdownHidden}
-                deleteCartModal={deleteCartModal}
-                setDeleteCartModal={setDeleteCartModal}
-                deleteCartModalRef={deleteCartModalRef}
-                shareCartModal={shareCartModal}
                 setShareCartModal={setShareCartModal}
                 shareCartModalRef={shareCartModalRef}
-            />
+            />}
             <DropdownMenu
                 actions={cartActions}
                 hidden={cartDropdownHidden}
