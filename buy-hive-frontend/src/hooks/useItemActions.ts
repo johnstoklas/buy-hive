@@ -9,8 +9,9 @@ interface useItemActionsProps {
     isExpanded?: boolean;
     setIsExpanded?: Dispatch<SetStateAction<boolean>>; 
     setItems?: Dispatch<SetStateAction<ItemType[]>>; 
+    setIsCartLoading?: Dispatch<SetStateAction<boolean>>; 
 }
-export function useItemActions({ isExpanded, setIsExpanded, setItems } : useItemActionsProps = {}) {
+export function useItemActions({ isExpanded, setIsExpanded, setItems, setIsCartLoading } : useItemActionsProps = {}) {
     const { isLoading, isAuthenticated } = useAuth0();
     const { isLocked } = useLocked();
     const { updateCarts } = useCarts();
@@ -19,15 +20,19 @@ export function useItemActions({ isExpanded, setIsExpanded, setItems } : useItem
         if (isLocked || isLoading || !isAuthenticated) return;
         if (isExpanded) { setIsExpanded?.(false); return; }
 
+        setIsCartLoading?.(true);
+        setIsExpanded?.(true);
+
         try {
             const data = { cartId }
             const res = await sendChromeMessage<{items: ItemType[]}>({action: "getItems", data});
 
             setItems?.(res.items);
-            setIsExpanded?.(true);
         } catch (err) {
             console.error(err);
         }
+
+        setIsCartLoading?.(false);
     };
 
     const editItem = async(itemNote: string, itemId: string) => {

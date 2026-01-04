@@ -17,16 +17,15 @@ interface CartProps {
 }
 
 const Cart = ({cart} : CartProps) => {
-
     const [items, setItems] = useState<ItemType[]>([]);
   
     const [sectionHeight, setSectionHeight] = useState("45px");
     const [modOrgHidden, setModOrgHidden] = useState(false);
     const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isCartLoading, setIsCartLoading] = useState(false);
     
 
-    const expandedSectionRef = useRef(null);
+    const itemsListRef = useRef<HTMLDivElement>(null);
     const folderRef = useRef(null);
     const inputRef = useRef(null);
     // const folderTitleRef = useRef(title);
@@ -35,46 +34,41 @@ const Cart = ({cart} : CartProps) => {
 
     const [isExpanded, setIsExpanded] = useState(false);
 
-    const updateScreenSize = () => {
-      if (expandedSectionRef.current) {
-        const expandedDisplayHeight = expandedSectionRef.current.scrollHeight;
-        setSectionHeight(
-          isExpanded && expandedDisplayHeight
-            ? `${expandedDisplayHeight + 60}px`
-            : "45px"
-        );
-      }
-      if(items && items.length == 0 ) setIsExpanded(false); 
-    };
+    useEffect(() => {
+        const el = itemsListRef.current
+        if (!el) return;
+
+        if (isExpanded) {
+            el.style.maxHeight = el.scrollHeight + "px";
+        } else {
+            el.style.maxHeight = "0px";
+        }
+    }, [isCartLoading, isExpanded, items]);
 
     useEffect(() => {
-      // Allow animation only after loading is done
-      if(!isLoading) {
-        updateScreenSize();
-      }
-    }, [isLoading, isExpanded, items]); // Trigger when loading or expanded state changes
-
-    useEffect(() => {
-      const itemIds = new Set(cart.item_ids);
-      setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
+        const itemIds = new Set(cart.item_ids);
+        setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
     }, [cart]);
 
-  return (
-      <div className="bg-[var(--seconday-background)]">
-        <CartTitle 
-          cart={cart}
-          isExpanded={isExpanded}
-          setIsExpanded={setIsExpanded}
-          isLocked={isLocked}
-          setItems={setItems}
-          folderRef={folderRef}
-        />
-        {isExpanded && <ItemsList 
-          cart={cart}
-          items={items}
-        />}
-      </div>
-    );
+    return (
+        <div className="flex flex-col">
+            <CartTitle 
+                cart={cart}
+                isExpanded={isExpanded}
+                setIsExpanded={setIsExpanded}
+                isLocked={isLocked}
+                setItems={setItems}
+                folderRef={folderRef}
+                setIsCartLoading={setIsCartLoading}
+            />
+            <ItemsList 
+                cart={cart}
+                items={items}
+                isExpanded={isExpanded}
+                itemsListRef={itemsListRef}
+            />
+        </div>
+      );
 }
 
 export default Cart;

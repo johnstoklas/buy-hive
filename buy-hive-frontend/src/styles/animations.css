@@ -15,3 +15,9 @@
 .slide-out {
   animation: slideOut 0.5s forwards;
 }
+
+.items-list-animation {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 300ms ease;
+}

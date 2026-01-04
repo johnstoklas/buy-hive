@@ -14,9 +14,10 @@ interface CartTitleProps {
     isLocked: boolean;
     setItems: Dispatch<SetStateAction<ItemType[]>>;
     folderRef: React.RefObject<HTMLElement | null>;
+    setIsCartLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderRef} : CartTitleProps) => {    
+const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderRef, setIsCartLoading} : CartTitleProps) => {    
     const [isEditing, setIsEditing] = useState(false); 
     const [cartTitle, setCartTitle] = useState(cart.cart_name);
     const [cartDropdownVisible, setCartDropdownVisible] = useState(false);
@@ -24,10 +25,8 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
     const cartDropdownButtonRef = useRef(null);
     const cartTitleRef = useRef(null);
 
-    // Handles submitting a new cart name
     const { renameCart } = useCartActions({ setIsEditing });
-    // Handles getting items for a cart
-    const { getItems } = useItemActions({isExpanded, setIsExpanded, setItems});
+    const { getItems } = useItemActions({isExpanded, setIsExpanded, setItems, setIsCartLoading});
 
     useEffect(() => {
         if (isEditing && cartTitleRef.current) {
@@ -44,10 +43,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
     return (
         <>
             <div 
-                className={
-                    `flex flex-row gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full rounded-lg 
-                    ${isExpanded ? "" : "shadow-bottom"}`
-                }
+                className="flex flex-row gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full rounded-lg shadow-bottom"
                 key={cart.cart_id} 
                 ref={cartTitleRef}
             >

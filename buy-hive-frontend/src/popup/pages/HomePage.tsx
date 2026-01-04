@@ -17,8 +17,8 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
 
     if (popupLoading) return (<div className="spinner-loader"></div>)
     return (
-        <section 
-            className="flex flex-col gap-2 w-full pt-2"
+        <div 
+            className="flex flex-col flex-1 gap-2 pt-2 w-full shrink-0"
             // ref={organizationSectionRef}
         >
             {isLocked && <div className="absolute inset-0 bg-black/25 my-14"/>}
@@ -41,7 +41,7 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
                     notifMessage={notifMessage}
                     addFileState={addFileState}
                 /> */}
-        </section>
+        </div>
     )
 }
 
