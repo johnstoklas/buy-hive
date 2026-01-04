@@ -1,7 +1,7 @@
-import type { ItemType } from "@/types/ItemType";
+import type { ItemType, ScrapedItemType } from "@/types/ItemTypes";
 
 interface itemHeaderProps {
-    item: ItemType
+    item: ItemType | ScrapedItemType
 }
 
 const itemHeader = ({ item } : itemHeaderProps) => {

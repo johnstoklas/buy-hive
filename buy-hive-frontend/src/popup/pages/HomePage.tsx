@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
 import { useCarts } from "../context/CartsProvider";
-import type { ItemType } from "@/types/ItemType";
+import type { ItemType } from "@/types/ItemTypes";
 
 interface HomePageProps {
     popupLoading: boolean;

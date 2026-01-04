@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { DropdownMenu } from '@/popup/ui/dropdownMenu.js';
-import type { ItemType } from '@/types/ItemType.js';
+import type { ItemType } from '@/types/ItemTypes.js';
 import { useClickOutside } from '@/popup/hooks/useClickOutside.js';
 import { useLocked } from '@/popup/context/LockedProvider';
 import type { CartType } from '@/types/CartType';

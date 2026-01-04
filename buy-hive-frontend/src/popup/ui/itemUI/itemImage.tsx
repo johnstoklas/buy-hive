@@ -1,10 +1,10 @@
-import type { ItemType } from "@/types/ItemType";
+import type { ItemType, ScrapedItemType } from "@/types/ItemTypes";
 
 interface ImageProps {
-    item: ItemType
+    item: ItemType | ScrapedItemType
 }
 
-const Image = ({ item } : ImageProps) => {
+const ItemImage = ({ item } : ImageProps) => {
     return (
         <div className="w-20 h-20 rounded-md">
         <img 
@@ -16,4 +16,4 @@ const Image = ({ item } : ImageProps) => {
   );
 };
 
-export default Image;
+export default ItemImage;

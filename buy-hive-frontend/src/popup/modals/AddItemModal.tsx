@@ -1,160 +1,160 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, type Dispatch, type SetStateAction } from 'react';
+import { standardizePrice } from '../../../utils/standardizePrice';
+import { useClickOutside } from '../hooks/useClickOutside';
+import Button from '../ui/button';
+import Container from '../ui/container';
+import CloseButton from '../ui/closeButton';
+import ContainerHeader from '../ui/containerHeader';
+import Image from '../ui/itemUI/itemImage';
+import ItemHeader from '../ui/itemUI/itemHeader';
+import LoadingBar from '../ui/loadingBar';
+import List from '../ui/list';
+import type { ScrapedItemType } from '@/types/ItemTypes';
+import ItemNote from '../ui/itemUI/itemNote';
 
-const AddItemModal = () => {
-  const [itemTitle, setItemTitle] = useState(null);
-  const [itemPrice, setItemPrice] = useState(null);
+interface AddItemModalProps {
+    addItemVisible: boolean;
+    setAddItemVisible: Dispatch<SetStateAction<boolean>>;
+    addItemButtonRef: React.RefObject<HTMLElement | null>;
+}
+
+
+const AddItemModal = ({ addItemVisible, setAddItemVisible, addItemButtonRef} : AddItemModalProps) => {
+  const [scrapedItem, setScrapedItem] = useState<ScrapedItemType>({
+    name: "",
+    price: "",
+    url: "",
+    image: "",
+    notes: "",
+    selected_cart_ids: [],
+  });
+
   const [itemNotes, setItemNotes] = useState(""); 
-  const [itemUrl, setItemUrl] = useState(null);
-  const [allCarts, setAllCarts] = useState(cartsArray);
-  const [selectedCarts, setSelectedCarts] = useState([]);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedCartIds, setSelectedCartIds] = useState<string[]>([]);
+  // const [isAnimating, setIsAnimating] = useState(false);
+  
+  //   useEffect(() => {
+  //     if (isVisible) {
+  //       setIsAnimating(true);
+  //     }
+  //   }, [isVisible]);
 
-  const addItem = useRef(null);
+  const addItemRef = useRef(null);
 
-//   useEffect(() => {
-//     if (isVisible) {
-//       setIsAnimating(true);
-//     }
-//   }, [isVisible]);
+  // Handles if user clicks outside of the component
+  useClickOutside(addItemRef, addItemVisible, setAddItemVisible, [addItemButtonRef]);
 
-  const handleClickOutside = (event) => {
-    if (isVisible && addItem.current && !addItem.current.contains(event.target)) {
-      setIsVisible(false);
-    }
-  };
-
+  // Gathers price, title, image, and url data for current page
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isVisible]);
+    const handleScrapePage = () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const tabId = tabs[0]?.id;
+            if (!tabId) return;
 
-  const standarizedPrice = (price) => {
-    function formatPrice(p) {
-      p = p.trim().replace(/\$/g, '');
-      let num = parseFloat(p);
-      if(isNaN(num)) {
-        return "";
-      }
-      return `$${num.toFixed(2)}`;
-    }
-    if(price.includes('-')) {
-      const [low, high] = price.split('-').map(p => p.trim()) 
-      return `${formatPrice(low)} - ${formatPrice(high)}`
-    }
-    else if(price.toLowerCase().includes('to')) {
-      const [low, high] = price.split('to').map(p => p.trim()) 
-      return `${formatPrice(low)} - ${formatPrice(high)}`
-    }
-    else {
-      return formatPrice(price);
-    }
-  }
+            chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
+                if (response?.success) {
+                    const res = response.data;
+                    setScrapedItem(prev => ({
+                      ...prev,
+                      title: res.title,
+                      price: standardizePrice(res.price),
+                      url: res.url,
+                      image: res.image,
+                    }));
 
-  useEffect(() => {
-    console.log("scraped data is: ", scrapedData);
-  }, [scrapedData])
-
-  useEffect(() => {
-    console.log("error data: ", errorData);
-    if(errorData) {
-      setIsVisible(false);
-      setTimeout(() => { 
-        showNotification("Invalid website", false);
-      }, 300);
-    }
-    else if (scrapedData) {
-      setItemTitle(scrapedData?.product_name || "");
-      const scrapedPrice = scrapedData?.price; 
-      if(scrapedData?.price) {
-        const correctedPrice = standarizedPrice(scrapedPrice);
-        setItemPrice(correctedPrice);
-      }
-      else setItemPrice("");
+                    
+                } else {
+                    console.error(response?.error);
+                }
+            }
+            );
+        });
     }
 
-  }, [scrapedData, errorData]);
-
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      if (tabs.length > 0) {
-        setItemUrl(tabs[0].url);
-      }
-    });
+    handleScrapePage();
   }, []);
 
-  const submitAdd = () => {
-    if (scrapedData && scrapedImage && itemUrl && selectedCarts.length > 0) {
-      const data = {
-        itemTitle,
-        itemPrice,
-        itemImage: scrapedImage,
-        itemNotes,
-        itemUrl,
-        selectedCarts,
-      };
-      handleAddItem(data);
-      setIsVisible(false);
-    }
-  };
+  // handles adding an item to carts
+  const handleAddItem = () => {
+    if(!scrapedItem.name || !scrapedItem.price || !scrapedItem.image || !scrapedItem.url) return;
 
-  return (isVisible || isAnimating) ? (
-    <section
-      id="add-item-section"
-      style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}
-      ref={addItem}
-      className={isVisible ? "slide-in-add-item" : "slide-out-add-item"}
-      onAnimationEnd={() => {
-        if (!isVisible) setIsAnimating(false);
-      }}
-    >
-          <div id="add-item-header" style={{justifyContent: "space-between"}}>
-            <h1 id="add-item-title" style={{paddingLeft: "10px"}}>Add Item</h1>
-            <p id="add-item-close" style={{paddingRight: "10px"}} onClick={() => setIsVisible(false)}> &#10005; </p>
-          </div>
-          <div className="add-item-container">
-            
-                {scrapedImage ? (
-                  <div className="add-item-image-container-container"> 
-                    <div className="add-item-image-container">
-                      <img src={scrapedImage} />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="add-image-loading"></div>
-                )}
+      chrome.runtime.sendMessage({action: "addItem", data: { scrapedItem }}, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error communicating with background script:", chrome.runtime.lastError.message);
+          return;
+        }
+  
+        if (response?.status === "success") {
+          console.log("fetched data ", response.data.item);
+          // chrome.runtime.sendMessage({action: "updateItems", data: response.data.item});
+          // showNotification("Succesfully added item!", true);
+        } else if(response?.status === "error") {
+          // showNotification("Error adding item", false);
+          console.error("Error adding item:", response?.message);
+        }
+      });
+  }
 
-            <div className="add-item-information-container">
-              <h4 className="add-item-name">
-                {itemTitle || <div className="add-item-loading"></div>}
-              </h4>
-              <h4 className="add-item-price">
-                {itemPrice || <div className="add-item-loading add-item-loading-price"></div>}
-              </h4>
-              <textarea
-                id="add-item-notes"
-                placeholder="Notes"
-                value={itemNotes}
-                onChange={(e) => setItemNotes(e.target.value)}
-              />
+  // return (isVisible || isAnimating) ? (
+  return (
+    <div className="fixed bottom-14 left-0 right-0 px-4 my-3">
+      <Container
+        ref={addItemRef}
+        className="!flex-col"
+        // onAnimationEnd={() => {
+        //   if (!isVisible) setIsAnimating(false);
+        // }}
+      >
+            <div className="flex">
+              <ContainerHeader> Add Item </ContainerHeader>
+              <CloseButton onClick={() => setAddItemVisible(false)} />
             </div>
-          </div>
-          <div className="add-item-organization-container">
-            <SelectFolders
-              cartsArray={cartsArray}
-              allCarts={allCarts}
-              setAllCarts={setAllCarts}
-              selectedCarts={selectedCarts}
-              setSelectedCarts={setSelectedCarts}
-              handleAddSection={handleAddSection}
-            />
-          </div>
-          <button id="add-item" onClick={submitAdd}>
-            Add Item
-          </button>
-    </section>
-  ) : null;
+            <Container className="!gap-1 justify-center">
+                  {scrapedItem.image ? (
+                    <Image 
+                      item={scrapedItem}
+                    />
+                  ) : (
+                    <LoadingBar 
+                      className="w-20 h-20"
+                    />
+                  )}
+                  <Container className="!flex-col !p-0 !gap-1">
+                      {scrapedItem.name && scrapedItem.price ? (
+                          <ItemHeader
+                              item={scrapedItem}
+                          />
+                      ) : (
+                          <div className="flex flex-col gap-1">
+                              <LoadingBar 
+                                className="w-full h-4"
+                              />
+                              <LoadingBar 
+                                className="w-[75%] h-4"
+                              />
+                          </div>
+                      )}
+                      <ItemNote
+                        isEditing={true}
+                        noteRef={null}
+                        placeholder="Notes"
+                        noteValue={scrapedItem.notes}
+                        setNoteValue={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
+                        onBlur={() => {}}
+                        onKeyDown={() => {}}
+                      />
+                  </Container>
+            </Container>
+            <List
+              item={scrapedItem}
+              setSelectedCartIds={setSelectedCartIds}
+            /> 
+            <Button onClick={() => handleAddItem}>
+              Add Item
+            </Button>
+      </Container>
+    </div>
+  )
 };
 
 export default AddItemModal;

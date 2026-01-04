@@ -5,8 +5,9 @@ import { useEffect, type Dispatch, type SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../ui/button';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import type { ItemType } from '@/types/ItemType';
+import type { ItemType } from '@/types/ItemTypes';
 import { useLocked } from '../context/LockedProvider';
+import CloseButton from '../ui/closeButton';
 
 interface DeleteModalProps {
     cart: CartType;
@@ -159,7 +160,7 @@ const DeleteModal = ({
                 className="flex flex-1 flex-col relative justify-center text-center py-3 gap-2 rounded-lg bg-[var(--secondary-background)] shadow-bottom"
                 ref={deleteModalRef}
             > 
-                <p className="absolute right-3 top-2 hover:cursor-pointer hover:font-bold" onClick={closePopup}> &#10005; </p>
+                <CloseButton onClick={closePopup} />
                 <div className="mt-4 mb-2">
                     <FontAwesomeIcon 
                         icon={faTrashCan} 

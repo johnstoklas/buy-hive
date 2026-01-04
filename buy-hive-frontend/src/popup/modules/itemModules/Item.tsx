@@ -1,11 +1,12 @@
 import { useLocked } from '@/popup/context/LockedProvider';
 import DropdownButton from '@/popup/ui/dropdownButton';
-import type { ItemType } from '@/types/ItemType';
+import type { ItemType } from '@/types/ItemTypes';
 import { useState, useEffect, useRef } from 'react';
 import ItemDropdown from './ItemDropdown';
 import type { CartType } from '@/types/CartType';
-import Image from '@/popup/ui/image';
-import ItemHeader from '@/popup/ui/itemHeader';
+import Image from '@/popup/ui/itemUI/itemImage';
+import ItemHeader from '@/popup/ui/itemUI/itemHeader';
+import ItemNote from '@/popup/ui/itemUI/itemNote';
 // import ModifyItemSec from './ModifyItemSec.jsx';
 // import { useLocked } from '../contexts/LockedProvider.jsx'
 // import { userDataContext } from '../contexts/UserProvider.jsx';
@@ -113,7 +114,7 @@ const Item = ({ cart, item, updateCarts } : ItemProp) => {
         />
       )}
 
-      <div className='overflow-hidden'>
+      <div className='flex flex-col overflow-hidden'>
         <div className='flex flex-row gap-1'>
           <ItemHeader
             item={item}
@@ -124,23 +125,15 @@ const Item = ({ cart, item, updateCarts } : ItemProp) => {
             buttonRef={itemDropdownButtonRef}
           />
         </div>
-            {isEditing ? (
-              <textarea
-                ref={itemNoteRef}
-                className="shopping-item-notes"
-                value={itemNote}
-                onChange={(e) => {setItemNote(e.target.value)}}
-                onBlur={handleNoteBlur}
-                onKeyDown={handleKeyDown}
-              />              
-            ) : (
-              <div 
-                className="flex flex-1 px-1 py-1 bg-[var(--input-color)] rounded-md text-xs"
-                onDoubleClick={handleItemNoteSelect} 
-              >
-                {(itemNote || (itemNote && itemNote.trim() !== "")) ? itemNote : "None"}
-              </div>
-            )}
+        <ItemNote
+          isEditing={isEditing}
+          noteRef={itemNoteRef}
+          noteValue={itemNote}
+          setNoteValue={setItemNote}
+          handleBlur={handleNoteBlur}
+          onKeyDown={handleKeyDown}
+          handleNoteSelect={handleItemNoteSelect}
+        />
         </div>
         {itemDropdownVisible && <ItemDropdown 
           cart={cart}

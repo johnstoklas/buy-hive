@@ -1,0 +1,30 @@
+.spinner-loader {
+    border: 4px solid var(--secondary-background);
+    border-left-color: var(--accent-color);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes loading-animation {
+    0% {
+        left: -20%;
+        background-color: #bcbcbc;
+    }
+    50% {
+        left: 100%;
+        background-color: #eaeaea;
+    }
+    100% {
+        left: -20%;
+        background-color: #bcbcbc;
+    }
+}
+
+.loading-bar {
+    border-radius: 5px;
+    background-color: #bcbcbc;
+    animation: loading-animation 2s infinite ease-in-out;
+}
+

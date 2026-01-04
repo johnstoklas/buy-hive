@@ -4,6 +4,7 @@ import type { CartType } from '@/types/CartType';
 import { useCarts } from '../context/CartsProvider';
 import Button from '../ui/button';
 import { useLocked } from '../context/LockedProvider';
+import CloseButton from '../ui/closeButton';
 
 interface DeletePopupProps {
     cart: CartType;
@@ -71,7 +72,7 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
             className="flex flex-1 flex-col relative justify-center text-center py-3 gap-2 rounded-lg bg-[var(--secondary-background)] shadow-bottom"
             ref={shareCartModalRef}
         > 
-            <p className="absolute right-3 top-2 hover:cursor-pointer hover:font-bold" onClick={closePopup}> &#10005; </p>
+            <CloseButton onClick={closePopup} />
             <p> Enter a valid email to share cart </p>
             <input 
                 className="bg-[var(--input-color)] px-2 py-1 mx-4 rounded-sm"

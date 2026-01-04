@@ -1,4 +1,4 @@
-import type { ItemType } from "@/types/ItemType";
+import type { ItemType } from "@/types/ItemTypes";
 import Item from "./Item";
 import type { CartType } from "@/types/CartType";
 

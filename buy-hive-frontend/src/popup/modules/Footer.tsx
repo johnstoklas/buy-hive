@@ -3,25 +3,35 @@ import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-ic
 import type { Dispatch, SetStateAction } from 'react';
 
 interface FooterProps {
-    accountPageVisible: boolean;
-    setAccountPageVisible: Dispatch<SetStateAction<boolean>>;
+    addItemVisible: boolean;
+    setAddItemVisible: Dispatch<SetStateAction<boolean>>;
+    addItemButtonRef: React.RefObject<HTMLElement | null>;
+    
     addCartVisible: boolean;
     setAddCartVisible: Dispatch<SetStateAction<boolean>>;
     addCartButtonRef: React.RefObject<HTMLElement | null>;
+        
+    accountPageVisible: boolean;
+    setAccountPageVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 const Footer = ({ 
-    accountPageVisible, 
-    setAccountPageVisible, 
+    addItemVisible, 
+    setAddItemVisible, 
+    addItemButtonRef,
     addCartVisible, 
     setAddCartVisible, 
-    addCartButtonRef 
+    addCartButtonRef,
+    accountPageVisible, 
+    setAccountPageVisible,
 } : FooterProps) => {
     const togglePage = (type: string) => {
         setAccountPageVisible(false);
         setAddCartVisible(false);
+        setAddItemVisible(false);
         if (type === "cart") setAddCartVisible(!addCartVisible);
-        if (type === "account") setAccountPageVisible(!accountPageVisible)
+        if (type === "account") setAccountPageVisible(!accountPageVisible);
+        if (type === "item") setAddItemVisible(!addItemVisible);
     }
     // const [addItemState, setAddItemState] = useState(false); // toggles visiblity for add item
     // const [signInState, setSignInState] = useState(false); // toggles visiblity for profile page
@@ -199,7 +209,11 @@ const Footer = ({
 
     return (
         <footer className="flex justify-between w-full h-14 items-center px-10 text-xl fixed bottom-0 shadow-top">
-            <button className='hover:cursor-pointer'>
+            <button 
+                className='hover:cursor-pointer'
+                onClick={() => togglePage("item")}
+                ref={addItemButtonRef}
+            >
                 <FontAwesomeIcon icon={faCartShopping} />    
             </button>
             <button 

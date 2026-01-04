@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 
 import CartDropdown from "./CartDropdown";
 import { useCarts } from "@/popup/context/CartsProvider";
 import DropdownButton from "@/popup/ui/dropdownButton";
-import type { ItemType } from "@/types/ItemType";
+import type { ItemType } from "@/types/ItemTypes";
 
 interface CartTitleProps {
     cart: CartType;

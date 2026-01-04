@@ -8,3 +8,12 @@ export interface ItemType {
     selected_cart_ids: string[],
     url: string,
 }
+
+export interface ScrapedItemType {
+    name: string;
+    price: string;
+    url: string;
+    image: string;
+    notes: string;
+    selected_cart_ids: string[],
+}

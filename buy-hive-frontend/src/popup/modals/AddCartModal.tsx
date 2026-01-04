@@ -62,29 +62,29 @@ const AddCartModal = ({
   
     return (
         <div className="fixed bottom-14 left-0 right-0 px-4 my-3">
-        <div 
-            className={
-                `flex py-2 px-3 gap-2 w-full bg-[var(--secondary-background)] rounded-lg shadow-bottom 
-                ${addCartVisible ? "slide-in-add-file" : "slide-out-add-file"}`
-            }
-            ref={addCartRef}
-        > 
-            <input 
-                type="text" 
-                className="flex-1 bg-[var(--input-color)] p-1 rounded-md"
-                placeholder="Cart Name" 
-                value={cartName} 
-                onChange={(e) => setCartName(e.target.value)}
-                onKeyDown={handleKeyDown}
-            />
-            <button 
-                type="button" 
-                className="shrink-0 bg-[var(--accent-color)] px-2 py-1 rounded-md hover:cursor-pointer"
-                onClick={() => handleAddCart(cartName)} 
-            >
-                <FontAwesomeIcon icon={faCheck} />
-            </button>
-        </div>
+            <div 
+                className={
+                    `flex py-2 px-3 gap-2 w-full bg-[var(--secondary-background)] rounded-lg shadow-bottom 
+                    ${addCartVisible ? "slide-in-add-file" : "slide-out-add-file"}`
+                }
+                ref={addCartRef}
+            > 
+                <input 
+                    type="text" 
+                    className="flex-1 bg-[var(--input-color)] p-1 rounded-md"
+                    placeholder="Cart Name" 
+                    value={cartName} 
+                    onChange={(e) => setCartName(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                />
+                <button 
+                    type="button" 
+                    className="shrink-0 bg-[var(--accent-color)] px-2 py-1 rounded-md hover:cursor-pointer"
+                    onClick={() => handleAddCart(cartName)} 
+                >
+                    <FontAwesomeIcon icon={faCheck} />
+                </button>
+            </div>
         </div>
     )
 };

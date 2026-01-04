@@ -10,11 +10,14 @@ import { useTokenResponder } from "./hooks/tokenResponder";
 import type { Cart } from "@/types/CartType";
 import { useCarts } from "./context/CartsProvider";
 import { useLocked } from "./context/LockedProvider";
+import AddItemModal from "./modals/AddItemModal";
 
 const Popup = () => {
   useTokenResponder();
-  const [accountPageVisible, setAccountPageVisible] = useState(true);
+
+  const [addItemVisible, setAddItemVisible] = useState(false);
   const [addCartVisible, setAddCartVisible] = useState(false);
+  const [accountPageVisible, setAccountPageVisible] = useState(true);
   const [popupLoading, setPopupLoading] = useState(false);
 
   const { setCarts } = useCarts();
@@ -22,7 +25,9 @@ const Popup = () => {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
 
+  const addItemButtoRef = useRef(null);
   const addCartButtonRef = useRef(null);
+
 
   useEffect(() => {
     const getUser = async() => {
@@ -140,7 +145,6 @@ const Popup = () => {
   // }, [userData]);
 
   return (
-      // <LockedProvider>
       <div className="min-h-screen flex flex-col">
         <Header />
         <div className="flex flex-1 justify-center py-14 px-4">
@@ -156,60 +160,23 @@ const Popup = () => {
             setAddCartVisibile={setAddCartVisible}
             addCartButtonRef={addCartButtonRef}
           />}
+          {addItemVisible && <AddItemModal
+            addItemVisible={addItemVisible}
+            setAddItemVisible={setAddItemVisible}
+            addItemButtonRef={addItemButtoRef}  
+          />}
         </div>
-        
-        {/* <section id="organization-section" 
-        style={{ overflowY: 'auto', maxHeight: '400px' }}
-        ref={organizationSectionRef}>
-          {userData ? (
-            isLoading ? (
-              <div className="spinner-loader main-page-sl"></div>
-            ) : organizationSections.length > 0 ? (
-              organizationSections.map((cart) => (
-                <OrganizationSection
-                  cart={cart}
-                  organizationSections={organizationSections}
-                  setOrganizationSections={setOrganizationSections}
-                  handleUpdateItem={handleUpdateItem}
-                  fetchOrganizationSections={fetchOrganizationSections}
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  showNotification={showNotification}
-                />
-              ))
-            ) : (
-              <div className="organization-section-empty">
-                <p>Looks like you have nothing here yet.</p>
-                <p>Click <FontAwesomeIcon id="org-sec-empty-folder" icon={faFolder} /> to get started!</p>
-              </div>
-            )
-          ) : (
-            <SignInPage homePage={true} />
-          )}
-            <UserNotification 
-                notificationVisible={notificationVisible}
-                notifStatus={notifStatus}
-                notifMessage={notifMessage}
-                addFileState={addFileState}
-            />
-        </section> */}
         <Footer
-          accountPageVisible={accountPageVisible}
-          setAccountPageVisible={setAccountPageVisible}
+          addItemVisible={addItemVisible}
+          setAddItemVisible={setAddItemVisible}
+          addItemButtonRef={addItemButtoRef}
           addCartVisible={addCartVisible}
           setAddCartVisible={setAddCartVisible}
           addCartButtonRef={addCartButtonRef}
-          // organizationSections={organizationSections}
-          // setOrganizationSections={setOrganizationSections}
-          // cartsArray={organizationSections}
-          // handleAddItem={handleAddItem}
-          // showNotification={showNotification}
-          // addFileState={addFileState}
-          // setAddFileState={setAddFileState}
-          // organizationSectionRef={organizationSectionRef}
+          accountPageVisible={accountPageVisible}
+          setAccountPageVisible={setAccountPageVisible}
         />
-        </div>
-      // </LockedProvider>
+      </div>
   );
 };
 

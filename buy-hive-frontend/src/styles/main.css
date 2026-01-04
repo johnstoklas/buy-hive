@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./checkbox.css";
+@import "./loading.css";
 
 :root { 
   --background-color: hsl(0,0,95%,100%);
@@ -34,15 +35,6 @@
 
 .shadow-top {
   box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1)
-}
-
-.spinner-loader {
-  border: 4px solid var(--secondary-background);
-  border-left-color: var(--accent-color);
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 2s linear infinite;
 }
 
 .slide-in-add-file {

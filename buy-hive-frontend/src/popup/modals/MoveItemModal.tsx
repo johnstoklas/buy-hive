@@ -1,12 +1,14 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { useLocked } from '../context/LockedProvider';
-import type { ItemType } from '@/types/ItemType';
-import Image from '../ui/image';
-import ItemHeader from '../ui/itemHeader';
+import type { ItemType } from '@/types/ItemTypes';
+import Image from '../ui/itemUI/itemImage';
+import ItemHeader from '../ui/itemUI/itemHeader';
 import List from '../ui/list';
 import Button from '../ui/button';
 import DeleteModal from './DeleteModal';
 import type { CartType } from '@/types/CartType';
+import CloseButton from '../ui/closeButton';
+import ItemNote from '../ui/itemUI/itemNote';
 
 interface MoveItemModalProps {
     cart: CartType;
@@ -93,21 +95,21 @@ const MoveItemModal = ({
                     className="flex flex-col flex-1 relative w-full bg-[var(--secondary-background)] px-2 py-2 rounded-md gap-2"
                     ref={moveItemModalRef}
                 >
-                    <p className="absolute right-3 top-2 hover:cursor-pointer hover:font-bold" onClick={closePopup}> &#10005; </p>
+                    <CloseButton onClick={closePopup} />
                     <div className="flex flex-row gap-2 pt-4">
                         <Image 
                             item={item}
                         />
 
-                        <div className='overflow-hidden'>
+                        <div className='flex flex-col overflow-hidden'>
                             <div className='flex flex-row gap-1 overflow-hidden'>
                                 <ItemHeader
                                     item={item}
                                 />
                             </div>
-                            <div className="flex flex-1 px-1 py-1 bg-[var(--input-color)] rounded-md text-xs">
-                                {(item.notes || (item.notes && item.notes.trim() !== "")) ? item.notes : "None"}
-                            </div>
+                            <ItemNote
+                                noteValue={item.notes}
+                            />
                         </div>
                             
                     </div>

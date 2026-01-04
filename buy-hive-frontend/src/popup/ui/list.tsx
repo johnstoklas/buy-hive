@@ -1,11 +1,11 @@
-import type { ItemType } from '@/types/ItemType';
+import type { ItemType, ScrapedItemType } from '@/types/ItemTypes';
 import{ useState, useEffect, type SetStateAction, type Dispatch } from 'react';
 import { useCarts } from '../context/CartsProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 interface ListProps {
-    item: ItemType;
+    item: ItemType | ScrapedItemType;
     // selectedCarts: string[];
     // setSelectedCarts: Dispatch<SetStateAction<string[]>>;
     // selectedCartIds: string[];
@@ -33,7 +33,7 @@ const List = ({ item, setSelectedCartIds } : ListProps) => {
 
         setSelectedCarts(selectedNames);
         setSelectedCartIds(selectedIds);
-    }, [item]);
+    }, []);
 
     const handleCheckboxChange = (cartName: string) => {
         setSelectedCarts((prev) => {
