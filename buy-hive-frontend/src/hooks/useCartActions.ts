@@ -1,13 +1,16 @@
+import type { Dispatch, SetStateAction } from "react";
+
 import { useCarts } from "@/popup/context/CartsProvider";
 import { useLocked } from "@/popup/context/LockedProvider";
-import { sendChromeMessage } from "@/services/chromeService";
-import { CartType } from "@/types/CartType";
 import { useAuth0 } from "@auth0/auth0-react";
-import type { Dispatch, SetStateAction } from "react";
+
+import type { CartType } from "@/types/CartType";
+
+import { sendChromeMessage } from "@/services/chromeService";
 
 interface useCartActionsProps {
     setIsEditing?: Dispatch<SetStateAction<boolean>>;
-    closePopup?;
+    closePopup?: () => void;
     setPopupLoading?: Dispatch<SetStateAction<boolean>>;
     setCartName?: Dispatch<SetStateAction<string>>;
 }
@@ -78,7 +81,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
             const data = { cartId: cartId, recipient: email};
             await sendChromeMessage({action: "sendEmail", data});
             // setIsLoading(false);
-            closePopup();  
+            closePopup?.();  
             // showNotification("Email succesfully sent!", true);
         } catch (err) {
             console.error(err);

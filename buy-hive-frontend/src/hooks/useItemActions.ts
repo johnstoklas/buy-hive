@@ -1,18 +1,21 @@
+import type { Dispatch, SetStateAction } from "react";
+
 import { useCarts } from "@/popup/context/CartsProvider";
 import { useItems } from "@/popup/context/ItemsProvder";
 import { useLocked } from "@/popup/context/LockedProvider";
-import { sendChromeMessage } from "@/services/chromeService";
-import type { ItemType } from "@/types/ItemTypes";
 import { useAuth0 } from "@auth0/auth0-react";
-import type { Dispatch, SetStateAction } from "react";
+
+import type { ItemType } from "@/types/ItemTypes";
+
+import { sendChromeMessage } from "@/services/chromeService";
 
 interface useItemActionsProps {
     isExpanded?: boolean;
     setIsExpanded?: Dispatch<SetStateAction<boolean>>; 
-    setItems?: Dispatch<SetStateAction<ItemType[]>>; 
     setIsCartLoading?: Dispatch<SetStateAction<boolean>>; 
 }
-export function useItemActions({ isExpanded, setIsExpanded, setItems, setIsCartLoading } : useItemActionsProps = {}) {
+
+export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading } : useItemActionsProps = {}) {
     const { isLoading, isAuthenticated } = useAuth0();
     const { isLocked } = useLocked();
     const { upsertItemUI, editNoteUI } = useItems();
