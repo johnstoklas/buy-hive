@@ -1,11 +1,11 @@
+import { useItems } from "../ItemContext/useItem";
 import { CartsProvider } from "./CartsProvider";
-import { useItems } from "../ItemsProvder";
 
 export function CartsProviderWithItems({ children }: { children: React.ReactNode }) {
-    const { deleteItem } = useItems();
+    const { deleteItemUI } = useItems();
 
     return (
-        <CartsProvider onItemOrphaned={deleteItem}>
+        <CartsProvider onItemOrphaned={deleteItemUI}>
             {children}
         </CartsProvider>
     );

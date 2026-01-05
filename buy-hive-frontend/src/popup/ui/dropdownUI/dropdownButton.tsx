@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useLocked } from "../../context/LockedProvider";
+import { useLocked } from "../../context/LockedContext/useLocked";
 
 interface DropdownButtonProps {
     dropdownVisible: boolean;

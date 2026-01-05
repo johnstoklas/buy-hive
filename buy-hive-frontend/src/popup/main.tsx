@@ -2,8 +2,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Popup from './Popup.tsx';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { LockedProvider } from './context/LockedProvider.tsx';
-import { ItemsProvider } from './context/ItemsProvder.tsx';
+import { LockedProvider } from './context/LockedContext/LockedProvider.tsx';
+import { ItemsProvider } from './context/ItemContext/ItemProvider.tsx';
 import { CartsProviderWithItems } from './context/CartContext/CartsProviderWithItems.tsx';
 
 const AUTH0_DOMAIN = import.meta.env.VITE_AUTH0_DOMAIN;

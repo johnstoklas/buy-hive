@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, type Dispatch, type SetStateAction 
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu.js';
 import type { ItemType } from '@/types/ItemTypes.js';
-import { useClickOutside } from '@/hooks/useClickOutside.js';
-import { useLocked } from '@/popup/context/LockedProvider';
+import { useLocked } from '@/popup/context/LockedContext/useLocked';
 import type { CartType } from '@/types/CartType';
 import DeleteModal from '@/popup/modals/DeleteModal';
 import MoveItemModal from '@/popup/modals/MoveItemModal';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface ItemDropdownProps {
     cart: CartType;

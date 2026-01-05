@@ -4,7 +4,7 @@ import type { ItemType } from "@/types/ItemTypes";
 import type { CartType } from "@/types/CartType";
 
 import Item from "./Item";
-import { useItems } from "@/popup/context/ItemsProvder";
+import { useItems } from "@/popup/context/ItemContext/useItem";
 
 interface ItemsListProp {
     cart: CartType;

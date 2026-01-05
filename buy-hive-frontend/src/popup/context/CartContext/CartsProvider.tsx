@@ -169,5 +169,4 @@ export function CartsProvider({
         </CartsContext.Provider>
     );
 }
-\
 

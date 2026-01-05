@@ -1,4 +1,4 @@
-import { useLocked } from '@/popup/context/LockedProvider';
+import { useLocked } from '@/popup/context/LockedContext/useLocked';
 import DropdownButton from '@/popup/ui/dropdownUI/dropdownButton';
 import type { ItemType } from '@/types/ItemTypes';
 import { useState, useEffect, useRef } from 'react';

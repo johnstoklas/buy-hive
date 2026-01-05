@@ -1,17 +1,9 @@
 import { useState, useRef, useEffect, type Dispatch, type SetStateAction } from "react";
-// import ExpandSection from "../item/ExpandSection.jsx";
-// import ModifyOrgSec from "./ModifyOrgSec.jsx";
-// import { useLocked } from '../contexts/LockedProvider.jsx'
-// import { userDataContext } from "../contexts/UserProvider.jsx";
 import type { CartType } from "@/types/CartType.js";
-import { useAuth0 } from "@auth0/auth0-react";
 import CartTitle from "./CartTitle";
 import ItemsList from "../itemModules/ItemsList";
-import { useLocked } from "@/popup/context/LockedProvider";
-import CartDropdown from "./CartDropdown";
-import type { ItemType } from "@/types/ItemTypes";
-import { useCarts } from "@/popup/context/CartContext/CartsProvider";
-import { useItems } from "@/popup/context/ItemsProvder";
+import { useLocked } from "@/popup/context/LockedContext/useLocked";
+import { useItems } from "@/popup/context/ItemContext/useItem";
 
 interface CartProps {
   cart: CartType;
