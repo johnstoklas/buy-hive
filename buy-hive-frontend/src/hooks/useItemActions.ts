@@ -21,7 +21,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
     const { isLoading, isAuthenticated } = useAuth0();
     const { isLocked } = useLocked();
     const { upsertItemUI, editNoteUI } = useItems();
-    const { moveItemBetweenCartsUI, removeItemFromCartUI, removeItemFromAllCartsUI } = useCarts();
+    const { moveItemBetweenCartsUI, removeItemFromCartUI, removeItemFromAllCartsUI, addItemToCartUI } = useCarts();
     
     const getItems = async(cartId : string, itemCount: string) => {
         if (isLocked || isLoading || !isAuthenticated) return;
@@ -33,8 +33,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
 
         try {
             const data = { cartId }
-            const res = await sendChromeMessage<{items: ItemType[]}>({action: "getItems", data});
-            const items = res.items;
+            const items = await sendChromeMessage<ItemType[]>({action: "getItems", data});
             items.forEach(item => upsertItemUI(item));
         } catch (err) {
             console.error(err);
@@ -44,33 +43,32 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
     };
 
     const scrapeItem = async() => {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const tabId = tabs[0]?.id;
-            if (!tabId) return;
-
-            chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
-                if (response?.success) {
-                    const res = response.data;
-                        setScrapedItem?.(prev => ({
-                            ...prev,
-                            title: res.title,
-                            price: standardizePrice(res.price),
-                            url: res.url,
-                            image: res.image,
-                        }));
-                } else {
-                    console.error(response?.error);
-                }
-            });
-        });
-    }
-
-    const addItem = async(scrapedItem: ScrapedItemType) => {
-        if(!scrapedItem.name || !scrapedItem.price || !scrapedItem.image || !scrapedItem.url) return;
+        if (isLoading || !isAuthenticated) return; 
 
         try {
-            const data = { scrapeItem };
-            await sendChromeMessage({action: "addItem", data});
+            const item = await sendChromeMessage<ItemType>({action: "scrapeItem"});
+            // console.log(res);
+            setScrapedItem?.(prev => ({
+                ...prev,
+                name: item.name,
+                price: standardizePrice(item.price),
+                url: item.url,
+                image: item.image,
+            }));
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    const addItem = async(scrapedItem: ScrapedItemType, selectedCartIds: string[]) => {
+        if (isLoading || !isAuthenticated) return;
+        if(!scrapedItem.name || !scrapedItem.price || !scrapedItem.image || !scrapedItem.url || selectedCartIds.length === 0) return;
+
+        try {
+            const data = { scrapedItem, selectedCartIds };
+            const res = await sendChromeMessage<{item: ItemType}>({action: "addItem", data});
+            upsertItemUI(res.item);
+            selectedCartIds.forEach(cartId => addItemToCartUI(cartId, res.item.item_id));
         } catch(err) {
             console.error(err);
         }

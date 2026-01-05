@@ -30,13 +30,91 @@ export async function handleGetItems(message, sender, sendResponse) {
         }
 
         const rawData = await response.json();
-        const data = rawData.map(({ selected_cart_ids, added_at, ...item }) => item);
+        const data = rawData.items.map(({ selected_cart_ids, added_at, ...item }) => item);
         sendResponse({ status: "success", data }); 
     } catch (error) {
         console.error("Error fetching data:", error);
         sendResponse({ status: "error", message: error.message });
     }
 };
+
+export async function handleScrapeItem(message, sender, sendResponse) {
+    const accessToken = await getAccessToken();
+
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "User must be signed in" });
+        return;
+    }
+
+    try {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const tabId = tabs[0]?.id;
+            if (!tabId) {
+                sendResponse({ status: "error", message: "No active tab" });
+                return;
+            }
+
+            chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
+                if (chrome.runtime.lastError) {
+                    sendResponse({status: "error", message: "chrome runtime last"});
+                    return;
+                }
+                
+                console.log(response.data);
+                sendResponse({status: "success", data: response.data});
+            });
+        });
+    } catch {
+        console.error("Error adding item:", error);
+        sendResponse({ status: "error", error });
+    }
+}
+
+// Adds an item to specified carts
+export async function handleAddItem(message, sender, sendResponse) {
+    const accessToken = await getAccessToken();
+    const { scrapedItem, selectedCartIds } = message.data;
+
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "User must be signed in" });
+        return;
+    }
+    if (!scrapedItem || !selectedCartIds) {
+        sendResponse({ status: "error", message: "Invalid payload" });
+        return;
+    }
+
+    const payload = {
+        name: scrapedItem.name,
+        price: scrapedItem.price,
+        image: scrapedItem.image,
+        url: scrapedItem.url,
+        notes: scrapedItem.notes,
+        selected_cart_ids: selectedCartIds,
+    };
+
+    const endpoint = `${apiUrl}/carts/items/add-new`;
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { 
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error adding item:", error);
+        sendResponse({ status: "error", error });
+    }
+}
 
 // Edits the notes of an item
 export async function handleEditItem(message, sender, sendResponse) {

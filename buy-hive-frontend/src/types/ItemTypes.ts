@@ -13,5 +13,4 @@ export interface ScrapedItemType {
     url: string;
     image: string;
     notes: string;
-    selected_cart_ids: string[],
 }

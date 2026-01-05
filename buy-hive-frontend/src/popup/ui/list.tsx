@@ -6,7 +6,7 @@ type ListProps =
     | {
         item: ScrapedItemType;
         addItem: true;
-        setSelectedCartIds: (value: string[]) => void;
+        setSelectedCartIds: Dispatch<SetStateAction<string[]>>;
       }
     | {
         item: ItemType;

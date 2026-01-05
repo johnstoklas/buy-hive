@@ -35,8 +35,9 @@ const AddItemModal = ({
         url: "",
         image: "",
         notes: "",
-        selected_cart_ids: [],
     });
+
+    const [selectedCartIds, setSelectedCartIds] = useState<string[]>([]);
   
     const addItemRef = useRef(null);
 
@@ -95,17 +96,18 @@ const AddItemModal = ({
                                 placeholder="Notes"
                                 noteValue={scrapedItem.notes}
                                 setNoteValue={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
-                                onBlur={() => {}}
+                                handleBlur={() => {}}
                                 onKeyDown={() => {}}
+                                handleNoteSelect={() => {}}
                             />
                         </Container>
                     </Container>
                     <List
                         item={scrapedItem}
                         addItem={true}
-                        setSelectedCartIds={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
+                        setSelectedCartIds={setSelectedCartIds}
                     /> 
-                    <Button onClick={() => addItem(scrapedItem)}>
+                    <Button onClick={() => addItem(scrapedItem, selectedCartIds)}>
                         Add Item
                     </Button>
             </Container>
