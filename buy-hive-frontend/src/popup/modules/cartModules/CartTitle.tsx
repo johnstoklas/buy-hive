@@ -54,7 +54,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
                             ${isExpanded ? "rotate-open-cart" : ""} 
                             ${isLocked ? "disabled-hover-modify" : ""}`
                         }          
-                        onClick={() => getItems(cart.cart_id)}
+                        onClick={() => getItems(cart.cart_id, cart.item_count)}
                     >
                         ▶
                     </button>
@@ -91,6 +91,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderR
                 setCartDropdownVisible={setCartDropdownVisible}
                 cartDropdownButtonRef={cartDropdownButtonRef}
                 handleCartTitleSelect={handleCartTitleSelect}
+                parentRef={cartTitleRef}
             />}
         </>
     )

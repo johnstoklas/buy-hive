@@ -35,12 +35,15 @@ const MoveItemModal = ({
     moveItemModalRef,
     deleteItemAllModalRef,
 } : MoveItemModalProps) => {
+    const { carts } = useCarts();
 
     const [deleteItemAllModal, setDeleteItemAllModal] = useState(false);
-    const [selectedCartIds, setSelectedCartIds] = useState<string[]>(item.selected_cart_ids ?? []);
+    const selected_cart_ids = carts
+          .filter(cart => cart.item_ids.includes(item.item_id))
+          .map(cart => cart.cart_id);
+    const [selectedCartIds, setSelectedCartIds] = useState<string[]>(selected_cart_ids ?? []);
 
     const { setIsLocked } = useLocked(); 
-    const { updateCarts } = useCarts();   
 
     const { moveItem } = useItemActions();
 
@@ -56,8 +59,8 @@ const MoveItemModal = ({
     }
 
     const submitMoveItem = () => {
-        if(selectedCartIds) return;
-        moveItem(item, selectedCartIds);
+        if(!selectedCartIds) return;
+        moveItem(item.item_id, selectedCartIds);
         closePopup();
     }
     
@@ -122,7 +125,6 @@ const MoveItemModal = ({
                 setDeleteModal={setDeleteItemAllModal}
                 deleteModalRef={deleteItemAllModalRef}
                 type="item-all"
-                updateCarts={updateCarts}
             />}
         </>
     )

@@ -58,7 +58,7 @@ const Popup = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
 
-        <section className="flex flex-1 overflow-y-auto py-14 px-4">
+        <main className="flex flex-1 overflow-y-auto py-14 px-4">
           {!accountPageVisible && <HomePage 
             popupLoading={popupLoading}
             setPopupLoading={setPopupLoading}
@@ -79,7 +79,7 @@ const Popup = () => {
             addCartButtonRef={addCartButtonRef}
             setAddCartAnimating={setAddCartAnimating}
           />}
-        </section>
+        </main>
 
         <Footer
           addItemVisible={addItemVisible}

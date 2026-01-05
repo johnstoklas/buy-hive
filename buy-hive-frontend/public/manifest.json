@@ -15,13 +15,5 @@
   ],
   "host_permissions": [
     "https://buyhive-backend-production.up.railway.app/*"
-  ],
-  "content_scripts": [
-  {
-    "matches": ["<all_urls>"],
-    "js": ["src/content/index.js"],
-    "run_at": "document_end"
-  }
-]
-
+  ]
 }

@@ -12,7 +12,7 @@ export async function handleMessage(message, sender, sendResponse) {
         case "getCarts":
             handleGetCarts(message, sender, sendResponse);
             return true;
-        case "addNewCart":
+        case "addCart":
             handleAddNewCart(message, sender, sendResponse);
             return true;
         case "editCartName":

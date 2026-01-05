@@ -9,10 +9,11 @@ interface useCartActionsProps {
     setIsEditing?: Dispatch<SetStateAction<boolean>>;
     closePopup?;
     setPopupLoading?: Dispatch<SetStateAction<boolean>>;
+    setCartName?: Dispatch<SetStateAction<string>>;
 }
 
-export function useCartActions({ setIsEditing, closePopup, setPopupLoading } : useCartActionsProps = {}) {
-    const { carts, setCarts } = useCarts();
+export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setCartName } : useCartActionsProps = {}) {
+    const { carts, hydrateCartsUI, upsertCartUI, renameCartUI, deleteCartUI } = useCarts();
     const { isLoading, isAuthenticated } = useAuth0();
     const { isLocked } = useLocked();
     
@@ -22,7 +23,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading } : u
 
         try {
             const res = await sendChromeMessage<{carts: CartType[]}>({action: "getCarts"});
-            setCarts(res.carts || []);
+            hydrateCartsUI(res.carts || []);
         } catch (err) {
             console.error(err);
         }
@@ -30,28 +31,40 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading } : u
         setPopupLoading?.(false);
     }
 
+    const addCart = async(cartName: string) => {
+        if(isLoading || !isAuthenticated) return;
+
+        const trimmedCartName = cartName.trim();
+        const isDuplicate = carts.some((cart) => cart.cart_name === trimmedCartName);
+        if (isDuplicate || !trimmedCartName) {
+            // showNotification("Invalid Cart Name", false);
+            return;
+        }
+
+        try {
+            const data = { cartName: trimmedCartName };
+            const newCart = await sendChromeMessage({action: "addCart", data})
+            upsertCartUI(newCart);
+            setCartName?.("");
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     const renameCart = async(cartId: string, cartTitle: string) => {
         if (isLocked || isLoading || !isAuthenticated) return;
         if (!cartTitle.trim()) return;
 
-        const isDuplicate = carts.some(
-            (cart) => cart.cart_name === cartTitle.trim() && cart.cart_id !== cartId
-        );
+        const isDuplicate = carts.some((cart) => cart.cart_name === cartTitle);
         if (isDuplicate) return;
 
         setIsEditing?.(false);
 
         try {
-            const data = {cartId, newCartName: cartTitle.trim()}
+            const newCartName = cartTitle.trim()
+            const data = {cartId, newCartName}
             await sendChromeMessage({action: "editCartName", data});
-
-            setCarts((prev) =>
-                prev.map((cart) =>
-                cart.cart_id === cartId
-                    ? { ...cart, cart_name: cartTitle.trim() }
-                    : cart
-                )
-            );
+            renameCartUI(cartId, newCartName);
         } catch (err) {
             console.error(err);
         }
@@ -79,13 +92,13 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading } : u
         try {
             const data = { cartId }
             await sendChromeMessage({action: "deleteCart", data});
-            setCarts((prev) => prev.filter((section) => section.cart_id !== cartId));
+            deleteCartUI(cartId);
         } catch (err) {
             console.error(err);
         }
     };
 
-    return { getCarts, renameCart, shareCart, deleteCart };
+    return { getCarts, addCart, renameCart, shareCart, deleteCart };
 }
 
 export default useCartActions;

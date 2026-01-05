@@ -68,11 +68,11 @@ const DeleteModal = ({
                 break;
             case "item":
                 if(!item) return;
-                deleteItem(cartId, item);   
+                deleteItem(cartId, item.item_id);   
                 break;
             case "item-all":
                 if(!item) return;
-                deleteItemAll(item);   
+                deleteItemAll(item.item_id);   
                 break;            
         }
         closePopup();

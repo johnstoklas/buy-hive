@@ -23,7 +23,11 @@ const List = ({ item, setSelectedCartIds } : ListProps) => {
         const selectedNames: string[] = [];
         const selectedIds: string[] = [];
 
-        item.selected_cart_ids.forEach(selectedCartId => {
+        const selected_cart_ids = carts
+          .filter(cart => cart.item_ids.includes(item.item_id))
+          .map(cart => cart.cart_id);
+
+        selected_cart_ids.forEach(selectedCartId => {
             const selectedCart = carts.find(c => c.cart_id === selectedCartId);
             if(selectedCart) {
                 selectedNames.push(selectedCart.cart_name);

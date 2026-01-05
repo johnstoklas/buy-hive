@@ -60,12 +60,7 @@ export async function handleAddNewCart(message, sender, sendResponse) {
     }
 
     const data = await response.json();
-
-    const newData = {
-      cart_id: data.cart_id,
-      cart_name: cartName,
-    }
-    sendResponse({ status: "success", data: newData });
+    sendResponse({ status: "success", data });
   } catch (error) {
     console.error("Error adding cart:", error);
     sendResponse({ status: "error", message: error.message });

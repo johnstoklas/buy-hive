@@ -11,14 +11,15 @@ import { useLocked } from "@/popup/context/LockedProvider";
 import CartDropdown from "./CartDropdown";
 import type { ItemType } from "@/types/ItemTypes";
 import { useCarts } from "@/popup/context/CartsProvider";
+import { useItems } from "@/popup/context/ItemsProvder";
 
 interface CartProps {
   cart: CartType;
 }
 
-const Cart = ({cart} : CartProps) => {
-    const [items, setItems] = useState<ItemType[]>([]);
-  
+const Cart = ({cart} : CartProps) => {  
+    const { items } = useItems();
+
     const [sectionHeight, setSectionHeight] = useState("45px");
     const [modOrgHidden, setModOrgHidden] = useState(false);
     const [modifyOrgSecPosition, setModifyOrgSecPosition] = useState("below");
@@ -26,6 +27,7 @@ const Cart = ({cart} : CartProps) => {
     
 
     const itemsListRef = useRef<HTMLDivElement>(null);
+    const cartRef = useRef<HTMLDivElement>(null);
     const folderRef = useRef(null);
     const inputRef = useRef(null);
     // const folderTitleRef = useRef(title);
@@ -45,25 +47,21 @@ const Cart = ({cart} : CartProps) => {
         }
     }, [isCartLoading, isExpanded, items]);
 
-    useEffect(() => {
-        const itemIds = new Set(cart.item_ids);
-        setItems((prev) => prev.filter((item) => itemIds.has(item.item_id)));
-    }, [cart]);
-
     return (
-        <div className="flex flex-col">
+        <div 
+            className="flex flex-col"
+            ref={cartRef}
+        >
             <CartTitle 
                 cart={cart}
                 isExpanded={isExpanded}
                 setIsExpanded={setIsExpanded}
                 isLocked={isLocked}
-                setItems={setItems}
                 folderRef={folderRef}
                 setIsCartLoading={setIsCartLoading}
             />
             <ItemsList 
                 cart={cart}
-                items={items}
                 isExpanded={isExpanded}
                 itemsListRef={itemsListRef}
             />

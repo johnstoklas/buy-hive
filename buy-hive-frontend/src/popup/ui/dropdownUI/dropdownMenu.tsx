@@ -11,6 +11,7 @@ type DropdownMenuProps = {
   actions: DropdownAction[];
   hidden: boolean;
   dropdownRef: React.RefObject<HTMLDivElement | null>;
+  dropdownPosition: string;
   className?: string;
 };
 
@@ -18,13 +19,14 @@ export function DropdownMenu({
   actions,
   hidden = false,
   dropdownRef,
+  dropdownPosition,
   className,
 }: DropdownMenuProps) {
   return (
     <div
       ref={dropdownRef}
-      className={`flex flex-col absolute gap-1 py-1 right-0 my-1 mx-4 rounded-md 
-        bg-[var(--secondary-background)] shadow-bottom
+      className={`flex flex-col absolute gap-1 right-0 rounded-md bg-[var(--secondary-background)] shadow-bottom
+        ${dropdownPosition === "above" ? "mb-10" : "py-1 my-1 mx-4"}
         ${hidden ? "hidden" : ""}
         ${className}
       `}

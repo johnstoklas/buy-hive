@@ -1,6 +1,6 @@
 const Header = () => {
     return (
-        <header className="flex justify-between w-full h-14 items-center px-4 text-xl fixed top-0 shadow-bottom">
+        <header className="flex justify-between w-full h-14 items-center px-4 text-xl fixed top-0 shadow-bottom z-50">
             <div className="flex items-center gap-2">
                 <div className="w-[30px]">
                     <img className="w-full" src="/images/buyhive_gradient2_13percent.png"></img>

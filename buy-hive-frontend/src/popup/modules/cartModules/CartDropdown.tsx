@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type SetStateAction, type Dispatch } from 'react';
+import { useState, useEffect, useRef, type SetStateAction, type Dispatch, type RefObject } from 'react';
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useLocked } from '../../context/LockedProvider';
 import { useClickOutside } from '@/hooks/useClickOutside';
@@ -13,6 +13,7 @@ interface CartDropdownProps {
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     cartDropdownButtonRef: React.RefObject<HTMLElement | null>;
     handleCartTitleSelect;
+    parentRef: RefObject<HTMLDivElement | null>;
 }
 
 const CartDropdown = ({
@@ -20,14 +21,16 @@ const CartDropdown = ({
     cartDropdownVisible, 
     setCartDropdownVisible, 
     cartDropdownButtonRef, 
-    handleCartTitleSelect
+    handleCartTitleSelect, 
+    parentRef,
 } : CartDropdownProps) => {
 
     const [deleteCartModal, setDeleteCartModal] = useState(false);
     const [shareCartModal, setShareCartModal] = useState(false);
     const [cartDropdownHidden, setCartDropdownHidden] = useState(false);
+    const [cartDropdownPosition, setCartDropdownPosition] = useState<string>("below");
 
-    const { setIsLocked } = useLocked();
+    const { isLocked, setIsLocked } = useLocked();
 
     const cartDropdownRef = useRef(null);
     const deleteCartModalRef = useRef(null);
@@ -50,6 +53,14 @@ const CartDropdown = ({
             onClick: () => setDeleteCartModal(true),
         },
     ];
+
+    useEffect(() => {
+        if (cartDropdownHidden || isLocked || !parentRef.current) return;
+        const parentRect = parentRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - parentRect.bottom;
+
+        setCartDropdownPosition(spaceBelow < 150 ? "above" : "below");
+    }, []);
 
     // Handles if user clicks outside of the component
     useClickOutside(cartDropdownRef, cartDropdownVisible, setCartDropdownVisible, [cartDropdownButtonRef, deleteCartModalRef, shareCartModalRef]);
@@ -79,6 +90,7 @@ const CartDropdown = ({
                 actions={cartActions}
                 hidden={cartDropdownHidden}
                 dropdownRef={cartDropdownRef}
+                dropdownPosition={cartDropdownPosition}
             />
         </>
     );

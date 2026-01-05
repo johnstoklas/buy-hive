@@ -1,6 +1,6 @@
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { type Dispatch, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
 import { useCarts } from "../context/CartsProvider";
 import { useLocked } from "../context/LockedProvider";
@@ -25,14 +25,15 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
             {carts.length > 0 ? (
                 carts.map((cart) => (
                     <Cart
+                        key={cart.cart_id}
                         cart={cart}
                     />
                 ))
                 ) : (
-                <div className="organization-section-empty">
+                <>
                     <p>Looks like you have nothing here yet.</p>
                     <p>Click <FontAwesomeIcon id="org-sec-empty-folder" icon={faFolder} /> to get started!</p>
-                </div>
+                </>
                 )
             }
                 {/* <UserNotification 

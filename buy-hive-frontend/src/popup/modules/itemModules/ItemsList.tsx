@@ -1,30 +1,35 @@
-import type { RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 
 import type { ItemType } from "@/types/ItemTypes";
 import type { CartType } from "@/types/CartType";
 
 import Item from "./Item";
+import { useItems } from "@/popup/context/ItemsProvder";
 
 interface ItemsListProp {
     cart: CartType;
-    items: ItemType[];
     isExpanded: boolean;
     itemsListRef: RefObject<HTMLDivElement>;
 }
 
-const ItemsList = ({ cart, items, isExpanded, itemsListRef } : ItemsListProp) => {
+const ItemsList = ({ cart, isExpanded, itemsListRef } : ItemsListProp) => {
+    const { items } = useItems();
+
+    const cartItems = cart.item_ids
+        .map(id => items.find(item => item.item_id === id))
+        .filter(Boolean);
+
     return (
         <div
             ref={itemsListRef}
             className={`bg-[var(--secondary-background)] shadow-bottom rounded-lg items-list-animation ${isExpanded ? "-mt-2" : ""}`}
-            // style={{ maxHeight: isExpanded ? undefined : "0px" }}
         >
             <div 
                 className="flex flex-col bg-[var(--secondary-background)] py-3 px-4 gap-2"
-                ref={itemsListRef}
             >
-                {items && items.map((item) => (
+                {cartItems && cartItems.map(item => (
                     <Item
+                        key={item.item_id}
                         cart={cart}
                         item={item}
                     />

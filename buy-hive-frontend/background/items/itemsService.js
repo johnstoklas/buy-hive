@@ -29,7 +29,8 @@ export async function handleGetItems(message, sender, sendResponse) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const rawData = await response.json();
+        const data = rawData.map(({ selected_cart_ids, added_at, ...item }) => item);
         sendResponse({ status: "success", data }); 
     } catch (error) {
         console.error("Error fetching data:", error);

@@ -3,14 +3,12 @@ import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
-import { useAuth0 } from '@auth0/auth0-react';
-import { useCarts } from '../context/CartsProvider';
-
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { onEnter } from '../../utils/keyboard';
 
 import FixedContainer from '../ui/containerUI/fixedContainer';
 import Container from '../ui/containerUI/container';
+import useCartActions from '@/hooks/useCartActions';
 
 interface AddCartModalProps {
     addCartVisible: boolean;
@@ -25,9 +23,6 @@ const AddCartModal = ({
     addCartButtonRef,
     setAddCartAnimating
 } : AddCartModalProps) => {
-    const { carts, setCarts } = useCarts();
-    const { isAuthenticated, isLoading } = useAuth0();
-
     const [cartName, setCartName] = useState("");
 
     const addCartRef = useRef(null);
@@ -40,33 +35,7 @@ const AddCartModal = ({
         setAddCartAnimating(true);
     }, []);
 
-    // Handles adding a new folder
-    const handleAddCart = (cartName: string) => {  
-        if(isLoading || !isAuthenticated) return;
-
-        const trimmedCartName = cartName.trim();
-        const isDuplicate = carts.some((cart) => cart.cart_name === trimmedCartName);
-        if (isDuplicate || !trimmedCartName) {
-            // showNotification("Invalid Cart Name", false);
-            return;
-        }
-
-        const data = { cartName: trimmedCartName };
-        chrome.runtime.sendMessage({ action: "addNewCart", data }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.error("Error communicating with background script:", chrome.runtime.lastError.message);
-                return;
-            }
-            
-            if (response?.status === "success" && response?.data) {
-                setCarts((prev) => [...prev, response.data]);
-                setCartName("");
-            } else {
-                console.error(response?.message);
-                // showNotification("Error Adding Cart", false);
-            }
-        });
-    };
+    const { addCart } = useCartActions({setCartName});
   
     return (
         <FixedContainer>
@@ -83,12 +52,12 @@ const AddCartModal = ({
                     placeholder="Cart Name" 
                     value={cartName} 
                     onChange={(e) => setCartName(e.target.value)}
-                    onKeyDown={(e) => onEnter(e, () => handleAddCart(cartName))}
+                    onKeyDown={(e) => onEnter(e, () => addCart(cartName))}
                 />
                 <button 
                     type="button" 
                     className="shrink-0 bg-[var(--accent-color)] px-2 py-1 rounded-md hover:cursor-pointer"
-                    onClick={() => handleAddCart(cartName)} 
+                    onClick={() => addCart(cartName)} 
                 >
                     <FontAwesomeIcon icon={faCheck} />
                 </button>

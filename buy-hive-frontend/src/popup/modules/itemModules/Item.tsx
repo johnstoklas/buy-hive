@@ -23,13 +23,18 @@ const Item = ({ cart, item } : ItemProp) => {
     const {item_id: itemId} = item;
     const [itemDropdownVisible, setItemDropdownVisible] = useState(false);
     const [itemNote, setItemNote] = useState(item.notes || "");
-    const [isEditing, setIsEditing] = useState(false); // Track if editing
+    const [isEditing, setIsEditing] = useState(false);
 
     const itemNoteRef = useRef(null);
     const prevNoteRef = useRef(item.notes || "");
     const itemDropdownButtonRef = useRef(null);
 
     const { isLocked } = useLocked();
+
+    useEffect(() => {
+        setItemNote(item.notes || "");
+        prevNoteRef.current = item.notes || "";
+    }, [item.notes]);
 
     useEffect(() => {
         if (isEditing && itemNoteRef.current) {
