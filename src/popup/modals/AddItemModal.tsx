@@ -7,13 +7,8 @@ import type { ScrapedItemType } from '@/types/ItemTypes';
 
 import Button from '../ui/button';
 import Container from '../ui/containerUI/container';
-import CloseButton from '../ui/closeButton';
 import ContainerHeader from '../ui/containerUI/containerHeader';
-import Image from '../ui/itemUI/itemImage';
-import ItemHeader from '../ui/itemUI/itemHeader';
-import LoadingBar from '../ui/loadingBar';
 import List from '../ui/list';
-import ItemNote from '../ui/itemUI/itemNote';
 import FixedContainer from '../ui/containerUI/fixedContainer';
 import ItemUI from '../ui/itemUI/itemUI';
 
@@ -59,13 +54,15 @@ const AddItemModal = ({
                 ref={addItemRef}
                 className={`!flex-col relative ${addItemVisible ? "slide-in" : "slide-out"}`}
                 onAnimationEnd={() => {
-                if (!addItemVisible) setAddItemAnimating(false);
+                    if (!addItemVisible) setAddItemAnimating(false);
                 }}
             >
-                    <div className="flex">
-                        <ContainerHeader> Add Item </ContainerHeader>
-                        <CloseButton onClick={() => setAddItemVisible(false)} />
-                    </div>
+                    <ContainerHeader
+                        titleText='Add Item'
+                        closeButtonProps={{
+                            onClick: () => setAddItemVisible(false)
+                        }}
+                    />
                     <ItemUI
                         item={scrapedItem}
                         isClickable={false}

@@ -1,37 +1,34 @@
-import type { Dispatch, SetStateAction } from "react";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type { ComponentPropsWithoutRef } from "react";
 
-type CheckboxProps = {
-  checked: boolean;
-  onChange: Dispatch<SetStateAction<boolean>>;
+interface CheckboxProps extends ComponentPropsWithoutRef<"input"> {}
+
+const Checkbox = ({ className, checked, ...props }: CheckboxProps) => {
+    return (
+        <>
+            <input
+                type="checkbox"
+                checked={checked}
+                className="peer sr-only"
+                {...props}
+            />
+            <span
+                className={`
+                    w-4 h-4 p-1 rounded-md flex items-center justify-center
+                    ${checked ? "bg-[var(--accent-color)]" : "bg-white border border-[var(--secondary-background-hover)]"}
+                    ${className ?? ""}
+                `}
+            >
+                {checked && (
+                    <FontAwesomeIcon
+                        icon={faCheck}
+                        className="text-black text-[10px]"
+                    />
+                )}
+            </span>
+        </>
+    );
 };
 
-export function Checkbox({ checked, onChange }: CheckboxProps) {
-  return (
-    <input
-      type="checbox"
-      onClick={() => onChange(!checked)}
-      className={`
-        w-5 h-5 flex items-center justify-center
-        rounded-md border
-        transition-colors
-        ${checked ? "bg-yellow-400 border-yellow-400" : "bg-white border-gray-300"}
-      `}
-      aria-checked={checked}
-      role="checkbox"
-    >
-      {checked && (
-        <svg
-          className="w-4 h-4 text-white"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      )}
-    </input>
-  );
-}
+export default Checkbox;

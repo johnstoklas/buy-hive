@@ -7,7 +7,6 @@ import { useLocked } from '../context/LockedContext/useLocked';
 import type { CartType } from '@/types/CartType';
 
 import Button from '../ui/button';
-import CloseButton from '../ui/closeButton';
 import ContainerHeader from '../ui/containerUI/containerHeader';
 import Container from '../ui/containerUI/container';
 import CenterContainer from '../ui/containerUI/centerContainer';
@@ -51,10 +50,12 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
             className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom"
             ref={shareCartModalRef}
         > 
-            <div className="flex">
-              <ContainerHeader> Share Cart </ContainerHeader>
-              <CloseButton onClick={closePopup} />
-            </div>
+            <ContainerHeader 
+                titleText='Share Cart'
+                closeButtonProps={{
+                    onClick: closePopup
+                }}
+            />
             <p> Enter a valid email to share cart </p>
             <input 
                 className="bg-[var(--input-color)] px-2 py-1 mx-4 rounded-sm"

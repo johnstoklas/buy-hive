@@ -1,6 +1,11 @@
 import type { ItemType, ScrapedItemType } from '@/types/ItemTypes';
 import{ useState, useEffect, type SetStateAction, type Dispatch } from 'react';
 import { useCarts } from '../context/CartContext/useCart';
+import CheckboxItem from './checboxItem';
+import Button from './button';
+import Checkbox from './checkbox';
+import { onEnter } from '@/utils/keyboard';
+import useCartActions from '@/hooks/useCartActions';
 
 type ListProps =
     | {
@@ -17,23 +22,24 @@ type ListProps =
 const List = ({ item, addItem, setSelectedCartIds } : ListProps) => {
     
     const [selectedCarts, setSelectedCarts] = useState<string[]>([]);
-    // const [isAddingFolder, setIsAddingFolder] = useState(false); 
-    // const [newFolderName, setNewFolderName] = useState(''); 
+    const [isAddingCart, setIsAddingCart] = useState(false); 
+    const [newCartName, setNewCartName] = useState(''); 
 
     const { carts } = useCarts();
+    const { addCart } = useCartActions({setCartName: setNewCartName});
 
     useEffect(() => {
         if (addItem) {
-          setSelectedCarts([]);
-          setSelectedCartIds([]);
-          return;
+            setSelectedCarts([]);
+            setSelectedCartIds([]);
+            return;
         }
         const selectedNames: string[] = [];
         const selectedIds: string[] = [];
 
         const selected_cart_ids = carts
-          .filter(cart => cart.item_ids.includes(item.item_id))
-          .map(cart => cart.cart_id);
+            .filter(cart => cart.item_ids.includes(item.item_id))
+            .map(cart => cart.cart_id);
 
         selected_cart_ids.forEach(selectedCartId => {
             const selectedCart = carts.find(c => c.cart_id === selectedCartId);
@@ -49,90 +55,72 @@ const List = ({ item, addItem, setSelectedCartIds } : ListProps) => {
 
     const handleCheckboxChange = (cartName: string) => {
         setSelectedCarts((prev) => {
-        const newSelectedNames = prev.includes(cartName)
-            ? prev.filter(name => name !== cartName) 
-            : [...prev, cartName];
+            const newSelectedNames = prev.includes(cartName)
+                ? prev.filter(name => name !== cartName) 
+                : [...prev, cartName];
 
-        const selectedIds = carts
-            .filter(cart => newSelectedNames.includes(cart.cart_name))
-            .map(cart => cart.cart_id);
+            const selectedIds = carts
+                .filter(cart => newSelectedNames.includes(cart.cart_name))
+                .map(cart => cart.cart_id);
 
-        setSelectedCarts(newSelectedNames);
-        setSelectedCartIds(selectedIds);
-        return newSelectedNames;
+            setSelectedCarts(newSelectedNames);
+            setSelectedCartIds(selectedIds);
+            return newSelectedNames;
         });
     };
 
-  // const handleInputChange = (e) => {
-  //   setNewFolderName(e.target.value);
-  // };
+    const onSubmit = () => {
+        addCart(newCartName)
+        setIsAddingCart(false);
+    }
 
-  // const handleKeyDown = (e) => {
-  //   if (e.key === 'Enter') {
-  //     handleAddSection(newFolderName);
-  //   }
-  // };
-
-  // const closeKeyDown = () => {
-  //   setNewFolderName("");
-  //   setIsAddingFolder(false);
-  // };
-
-  return (
-    <div className="bg-[var(--input-color)] rounded-md p-2">
-      <div>
-        <p>Select Folders</p>
-        {/* {!moveItem && (
-          <button onClick={() => setIsAddingFolder(true)}>New Folder</button>
-        )} */}
-      </div>
-      <hr className="bg-[var(--input-color)] mt-1 mb-2" />
-      <div id="select-folders-section">
-        <div id="sf-dropdown">
-          <ul className="flex flex-col gap-1">
-            {carts.map((cart) => (
-              <li key={cart.cart_id}>
-                <label className="checkbox">
-                  <input
-                    type="checkbox"
-                    value={cart.cart_name}
-                    checked={selectedCarts.includes(cart.cart_name)}
-                    onChange={() => handleCheckboxChange(cart.cart_name)}
-                  />
-                  {/* <span className="checkmark">
-                    <FontAwesomeIcon icon={faCheck} />
-                  </span> */}
-                  {cart.cart_name}
-                </label>
-              </li>
-            ))}
-            {/* {isAddingFolder && (
-              <li key="new-folder">
-                <label className="custom-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={false}
-                    disabled
-                  />
-                  <span className="checkmark"></span>
-                  <input
-                    type="text"
-                    value={newFolderName}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onBlur={closeKeyDown}
-                    placeholder="Folder name"
-                    id="add-folder-input"
-                    autoFocus
-                  />
-                </label>
-              </li>
-            )} */}
-          </ul>
+    return (
+        <div className="bg-[var(--input-color)] rounded-md p-2">
+            <div className="flex flex-row justify-between items-center">
+                <p>Select Carts</p>
+                {addItem && (
+                    <Button 
+                        onClick={() => setIsAddingCart(true)}
+                        isModal={true}
+                    >
+                        Add Cart
+                    </Button>
+                )}
+            </div>
+            <hr className="bg-[var(--input-color)] my-1" />
+            <div>
+                <ul className="flex flex-col">
+                    {carts.map((cart) => (
+                        <li key={cart.cart_id}>
+                            <CheckboxItem
+                                label={cart.cart_name}
+                                checked={selectedCarts.includes(cart.cart_name)}
+                                onChange={() => handleCheckboxChange(cart.cart_name)}
+                            />
+                        </li>
+                    ))}
+                    {isAddingCart && (
+                        <li key="new-folder">
+                            <label className="flex items-center gap-1 rounded-md p-1 hover:cursor-pointer hover:bg-[#f0f0f0]">
+                                <Checkbox 
+                                    checked={false}
+                                />
+                                <input
+                                    type="text"
+                                    value={newCartName}
+                                    onChange={(e) => setNewCartName(e.target.value)}
+                                    onKeyDown={(e) => onEnter(e, () => onSubmit())}
+                                    onBlur={() => setIsAddingCart(false)}
+                                    placeholder="Cart name"
+                                    autoFocus
+                                />
+                            </label>
+                        </li>
+                    )}
+                </ul>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default List;

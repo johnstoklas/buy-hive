@@ -1,20 +1,24 @@
-import { type ReactNode } from "react";
+import { type ComponentPropsWithoutRef } from "react";
 
 interface ContainerHeaderProps {
-  children: ReactNode;
+  titleText?: string;
   className?: string;
+  closeButtonProps: ComponentPropsWithoutRef<"p">;
 }
 
-const ContainerHeader = ({ children, className } : ContainerHeaderProps ) => {
+const ContainerHeader = ({ titleText, className, closeButtonProps } : ContainerHeaderProps ) => {
     return (
-      <p 
-        className={`
-          flex flex-1 font-semibold
-          ${className ?? ""}
-        `}
-      >
-        {children}
-      </p>
+      <div className={`flex justify-between align-items ${className ?? ""}`}>
+        {titleText && <p className="font-semibold">
+          {titleText}
+        </p>}
+        <p 
+          {...closeButtonProps}
+          className="hover:cursor-pointer hover:font-bold" 
+        >
+          &#10005; 
+        </p>
+    </div>
     );
 }
 

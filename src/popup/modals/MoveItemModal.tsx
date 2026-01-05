@@ -10,12 +10,8 @@ import type { CartType } from '@/types/CartType';
 
 import DeleteModal from './DeleteModal';
 
-import Image from '../ui/itemUI/itemImage';
-import ItemHeader from '../ui/itemUI/itemHeader';
 import List from '../ui/list';
 import Button from '../ui/button';
-import CloseButton from '../ui/closeButton';
-import ItemNote from '../ui/itemUI/itemNote';
 import ContainerHeader from '../ui/containerUI/containerHeader';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import Container from '../ui/containerUI/container';
@@ -76,33 +72,18 @@ const MoveItemModal = ({
                     className="!flex-col flex-1 relative w-full shadow-bottom"
                     ref={moveItemModalRef}
                 >
-                    <div className="flex">
-                        <ContainerHeader> Move Item </ContainerHeader>
-                        <CloseButton onClick={closePopup} />
-                    </div>
+                    <ContainerHeader 
+                        titleText='Move Item'
+                        closeButtonProps={{
+                            onClick: closePopup
+                        }}
+                    />
                     <ItemUI
                         item={item}
                         isClickable={false}
                         hasDropdown={false}
                         noteValue={item.notes}
                     />
-                    {/* <div className="flex flex-row gap-2">
-                        <Image 
-                            item={item}
-                        />
-
-                        <div className='flex flex-1 flex-col overflow-hidden'>
-                            <div className='flex flex-row gap-1 overflow-hidden'>
-                                <ItemHeader
-                                    item={item}
-                                />
-                            </div>
-                            <ItemNote
-                                noteValue={item.notes}
-                            />
-                        </div>
-                            
-                    </div> */}
                     <List 
                         item={item}
                         setSelectedCartIds={setSelectedCartIds}

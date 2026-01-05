@@ -12,9 +12,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 import Button from '../ui/button';
-import CloseButton from '../ui/closeButton';
 import Container from '../ui/containerUI/container';
 import CenterContainer from '../ui/containerUI/centerContainer';
+import ContainerHeader from '../ui/containerUI/containerHeader';
 
 
 interface DeleteModalProps {
@@ -90,7 +90,11 @@ const DeleteModal = ({
                 className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom"
                 ref={deleteModalRef}
             > 
-                <CloseButton onClick={closePopup} />
+                <ContainerHeader
+                    closeButtonProps={{
+                        onClick: closePopup 
+                    }}
+                />
                 <div className="mt-4 mb-2">
                     <FontAwesomeIcon 
                         icon={faTrashCan} 
