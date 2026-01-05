@@ -83,7 +83,7 @@ const Item = ({ cart, item } : ItemProp) => {
                     />
             )}
 
-            <div className='flex flex-col overflow-hidden gap-1'>
+            <div className='flex flex-1 flex-col overflow-hidden gap-1'>
                 <div className='flex flex-row gap-1'>
                     <ItemHeader
                         item={item}
@@ -98,7 +98,7 @@ const Item = ({ cart, item } : ItemProp) => {
                     isEditing={isEditing}
                     noteRef={itemNoteRef}
                     noteValue={itemNote}
-                    setNoteValue={setItemNote}
+                    setNoteValue={(e) => setItemNote(e.target.value)}
                     handleBlur={() => handleSubmit}
                     onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
                         onNotShiftEnter(e, handleSubmit)

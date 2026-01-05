@@ -84,7 +84,7 @@ const MoveItemModal = ({
                             item={item}
                         />
 
-                        <div className='flex flex-col overflow-hidden'>
+                        <div className='flex flex-1 flex-col overflow-hidden'>
                             <div className='flex flex-row gap-1 overflow-hidden'>
                                 <ItemHeader
                                     item={item}
