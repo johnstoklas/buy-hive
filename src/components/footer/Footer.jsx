@@ -58,26 +58,91 @@ function Footer({
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             const tabId = tabs[0]?.id;
             if (!tabId) return;
-
-            chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
-                if (response?.success) {
-                    const res = response.data;
-                    const scraped_data = {
-                        product_name: res.name,
-                        price: res.price,
-
-                    }
-                    setScrapedData(scraped_data);
-                    setScrapedImage(res.image);
-                    
-                } else {
-                    console.error(response?.error);
-                }
+        
+            const url = tabs[0]?.url || '';
+            if (url.startsWith('chrome://') || 
+                url.startsWith('chrome-extension://') || 
+                url.startsWith('edge://') || 
+                url.startsWith('about:') ||
+                url.startsWith('moz-extension://')) {
+                return;
             }
-            );
+        
+            const sendMessage = () => {
+                chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        // Content script not ready - inject it automatically
+                        console.log("Content script not ready, injecting...");
+                        
+                        chrome.scripting.executeScript({
+                            target: { tabId: tabId },
+                            files: ['dist/content/index.bundle.js']
+                        }, (injectionResult) => {
+                            if (chrome.runtime.lastError) {
+                                console.error("Failed to inject content script:", chrome.runtime.lastError.message);
+                                return;
+                            }
+                            
+                            // Wait a bit for the script to initialize, then retry
+                            setTimeout(() => {
+                                chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
+                                    if (chrome.runtime.lastError) {
+                                        console.error("Error after injection:", chrome.runtime.lastError.message);
+                                        return;
+                                    }
+                                    
+                                    if (response?.success) {
+                                        const res = response.data;
+                                        console.log("=== EXTRACTION DEBUG ===");
+                                        console.log("Full response:", res);
+                                        console.log("Image URL:", res.image);
+                                        console.log("Image URL type:", typeof res.image);
+                                        console.log("Image URL length:", res.image?.length);
+                                        console.log("========================");
+                                        
+                                        const scraped_data = {
+                                            product_name: res.name,
+                                            price: res.price,
+                                        }
+                                        setScrapedData(scraped_data);
+                                        setScrapedImage(res.image);
+                                        
+                                        console.log("scrapedImage state set to:", res.image);
+                                    } else {
+                                        console.error("Extraction failed:", response?.error);
+                                    }
+                                });
+                            }, 200); // Wait 200ms for script to initialize
+                        });
+                        return;
+                    }
+                    
+                    // Normal flow - content script is ready
+                    if (response?.success) {
+                        const res = response.data;
+                        console.log("=== EXTRACTION DEBUG ===");
+                        console.log("Full response:", res);
+                        console.log("Image URL:", res.image);
+                        console.log("Image URL type:", typeof res.image);
+                        console.log("Image URL length:", res.image?.length);
+                        console.log("========================");
+                        
+                        const scraped_data = {
+                            product_name: res.name,
+                            price: res.price,
+                        }
+                        setScrapedData(scraped_data);
+                        setScrapedImage(res.image);
+                        
+                        console.log("scrapedImage state set to:", res.image);
+                    } else {
+                        console.error("Extraction failed:", response?.error);
+                    }
+                });
+            };
+        
+            sendMessage();
         });
-
-
     }
 
     // Handles adding a new folder

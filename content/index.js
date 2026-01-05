@@ -1515,15 +1515,68 @@ async function extractProductInfo() {
     if (selectors.image) {
       const imageSelectors = selectors.image.split(',').map(s => s.trim());
       for (const selector of imageSelectors) {
-        const imageElement = document.querySelector(selector);
-        if (imageElement) {
-          let imageUrl = imageElement.src || 
-                        imageElement.getAttribute('data-src') || 
-                        imageElement.getAttribute('data-lazy-src') ||
-                        imageElement.getAttribute('data-old-src');
-          if (imageUrl) {
-            productData.image = imageUrl;
-            break;
+        // Use querySelectorAll to get ALL matching images, not just the first one
+        const imageElements = document.querySelectorAll(selector);
+        
+        if (imageElements.length > 0) {
+          // Collect all valid image candidates
+          const imageCandidates = [];
+          
+          for (const imageElement of imageElements) {
+            // Check data attributes FIRST (for lazy-loaded images like Temu)
+            // Then fall back to src (for sites that load images normally)
+            let imageUrl = imageElement.getAttribute('data-src') || 
+                          imageElement.getAttribute('data-lazy-src') ||
+                          imageElement.getAttribute('data-original') ||
+                          imageElement.getAttribute('data-old-src') ||
+                          imageElement.getAttribute('data-url') ||
+                          imageElement.src; // Fallback to src
+            
+            // Filter out known placeholder images
+            if (imageUrl) {
+              // Skip the common 1x1 transparent GIF placeholder
+              const isPlaceholder = imageUrl.includes('base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==') ||
+                                    (imageUrl.startsWith('data:image/gif') && imageUrl.length < 100);
+              
+              if (isPlaceholder) {
+                // If we found a placeholder in src, try data attributes again
+                if (imageUrl === imageElement.src) {
+                  imageUrl = imageElement.getAttribute('data-src') || 
+                            imageElement.getAttribute('data-lazy-src') ||
+                            imageElement.getAttribute('data-original');
+                } else {
+                  imageUrl = null; // Skip placeholder
+                }
+              }
+            }
+            
+            // Only consider valid, non-placeholder images
+            if (imageUrl && !imageUrl.startsWith('data:image/gif')) {
+              const rect = imageElement.getBoundingClientRect();
+              const area = rect.width * rect.height;
+              
+              // Score the image: larger images are more likely to be product images
+              // Also prefer images that are higher on the page (product images are usually near the top)
+              const score = area - (rect.top * 10); // Larger area = higher score, higher position = higher score
+              
+              // Filter out very small images (likely icons, thumbnails, etc.)
+              // Product images are usually at least 200x200px
+              if (rect.width >= 200 && rect.height >= 200) {
+                imageCandidates.push({
+                  url: imageUrl,
+                  score: score,
+                  width: rect.width,
+                  height: rect.height
+                });
+              }
+            }
+          }
+          
+          // If we found candidates, pick the best one (highest score = largest, highest on page)
+          if (imageCandidates.length > 0) {
+            imageCandidates.sort((a, b) => b.score - a.score); // Sort descending (best first)
+            productData.image = imageCandidates[0].url;
+            break; // Found image, stop trying other selectors
           }
         }
       }

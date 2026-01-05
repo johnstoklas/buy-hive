@@ -153,7 +153,7 @@ export const SITE_SELECTORS = {
   // Temu
   'temu.com': {
     name: '',
-    image: 'img._3eDhqCfZ',
+    image: 'img.lazy-image',
     price: 'div._1vkz0rqG'
   },
   // Abercrombie
