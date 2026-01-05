@@ -19,6 +19,7 @@ import ItemNote from '../ui/itemUI/itemNote';
 import ContainerHeader from '../ui/containerUI/containerHeader';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import Container from '../ui/containerUI/container';
+import ItemUI from '../ui/itemUI/itemUI';
 
 interface MoveItemModalProps {
     cart: CartType;
@@ -79,7 +80,13 @@ const MoveItemModal = ({
                         <ContainerHeader> Move Item </ContainerHeader>
                         <CloseButton onClick={closePopup} />
                     </div>
-                    <div className="flex flex-row gap-2">
+                    <ItemUI
+                        item={item}
+                        isClickable={false}
+                        hasDropdown={false}
+                        noteValue={item.notes}
+                    />
+                    {/* <div className="flex flex-row gap-2">
                         <Image 
                             item={item}
                         />
@@ -95,7 +102,7 @@ const MoveItemModal = ({
                             />
                         </div>
                             
-                    </div>
+                    </div> */}
                     <List 
                         item={item}
                         setSelectedCartIds={setSelectedCartIds}

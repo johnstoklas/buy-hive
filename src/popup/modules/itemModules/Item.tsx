@@ -1,17 +1,11 @@
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
-import DropdownButton from '@/popup/ui/dropdownUI/dropdownButton';
 import type { ItemType } from '@/types/ItemTypes';
 import { useState, useEffect, useRef } from 'react';
 import ItemDropdown from './ItemDropdown';
 import type { CartType } from '@/types/CartType';
-import Image from '@/popup/ui/itemUI/itemImage';
-import ItemHeader from '@/popup/ui/itemUI/itemHeader';
-import ItemNote from '@/popup/ui/itemUI/itemNote';
 import useItemActions from '@/hooks/useItemActions';
 import { onNotShiftEnter } from '@/utils/keyboard';
-// import ModifyItemSec from './ModifyItemSec.jsx';
-// import { useLocked } from '../contexts/LockedProvider.jsx'
-// import { userDataContext } from '../contexts/UserProvider.jsx';
+import ItemUI from '@/popup/ui/itemUI/itemUI';
 
 interface ItemProp {
     cart: CartType;
@@ -68,10 +62,28 @@ const Item = ({ cart, item } : ItemProp) => {
 
     return (
         <div 
-            className="flex flex-row px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md"
+            className="px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md"
             ref={itemRef}
         >
-            {!isLocked ? (
+            <ItemUI
+                item={item}
+                isClickable={true}
+                hasDropdown={true}
+                itemDropdownVisible={itemDropdownVisible}
+                setItemDropdownVisible={setItemDropdownVisible}
+                itemDropdownButtonRef={itemDropdownButtonRef}
+                isEditing={isEditing}
+                noteRef={itemNoteRef}
+                noteValue={itemNote}
+                setNoteValue={(e) => setItemNote(e.target.value)}
+                handleBlur={() => handleSubmit}
+                onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
+                    onNotShiftEnter(e, handleSubmit)
+                }
+                handleNoteSelect={handleItemNoteSelect}
+            />
+
+            {/* {!isLocked ? (
                 <a href={item.url} target="_blank" rel="noopener noreferrer">
                     {<Image 
                         item={item}
@@ -105,7 +117,7 @@ const Item = ({ cart, item } : ItemProp) => {
                     }
                     handleNoteSelect={handleItemNoteSelect}
                 />
-            </div>
+            </div> */}
             {itemDropdownVisible && <ItemDropdown 
                 cart={cart}
                 item={item}

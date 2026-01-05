@@ -15,6 +15,7 @@ import LoadingBar from '../ui/loadingBar';
 import List from '../ui/list';
 import ItemNote from '../ui/itemUI/itemNote';
 import FixedContainer from '../ui/containerUI/fixedContainer';
+import ItemUI from '../ui/itemUI/itemUI';
 
 interface AddItemModalProps {
     addItemVisible: boolean;
@@ -65,43 +66,19 @@ const AddItemModal = ({
                         <ContainerHeader> Add Item </ContainerHeader>
                         <CloseButton onClick={() => setAddItemVisible(false)} />
                     </div>
-                    <Container className="!gap-1 justify-center">
-                        {scrapedItem.image ? (
-                            <Image 
-                                item={scrapedItem}
-                            />
-                        ) : (
-                            <LoadingBar 
-                                className="w-20 h-20"
-                            />
-                        )}
-                        <Container className="!flex-col !p-0 !gap-1">
-                            {scrapedItem.name && scrapedItem.price ? (
-                                <ItemHeader
-                                    item={scrapedItem}
-                                />
-                            ) : (
-                                <div className="flex flex-col gap-1">
-                                    <LoadingBar 
-                                        className="w-full h-4"
-                                    />
-                                    <LoadingBar 
-                                        className="w-[75%] h-4"
-                                    />
-                                </div>
-                            )}
-                            <ItemNote
-                                isEditing={true}
-                                noteRef={null}
-                                placeholder="Notes"
-                                noteValue={scrapedItem.notes}
-                                setNoteValue={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
-                                handleBlur={() => {}}
-                                onKeyDown={() => {}}
-                                handleNoteSelect={() => {}}
-                            />
-                        </Container>
-                    </Container>
+                    <ItemUI
+                        item={scrapedItem}
+                        isClickable={false}
+                        hasDropdown={false}
+                        isEditing={true}
+                        noteRef={null}
+                        placeholder="Notes"
+                        noteValue={scrapedItem.notes}
+                        setNoteValue={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
+                        handleBlur={() => {}}
+                        onKeyDown={() => {}}
+                        handleNoteSelect={() => {}}
+                    />
                     <List
                         item={scrapedItem}
                         addItem={true}
