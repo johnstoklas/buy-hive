@@ -1,6 +1,6 @@
 import type { ItemType, ScrapedItemType } from '@/types/ItemTypes';
 import{ useState, useEffect, type SetStateAction, type Dispatch } from 'react';
-import { useCarts } from '../context/CartsProvider';
+import { useCarts } from '../context/CartContext/CartsProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 

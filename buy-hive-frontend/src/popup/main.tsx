@@ -4,7 +4,7 @@ import Popup from './Popup.tsx';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { LockedProvider } from './context/LockedProvider.tsx';
 import { ItemsProvider } from './context/ItemsProvder.tsx';
-import { CartsProviderWithItems } from './context/CartsProviderWithItems.tsx';
+import { CartsProviderWithItems } from './context/CartContext/CartsProviderWithItems.tsx';
 
 const AUTH0_DOMAIN = import.meta.env.VITE_AUTH0_DOMAIN;
 const AUTH0_CLIENT_ID = import.meta.env.VITE_AUTH0_CLIENT_ID;

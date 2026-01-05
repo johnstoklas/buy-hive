@@ -2,7 +2,7 @@ import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
-import { useCarts } from "../context/CartsProvider";
+import { useCarts } from "../context/CartContext/CartsProvider";
 import { useLocked } from "../context/LockedProvider";
 
 interface HomePageProps {

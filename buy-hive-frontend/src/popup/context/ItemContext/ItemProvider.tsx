@@ -1,15 +1,6 @@
 import type { ItemType } from "@/types/ItemTypes";
-import { createContext, useContext, useState } from "react";
-
-type ItemsContextType = {
-  items: ItemType[];
-  setItems: React.Dispatch<React.SetStateAction<ItemType[]>>;
-  editNoteUI: (itemId: string, newNote: string) => void;
-  deleteItemUI: (itemId: string) => void;
-  upsertItemUI: (newItem: ItemType) => void;
-};
-
-const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
+import { useState } from "react";
+import { ItemsContext } from "./ItemContext";
 
 export function ItemsProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<ItemType[]>([]);
@@ -52,12 +43,3 @@ export function ItemsProvider({ children }: { children: React.ReactNode }) {
             </ItemsContext.Provider>
     );
 }
-
-export function useItems() {
-    const context = useContext(ItemsContext);
-    if (!context) {
-        throw new Error("useItems must be used within ItemsProvider");
-    }
-    return context;
-}
-

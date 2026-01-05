@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 
-import { useCarts } from "@/popup/context/CartsProvider";
+import { useCarts } from "@/popup/context/CartContext/CartsProvider";
 import { useItems } from "@/popup/context/ItemsProvder";
 import { useLocked } from "@/popup/context/LockedProvider";
 import { useAuth0 } from "@auth0/auth0-react";

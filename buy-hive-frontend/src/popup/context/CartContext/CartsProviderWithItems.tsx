@@ -1,5 +1,5 @@
 import { CartsProvider } from "./CartsProvider";
-import { useItems } from "./ItemsProvder";
+import { useItems } from "../ItemsProvder";
 
 export function CartsProviderWithItems({ children }: { children: React.ReactNode }) {
     const { deleteItem } = useItems();

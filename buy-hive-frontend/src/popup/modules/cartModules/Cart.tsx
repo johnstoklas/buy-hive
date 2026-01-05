@@ -10,7 +10,7 @@ import ItemsList from "../itemModules/ItemsList";
 import { useLocked } from "@/popup/context/LockedProvider";
 import CartDropdown from "./CartDropdown";
 import type { ItemType } from "@/types/ItemTypes";
-import { useCarts } from "@/popup/context/CartsProvider";
+import { useCarts } from "@/popup/context/CartContext/CartsProvider";
 import { useItems } from "@/popup/context/ItemsProvder";
 
 interface CartProps {

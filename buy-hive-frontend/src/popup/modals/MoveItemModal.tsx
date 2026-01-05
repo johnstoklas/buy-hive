@@ -12,7 +12,7 @@ import ItemNote from '../ui/itemUI/itemNote';
 import ContainerHeader from '../ui/containerUI/containerHeader';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import Container from '../ui/containerUI/container';
-import { useCarts } from '../context/CartsProvider';
+import { useCarts } from '../context/CartContext/CartsProvider';
 import useItemActions from '@/hooks/useItemActions';
 
 interface MoveItemModalProps {
