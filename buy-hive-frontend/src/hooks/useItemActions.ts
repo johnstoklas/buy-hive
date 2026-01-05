@@ -1,21 +1,23 @@
 import type { Dispatch, SetStateAction } from "react";
 
-import { useCarts } from "@/popup/context/CartContext/CartsProvider";
-import { useItems } from "@/popup/context/ItemsProvder";
-import { useLocked } from "@/popup/context/LockedProvider";
+import { useCarts } from "@/popup/context/CartContext/useCart";
+import { useItems } from "@/popup/context/ItemContext/useItem";
+import { useLocked } from "@/popup/context/LockedContext/useLocked";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import type { ItemType } from "@/types/ItemTypes";
+import type { ItemType, ScrapedItemType } from "@/types/ItemTypes";
 
 import { sendChromeMessage } from "@/services/chromeService";
+import { standardizePrice } from "@/utils/standardizePrice";
 
 interface useItemActionsProps {
     isExpanded?: boolean;
     setIsExpanded?: Dispatch<SetStateAction<boolean>>; 
     setIsCartLoading?: Dispatch<SetStateAction<boolean>>; 
+    setScrapedItem?: Dispatch<SetStateAction<ScrapedItemType>>; 
 }
 
-export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading } : useItemActionsProps = {}) {
+export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, setScrapedItem } : useItemActionsProps = {}) {
     const { isLoading, isAuthenticated } = useAuth0();
     const { isLocked } = useLocked();
     const { upsertItemUI, editNoteUI } = useItems();
@@ -40,6 +42,39 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading } :
 
         setIsCartLoading?.(false);
     };
+
+    const scrapeItem = async() => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const tabId = tabs[0]?.id;
+            if (!tabId) return;
+
+            chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
+                if (response?.success) {
+                    const res = response.data;
+                        setScrapedItem?.(prev => ({
+                            ...prev,
+                            title: res.title,
+                            price: standardizePrice(res.price),
+                            url: res.url,
+                            image: res.image,
+                        }));
+                } else {
+                    console.error(response?.error);
+                }
+            });
+        });
+    }
+
+    const addItem = async(scrapedItem: ScrapedItemType) => {
+        if(!scrapedItem.name || !scrapedItem.price || !scrapedItem.image || !scrapedItem.url) return;
+
+        try {
+            const data = { scrapeItem };
+            await sendChromeMessage({action: "addItem", data});
+        } catch(err) {
+            console.error(err);
+        }
+    }
 
     const editItem = async(itemNote: string, itemId: string) => {
         if (isLoading || !isAuthenticated) return;
@@ -90,7 +125,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading } :
         }
     }
 
-    return { getItems, editItem, moveItem, deleteItem, deleteItemAll};
+    return { getItems, addItem, scrapeItem, editItem, moveItem, deleteItem, deleteItemAll};
 }
 
 export default useItemActions;

@@ -1,36 +1,39 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-import { useLocked } from '../context/LockedProvider';
+import { useEffect, useState, type Dispatch, type RefObject, type SetStateAction } from 'react';
+
+import useItemActions from '@/hooks/useItemActions';
+
+import { useLocked } from '../context/LockedContext/useLocked';
+import { useCarts } from '../context/CartContext/useCart';
+
 import type { ItemType } from '@/types/ItemTypes';
+import type { CartType } from '@/types/CartType';
+
+import DeleteModal from './DeleteModal';
+
 import Image from '../ui/itemUI/itemImage';
 import ItemHeader from '../ui/itemUI/itemHeader';
 import List from '../ui/list';
 import Button from '../ui/button';
-import DeleteModal from './DeleteModal';
-import type { CartType } from '@/types/CartType';
 import CloseButton from '../ui/closeButton';
 import ItemNote from '../ui/itemUI/itemNote';
 import ContainerHeader from '../ui/containerUI/containerHeader';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import Container from '../ui/containerUI/container';
-import { useCarts } from '../context/CartContext/CartsProvider';
-import useItemActions from '@/hooks/useItemActions';
 
 interface MoveItemModalProps {
     cart: CartType;
     item: ItemType;
     setItemDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
-    moveItemModal: boolean;
     setMoveItemModal: Dispatch<SetStateAction<boolean>>;
-    moveItemModalRef: React.RefObject<HTMLElement | null>;
-    deleteItemAllModalRef: React.RefObject<HTMLElement | null>;
+    moveItemModalRef: RefObject<HTMLDivElement>;
+    deleteItemAllModalRef: RefObject<HTMLDivElement>;
 }
 const MoveItemModal = ({
     cart,
     item,
     setItemDropdownHidden,
     setItemDropdownVisible,
-    moveItemModal, 
     setMoveItemModal,
     moveItemModalRef,
     deleteItemAllModalRef,

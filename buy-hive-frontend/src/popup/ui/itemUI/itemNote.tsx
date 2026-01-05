@@ -3,12 +3,12 @@ import type { Dispatch, RefObject, SetStateAction } from "react";
 type ItemNoteProps =
   | {
         isEditing: true;
-        noteRef: RefObject<HTMLTextAreaElement>;
+        noteRef: RefObject<HTMLTextAreaElement> | null;
         setNoteValue: Dispatch<SetStateAction<string>>;
-        handleBlur;
-        onKeyDown;
+        handleBlur: () => void;
+        onKeyDown: () => void;
         noteValue: string;
-        handleNoteSelect;
+        handleNoteSelect: () => void;
         placeholder?: string;
     }
   | {
@@ -18,7 +18,7 @@ type ItemNoteProps =
         handleBlur?: never;
         onKeyDown?: never;
         noteValue: string;
-        handleNoteSelect?;
+        handleNoteSelect?: never;
         placeholder?: string;
 
     };

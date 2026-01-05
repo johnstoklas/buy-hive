@@ -1,19 +1,23 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useState, type Dispatch, type RefObject, type SetStateAction } from 'react';
+
+import useCartActions from '@/hooks/useCartActions';
+
+import { useLocked } from '../context/LockedContext/useLocked';
+
 import type { CartType } from '@/types/CartType';
+
 import Button from '../ui/button';
-import { useLocked } from '../context/LockedProvider';
 import CloseButton from '../ui/closeButton';
 import ContainerHeader from '../ui/containerUI/containerHeader';
 import Container from '../ui/containerUI/container';
 import CenterContainer from '../ui/containerUI/centerContainer';
-import useCartActions from '@/hooks/useCartActions';
 
 interface DeletePopupProps {
     cart: CartType;
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     setCartDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setShareCartModal: Dispatch<SetStateAction<boolean>>;
-    shareCartModalRef: React.RefObject<HTMLElement | null>;
+    shareCartModalRef: RefObject<HTMLDivElement>;
 }
 
 const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setShareCartModal, shareCartModalRef } : DeletePopupProps) => {

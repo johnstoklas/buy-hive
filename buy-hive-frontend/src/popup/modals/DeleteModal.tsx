@@ -1,15 +1,21 @@
 import { useEffect, type Dispatch, type RefObject, type SetStateAction } from 'react';
+
+import useCartActions from '@/hooks/useCartActions';
+import useItemActions from '@/hooks/useItemActions';
+
+import { useLocked } from '../context/LockedContext/useLocked';
+
 import type { CartType } from '@/types/CartType';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Button from '../ui/button';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import type { ItemType } from '@/types/ItemTypes';
-import { useLocked } from '../context/LockedProvider';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+
+import Button from '../ui/button';
 import CloseButton from '../ui/closeButton';
 import Container from '../ui/containerUI/container';
 import CenterContainer from '../ui/containerUI/centerContainer';
-import useCartActions from '@/hooks/useCartActions';
-import useItemActions from '@/hooks/useItemActions';
+
 
 interface DeleteModalProps {
     cart: CartType;
@@ -19,7 +25,7 @@ interface DeleteModalProps {
     setDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setDeleteModal: Dispatch<SetStateAction<boolean>>;
 
-    deleteModalRef: RefObject<HTMLElement | null>;
+    deleteModalRef: RefObject<HTMLDivElement>;
     type: string;
 }
 
