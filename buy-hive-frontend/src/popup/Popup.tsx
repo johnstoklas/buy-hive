@@ -7,7 +7,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import HomePage from "./pages/HomePage";
 import AddCart from "./modals/AddCartModal";
 import { useTokenResponder } from "../hooks/tokenResponder";
-import { useCarts } from "./context/CartContext/CartsProvider";
 import AddItemModal from "./modals/AddItemModal";
 import useCartActions from "@/hooks/useCartActions";
 
@@ -27,8 +26,8 @@ const Popup = () => {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
 
-  const addItemButtoRef = useRef(null);
-  const addCartButtonRef = useRef(null);
+  const addItemButtoRef = useRef<HTMLButtonElement>(null);
+  const addCartButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const getUser = async() => {

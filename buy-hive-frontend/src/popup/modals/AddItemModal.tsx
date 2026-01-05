@@ -102,6 +102,7 @@ const AddItemModal = ({
                     </Container>
                     <List
                         item={scrapedItem}
+                        addItem={true}
                         setSelectedCartIds={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
                     /> 
                     <Button onClick={() => addItem(scrapedItem)}>

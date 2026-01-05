@@ -2,22 +2,32 @@ import type { ItemType, ScrapedItemType } from '@/types/ItemTypes';
 import{ useState, useEffect, type SetStateAction, type Dispatch } from 'react';
 import { useCarts } from '../context/CartContext/useCart';
 
-interface ListProps {
-    item: ItemType | ScrapedItemType;
-    // selectedCarts: string[];
-    // setSelectedCarts: Dispatch<SetStateAction<string[]>>;
-    // selectedCartIds: string[];
-    setSelectedCartIds: Dispatch<SetStateAction<string[]>>;
-}
-const List = ({ item, setSelectedCartIds } : ListProps) => {
+type ListProps =
+    | {
+        item: ScrapedItemType;
+        addItem: true;
+        setSelectedCartIds: (value: string[]) => void;
+      }
+    | {
+        item: ItemType;
+        addItem?: false;
+        setSelectedCartIds: Dispatch<SetStateAction<string[]>>;
+    };
+    
+const List = ({ item, addItem, setSelectedCartIds } : ListProps) => {
     
     const [selectedCarts, setSelectedCarts] = useState<string[]>([]);
-    const [isAddingFolder, setIsAddingFolder] = useState(false); 
-    const [newFolderName, setNewFolderName] = useState(''); 
+    // const [isAddingFolder, setIsAddingFolder] = useState(false); 
+    // const [newFolderName, setNewFolderName] = useState(''); 
 
     const { carts } = useCarts();
 
     useEffect(() => {
+        if (addItem) {
+          setSelectedCarts([]);
+          setSelectedCartIds([]);
+          return;
+        }
         const selectedNames: string[] = [];
         const selectedIds: string[] = [];
 
@@ -47,28 +57,26 @@ const List = ({ item, setSelectedCartIds } : ListProps) => {
             .filter(cart => newSelectedNames.includes(cart.cart_name))
             .map(cart => cart.cart_id);
 
-        console.log(newSelectedNames)
-
         setSelectedCarts(newSelectedNames);
         setSelectedCartIds(selectedIds);
         return newSelectedNames;
         });
     };
 
-  const handleInputChange = (e) => {
-    setNewFolderName(e.target.value);
-  };
+  // const handleInputChange = (e) => {
+  //   setNewFolderName(e.target.value);
+  // };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleAddSection(newFolderName);
-    }
-  };
+  // const handleKeyDown = (e) => {
+  //   if (e.key === 'Enter') {
+  //     handleAddSection(newFolderName);
+  //   }
+  // };
 
-  const closeKeyDown = () => {
-    setNewFolderName("");
-    setIsAddingFolder(false);
-  };
+  // const closeKeyDown = () => {
+  //   setNewFolderName("");
+  //   setIsAddingFolder(false);
+  // };
 
   return (
     <div className="bg-[var(--input-color)] rounded-md p-2">
@@ -98,7 +106,7 @@ const List = ({ item, setSelectedCartIds } : ListProps) => {
                 </label>
               </li>
             ))}
-            {isAddingFolder && (
+            {/* {isAddingFolder && (
               <li key="new-folder">
                 <label className="custom-checkbox">
                   <input
@@ -119,7 +127,7 @@ const List = ({ item, setSelectedCartIds } : ListProps) => {
                   />
                 </label>
               </li>
-            )}
+            )} */}
           </ul>
         </div>
       </div>

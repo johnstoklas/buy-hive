@@ -1,5 +1,5 @@
 import type { CartType } from "@/types/CartType";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { CartsContext } from "./CartContext";
 
 export function CartsProvider({ 

@@ -25,9 +25,10 @@ const Item = ({ cart, item } : ItemProp) => {
     const [itemNote, setItemNote] = useState(item.notes || "");
     const [isEditing, setIsEditing] = useState(false);
 
-    const itemNoteRef = useRef(null);
+    const itemNoteRef = useRef<HTMLTextAreaElement>(null);
     const prevNoteRef = useRef(item.notes || "");
-    const itemDropdownButtonRef = useRef(null);
+    const itemDropdownButtonRef = useRef<HTMLButtonElement>(null);
+    const itemRef = useRef<HTMLDivElement>(null);
 
     const { isLocked } = useLocked();
 
@@ -66,7 +67,10 @@ const Item = ({ cart, item } : ItemProp) => {
     }
 
     return (
-        <div className="flex flex-row px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md">
+        <div 
+            className="flex flex-row px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md"
+            ref={itemRef}
+        >
             {!isLocked ? (
                 <a href={item.url} target="_blank" rel="noopener noreferrer">
                     {<Image 
@@ -96,7 +100,9 @@ const Item = ({ cart, item } : ItemProp) => {
                     noteValue={itemNote}
                     setNoteValue={setItemNote}
                     handleBlur={() => handleSubmit}
-                    onKeyDown={(e) => onNotShiftEnter(e, () => handleSubmit())}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
+                        onNotShiftEnter(e, handleSubmit)
+                    }
                     handleNoteSelect={handleItemNoteSelect}
                 />
             </div>
@@ -107,6 +113,7 @@ const Item = ({ cart, item } : ItemProp) => {
                 setItemDropdownVisible={setItemDropdownVisible}
                 itemDropdownButtonRef={itemDropdownButtonRef}
                 handleItemNoteSelect={handleItemNoteSelect}
+                parentRef={itemRef}
             />}
         </div>
     )

@@ -2,7 +2,6 @@ import type { CartType } from "@/types/CartType";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import CartDropdown from "./CartDropdown";
 import DropdownButton from "@/popup/ui/dropdownUI/dropdownButton";
-import type { ItemType } from "@/types/ItemTypes";
 import { onEnter } from "@/utils/keyboard";
 import useCartActions from "@/hooks/useCartActions";
 import useItemActions from "@/hooks/useItemActions";
@@ -12,21 +11,19 @@ interface CartTitleProps {
     isExpanded: boolean;
     setIsExpanded: Dispatch<SetStateAction<boolean>>;
     isLocked: boolean;
-    setItems: Dispatch<SetStateAction<ItemType[]>>;
-    folderRef: React.RefObject<HTMLElement | null>;
     setIsCartLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setItems, folderRef, setIsCartLoading} : CartTitleProps) => {    
+const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading} : CartTitleProps) => {    
     const [isEditing, setIsEditing] = useState(false); 
     const [cartTitle, setCartTitle] = useState(cart.cart_name);
     const [cartDropdownVisible, setCartDropdownVisible] = useState(false);
 
     const cartDropdownButtonRef = useRef(null);
-    const cartTitleRef = useRef(null);
+    const cartTitleRef = useRef<HTMLInputElement>(null);
 
     const { renameCart } = useCartActions({ setIsEditing });
-    const { getItems } = useItemActions({isExpanded, setIsExpanded, setItems, setIsCartLoading});
+    const { getItems } = useItemActions({isExpanded, setIsExpanded, setIsCartLoading});
 
     useEffect(() => {
         if (isEditing && cartTitleRef.current) {

@@ -5,11 +5,11 @@ import type { Dispatch, SetStateAction } from 'react';
 interface FooterProps {
     addItemVisible: boolean;
     setAddItemVisible: Dispatch<SetStateAction<boolean>>;
-    addItemButtonRef: React.RefObject<HTMLElement | null>;
+    addItemButtonRef: React.RefObject<HTMLButtonElement | null>;
     
     addCartVisible: boolean;
     setAddCartVisible: Dispatch<SetStateAction<boolean>>;
-    addCartButtonRef: React.RefObject<HTMLElement | null>;
+    addCartButtonRef: React.RefObject<HTMLButtonElement | null>;
         
     accountPageVisible: boolean;
     setAccountPageVisible: Dispatch<SetStateAction<boolean>>;

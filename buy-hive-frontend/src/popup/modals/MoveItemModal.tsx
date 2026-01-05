@@ -26,8 +26,8 @@ interface MoveItemModalProps {
     setItemDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
     setMoveItemModal: Dispatch<SetStateAction<boolean>>;
-    moveItemModalRef: RefObject<HTMLDivElement>;
-    deleteItemAllModalRef: RefObject<HTMLDivElement>;
+    moveItemModalRef: RefObject<HTMLDivElement | null>;
+    deleteItemAllModalRef: RefObject<HTMLDivElement | null>;
 }
 const MoveItemModal = ({
     cart,
@@ -41,6 +41,7 @@ const MoveItemModal = ({
     const { carts } = useCarts();
 
     const [deleteItemAllModal, setDeleteItemAllModal] = useState(false);
+    
     const selected_cart_ids = carts
           .filter(cart => cart.item_ids.includes(item.item_id))
           .map(cart => cart.cart_id);
@@ -97,9 +98,6 @@ const MoveItemModal = ({
                     </div>
                     <List 
                         item={item}
-                        // selectedCarts={selectedCarts}
-                        // setSelectedCarts={setSelectedCarts}
-                        // selectedCartIds={selectedCartIds}
                         setSelectedCartIds={setSelectedCartIds}
                     />
                     {selectedCartIds.length === 0 ? (

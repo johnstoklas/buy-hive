@@ -1,10 +1,10 @@
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type RefObject, type SetStateAction } from "react";
 
-export function useClickOutside<T extends HTMLElement>(
-    targetRef: React.RefObject<T | null>,
+export function useClickOutside(
+    targetRef: RefObject<HTMLElement | null>,
     bool: boolean,
     setBool: Dispatch<SetStateAction<boolean>>,
-    ignoreRefs: React.RefObject<T | null>[] = []
+    ignoreRefs: RefObject<HTMLElement | null>[] = []
 ) {
     useEffect(() => {
         if (!bool) return;

@@ -17,7 +17,7 @@ interface DeletePopupProps {
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     setCartDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setShareCartModal: Dispatch<SetStateAction<boolean>>;
-    shareCartModalRef: RefObject<HTMLDivElement>;
+    shareCartModalRef: RefObject<HTMLDivElement | null>;
 }
 
 const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setShareCartModal, shareCartModalRef } : DeletePopupProps) => {

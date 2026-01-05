@@ -25,7 +25,7 @@ interface DeleteModalProps {
     setDropdownHidden: Dispatch<SetStateAction<boolean>>;
     setDeleteModal: Dispatch<SetStateAction<boolean>>;
 
-    deleteModalRef: RefObject<HTMLDivElement>;
+    deleteModalRef: RefObject<HTMLDivElement | null>;
     type: string;
 }
 

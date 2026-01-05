@@ -18,6 +18,11 @@ export function useTokenResponder() {
             sender: chrome.runtime.MessageSender,
             sendResponse: (response: TokenResponse
         ) => boolean | void) => {
+            if (sender.id !== chrome.runtime.id) {
+                sendResponse({ status: "error", message: "Unauthorized sender" });
+                return;
+            }
+
             if (message.action !== "requestAccessToken") return;
 
             (async () => {

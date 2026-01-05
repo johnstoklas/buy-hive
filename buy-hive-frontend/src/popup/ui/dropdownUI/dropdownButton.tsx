@@ -1,10 +1,10 @@
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import { useLocked } from "../../context/LockedContext/useLocked";
 
 interface DropdownButtonProps {
     dropdownVisible: boolean;
     setDropdownVisible: Dispatch<SetStateAction<boolean>>;
-    buttonRef: React.RefObject<HTMLElement | null>;
+    buttonRef: RefObject<HTMLButtonElement | null>;
 }
 
 const DropdownButton = ({

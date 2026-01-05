@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction, type RefObject } from 'react';
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu.js';
 import type { ItemType } from '@/types/ItemTypes.js';
@@ -13,8 +13,9 @@ interface ItemDropdownProps {
     item: ItemType;
     itemDropdownVisible: boolean;
     setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
-    itemDropdownButtonRef: React.RefObject<HTMLElement | null>;
-    handleItemNoteSelect;
+    itemDropdownButtonRef: RefObject<HTMLButtonElement | null>;
+    handleItemNoteSelect: () => void;
+    parentRef: RefObject<HTMLDivElement | null>;
 }
 
 const ItemDropdown = ({
@@ -24,17 +25,19 @@ const ItemDropdown = ({
     setItemDropdownVisible,
     itemDropdownButtonRef,
     handleItemNoteSelect,
+    parentRef,
 } : ItemDropdownProps) => {  
         
     const [moveItemModal, setMoveItemModal] = useState(false);
     const [deleteItemModal, setDeleteItemModal] = useState(false);
     const [itemDropdownHidden, setItemDropdownHidden] = useState(false);
+    const [itemDropdownPosition , setItemDropdownPosition] = useState("below");
 
-    const { setIsLocked } = useLocked();
+    const { isLocked, setIsLocked } = useLocked();
 
     const itemDropdownRef = useRef(null);
-    const moveItemModalRef = useRef(null);
-    const deleteItemModalRef = useRef(null);
+    const moveItemModalRef = useRef<HTMLDivElement>(null);
+    const deleteItemModalRef = useRef<HTMLDivElement>(null);
     const deleteItemAllModalRef = useRef(null);
 
     const itemActions = [
@@ -61,6 +64,14 @@ const ItemDropdown = ({
     useEffect(() => {
         setIsLocked(deleteItemModal || moveItemModal);
     }, [deleteItemModal, moveItemModal]);
+    
+    useEffect(() => {
+        if (itemDropdownHidden || isLocked || !parentRef.current) return;
+        const parentRect = parentRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - parentRect.bottom;
+
+        setItemDropdownPosition(spaceBelow < 150 ? "above" : "below");
+    }, []);
 
     return (
         <>
@@ -69,7 +80,6 @@ const ItemDropdown = ({
                 item={item}
                 setItemDropdownHidden={setItemDropdownHidden}
                 setItemDropdownVisible={setItemDropdownVisible}
-                moveItemModal={moveItemModal}
                 setMoveItemModal={setMoveItemModal}
                 moveItemModalRef={moveItemModalRef}
                 deleteItemAllModalRef={deleteItemAllModalRef}
@@ -88,6 +98,7 @@ const ItemDropdown = ({
                 hidden={itemDropdownHidden}
                 dropdownRef={itemDropdownRef}
                 className={"mt-6 mr-9"}
+                dropdownPosition={itemDropdownPosition}
             />
         </>
     );

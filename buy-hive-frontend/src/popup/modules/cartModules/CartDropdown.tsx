@@ -12,7 +12,7 @@ interface CartDropdownProps {
     cartDropdownVisible: boolean;
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     cartDropdownButtonRef: React.RefObject<HTMLElement | null>;
-    handleCartTitleSelect;
+    handleCartTitleSelect: () => void;
     parentRef: RefObject<HTMLDivElement | null>;
 }
 
@@ -32,9 +32,9 @@ const CartDropdown = ({
 
     const { isLocked, setIsLocked } = useLocked();
 
-    const cartDropdownRef = useRef(null);
-    const deleteCartModalRef = useRef(null);
-    const shareCartModalRef = useRef(null);
+    const cartDropdownRef = useRef<HTMLDivElement>(null);
+    const deleteCartModalRef = useRef<HTMLDivElement>(null);
+    const shareCartModalRef = useRef<HTMLDivElement>(null);
 
     const cartActions = [
         {
