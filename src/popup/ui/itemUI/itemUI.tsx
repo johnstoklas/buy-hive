@@ -5,7 +5,7 @@ import ItemHeader from "./itemHeader";
 import DropdownButton from "../dropdownUI/dropdownButton";
 import ItemNote from "./itemNote";
 import type { Dispatch, RefObject, SetStateAction, KeyboardEvent, ChangeEventHandler } from "react";
-import LoadingBar from "../loadingBar";
+import LoadingBar from "../loadingUI/loadingBar";
 
 type ItemUIProps =
     | {

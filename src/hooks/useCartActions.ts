@@ -13,6 +13,7 @@ interface useCartActionsProps {
     closePopup?: () => void;
     setPopupLoading?: Dispatch<SetStateAction<boolean>>;
     setCartName?: Dispatch<SetStateAction<string>>;
+    cartTitlePrev?: string;
 }
 
 export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setCartName } : useCartActionsProps = {}) {
@@ -56,9 +57,8 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
 
     const renameCart = async(cartId: string, cartTitle: string) => {
         if (isLocked || isLoading || !isAuthenticated) return;
-        if (!cartTitle.trim()) return;
 
-        const isDuplicate = carts.some((cart) => cart.cart_name === cartTitle);
+        const isDuplicate = carts.some((cart) => cart.cart_name === cartTitle && cartId !== cart.cart_id);
         if (isDuplicate) return;
 
         setIsEditing?.(false);

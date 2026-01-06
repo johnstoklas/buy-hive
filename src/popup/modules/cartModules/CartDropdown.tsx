@@ -2,17 +2,17 @@ import { useState, useEffect, useRef, type SetStateAction, type Dispatch, type R
 import { faPenToSquare, faArrowUpFromBracket, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useLocked } from '../../context/LockedContext/useLocked';
 import type { CartType } from '@/types/CartType';
-import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu';
 import ShareCartModal from '@/popup/modals/ShareCartModal';
 import DeleteModal from '@/popup/modals/DeleteModal';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu';
 
 interface CartDropdownProps {
     cart: CartType;
     cartDropdownVisible: boolean;
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     cartDropdownButtonRef: React.RefObject<HTMLElement | null>;
-    handleCartTitleSelect: () => void;
+    startEditing: () => void;
     parentRef: RefObject<HTMLDivElement | null>;
 }
 
@@ -21,7 +21,7 @@ const CartDropdown = ({
     cartDropdownVisible, 
     setCartDropdownVisible, 
     cartDropdownButtonRef, 
-    handleCartTitleSelect, 
+    startEditing, 
     parentRef,
 } : CartDropdownProps) => {
 
@@ -40,7 +40,7 @@ const CartDropdown = ({
         {
             label: "Edit",
             icon: faPenToSquare,
-            onClick: handleCartTitleSelect,
+            onClick: startEditing,
         },
         {
             label: "Share",

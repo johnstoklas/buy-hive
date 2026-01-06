@@ -38,7 +38,7 @@ const AddCartModal = ({
     const { addCart } = useCartActions({setCartName});
   
     return (
-        <FixedContainer>
+        <FixedContainer className="z-60">
             <Container 
                 className={`!px-3 w-full !rounded-lg shadow-bottom ${addCartVisible ? "slide-in" : "slide-out"}`}
                 ref={addCartRef}

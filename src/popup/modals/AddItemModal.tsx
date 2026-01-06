@@ -81,7 +81,10 @@ const AddItemModal = ({
                         addItem={true}
                         setSelectedCartIds={setSelectedCartIds}
                     /> 
-                    <Button onClick={() => addItem(scrapedItem, selectedCartIds)}>
+                    <Button 
+                        onClick={() => addItem(scrapedItem, selectedCartIds)}
+                        isAccent={true}
+                    >
                         Add Item
                     </Button>
             </Container>

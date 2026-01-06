@@ -21,6 +21,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
 
     const cartDropdownButtonRef = useRef(null);
     const cartTitleRef = useRef<HTMLInputElement>(null);
+    const prevTitleRef = useRef(cart.cart_name);
 
     const { renameCart } = useCartActions({ setIsEditing });
     const { getItems } = useItemActions({isExpanded, setIsExpanded, setIsCartLoading});
@@ -31,11 +32,27 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
         }
     }, [isEditing]);
 
-    const handleCartTitleSelect = () => {
+    const startEditing = () => {
         if (isLocked) return;
+        prevTitleRef.current = cartTitle;
         setIsEditing(true);
         setCartDropdownVisible(false);
     };
+
+    const submitEditing = async () => {
+        if (!cartTitle.trim()) {
+            setCartTitle(prevTitleRef.current);
+            setIsEditing(false);
+            return;
+        }
+
+        await renameCart(cart.cart_id, cartTitle);
+        setIsEditing(false);
+    };
+    
+    useEffect(() => {
+        console.log(isEditing)
+    }, [isEditing])
 
     return (
         <div 
@@ -62,11 +79,11 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
                         className="bg-[var(--input-color)] rounded-sm px-2 py-1"
                         value={cartTitle}
                         onChange={(e) => {setCartTitle(e.target.value)}}
-                        onBlur={() => renameCart(cart.cart_id, cartTitle)}
-                        onKeyDown={(e) => onEnter(e, () => renameCart(cart.cart_id, cartTitle))}
+                        onBlur={submitEditing}
+                        onKeyDown={(e) => onEnter(e, () => submitEditing())}
                     />
                 ) : (
-                    <h4 className="px-2 py-1" onDoubleClick={handleCartTitleSelect}>
+                    <h4 className="px-2 py-1" onDoubleClick={startEditing}>
                         {cartTitle}
                     </h4>
                 )}
@@ -85,7 +102,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
                 cartDropdownVisible={cartDropdownVisible}
                 setCartDropdownVisible={setCartDropdownVisible}
                 cartDropdownButtonRef={cartDropdownButtonRef}
-                handleCartTitleSelect={handleCartTitleSelect}
+                startEditing={startEditing}
                 parentRef={cartTitleRef}
             />}
         </div>     

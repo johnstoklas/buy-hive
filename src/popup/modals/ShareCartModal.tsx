@@ -47,7 +47,7 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
   return (
     <CenterContainer>
         <Container 
-            className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom"
+            className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom z-60"
             ref={shareCartModalRef}
         > 
             <ContainerHeader 

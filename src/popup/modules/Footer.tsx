@@ -35,7 +35,7 @@ const Footer = ({
     }
 
     return (
-        <footer className="flex justify-between w-full h-14 items-center px-10 text-xl shadow-top z-50">
+        <footer className="flex justify-between w-full z-100 h-14 items-center px-10 text-xl shadow-top">
             <button 
                 className='hover:cursor-pointer'
                 onClick={() => togglePage("item")}
