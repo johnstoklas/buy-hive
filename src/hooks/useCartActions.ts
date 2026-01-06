@@ -7,6 +7,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import type { CartType } from "@/types/CartType";
 
 import { sendChromeMessage } from "@/services/chromeService";
+import { useAlert } from "@/popup/context/AlertContext/useAlert";
 
 interface useCartActionsProps {
     setIsEditing?: Dispatch<SetStateAction<boolean>>;
@@ -20,6 +21,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
     const { carts, hydrateCartsUI, upsertCartUI, renameCartUI, deleteCartUI } = useCarts();
     const { isLoading, isAuthenticated } = useAuth0();
     const { isLocked } = useLocked();
+    const { notify } = useAlert();
     
     const getCarts = async() => {
         if (isLoading || !isAuthenticated) return;
@@ -29,7 +31,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
             const res = await sendChromeMessage<{carts: CartType[]}>({action: "getCarts"});
             hydrateCartsUI(res.carts || []);
         } catch (err) {
-            console.error(err);
+            notify("error", "Error getting user data");
         }
 
         setPopupLoading?.(false);
@@ -40,8 +42,9 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
 
         const trimmedCartName = cartName.trim();
         const isDuplicate = carts.some((cart) => cart.cart_name === trimmedCartName);
+
         if (isDuplicate || !trimmedCartName) {
-            // showNotification("Invalid Cart Name", false);
+            notify("error", "Invalid cart name");
             return;
         }
 
@@ -51,7 +54,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
             upsertCartUI(newCart);
             setCartName?.("");
         } catch (err) {
-            console.error(err);
+            notify("error", "Error adding cart");
         }
     }
 
@@ -59,7 +62,10 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
         if (isLocked || isLoading || !isAuthenticated) return;
 
         const isDuplicate = carts.some((cart) => cart.cart_name === cartTitle && cartId !== cart.cart_id);
-        if (isDuplicate) return;
+        if (isDuplicate) {
+            notify("error", "Invalid cart name");
+            return;
+        }
 
         setIsEditing?.(false);
 
@@ -69,7 +75,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
             await sendChromeMessage({action: "editCartName", data});
             renameCartUI(cartId, newCartName);
         } catch (err) {
-            console.error(err);
+            notify("error", "Error editing cart name");
         }
     };
 
@@ -85,7 +91,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
             // showNotification("Email succesfully sent!", true);
         } catch (err) {
             console.error(err);
-            // showNotification("Error sending email", false);
+            notify("error", "Error sharing cart");
         }
     }
 
@@ -97,7 +103,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
             await sendChromeMessage({action: "deleteCart", data});
             deleteCartUI(cartId);
         } catch (err) {
-            console.error(err);
+            notify("error", "Error deleting cart");
         }
     };
 

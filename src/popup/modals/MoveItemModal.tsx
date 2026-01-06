@@ -16,6 +16,7 @@ import ContainerHeader from '../ui/containerUI/containerHeader';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import Container from '../ui/containerUI/container';
 import ItemUI from '../ui/itemUI/itemUI';
+import ModalPortal from '../ui/ModalPortal';
 
 interface MoveItemModalProps {
     cart: CartType;
@@ -67,45 +68,47 @@ const MoveItemModal = ({
     
     return (
         <>
-            <CenterContainer>
-                <Container 
-                    className="!flex-col flex-1 relative w-full shadow-bottom"
-                    ref={moveItemModalRef}
-                >
-                    <ContainerHeader 
-                        titleText='Move Item'
-                        closeButtonProps={{
-                            onClick: closePopup
-                        }}
-                    />
-                    <ItemUI
-                        item={item}
-                        isClickable={false}
-                        hasDropdown={false}
-                        noteValue={item.notes}
-                    />
-                    <List 
-                        item={item}
-                        setSelectedCartIds={setSelectedCartIds}
-                    />
-                    {selectedCartIds.length === 0 ? (
-                        <Button 
-                            onClick={() => setDeleteItemAllModal(true)}
-                            isModal={true}
-                            isDelete={true}
-                        > 
-                            Delete Item 
-                        </Button>
-                    ) : (
-                        <Button
-                            onClick={submitMoveItem}
-                            isModal={true}
-                        > 
-                            Confirm Move 
-                        </Button>
-                    )}
-                </Container>
-            </CenterContainer>
+            <ModalPortal>
+                <CenterContainer>
+                    <Container 
+                        className="!flex-col flex-1 relative w-full shadow-bottom"
+                        ref={moveItemModalRef}
+                    >
+                        <ContainerHeader 
+                            titleText='Move Item'
+                            closeButtonProps={{
+                                onClick: closePopup
+                            }}
+                        />
+                        <ItemUI
+                            item={item}
+                            isClickable={false}
+                            hasDropdown={false}
+                            noteValue={item.notes}
+                        />
+                        <List 
+                            item={item}
+                            setSelectedCartIds={setSelectedCartIds}
+                        />
+                        {selectedCartIds.length === 0 ? (
+                            <Button 
+                                onClick={() => setDeleteItemAllModal(true)}
+                                isModal={true}
+                                isDelete={true}
+                            > 
+                                Delete Item 
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={submitMoveItem}
+                                isModal={true}
+                            > 
+                                Confirm Move 
+                            </Button>
+                        )}
+                    </Container>
+                </CenterContainer>
+            </ModalPortal>
             {deleteItemAllModal && <DeleteModal
                 cart={cart}
                 item={item}

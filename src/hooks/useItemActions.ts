@@ -9,6 +9,7 @@ import type { ItemType, ScrapedItemType } from "@/types/ItemTypes";
 
 import { sendChromeMessage } from "@/services/chromeService";
 import { standardizePrice } from "@/utils/standardizePrice";
+import { useAlert } from "@/popup/context/AlertContext/useAlert";
 
 interface useItemActionsProps {
     isExpanded?: boolean;
@@ -22,6 +23,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
     const { isLocked } = useLocked();
     const { upsertItemUI, editNoteUI } = useItems();
     const { moveItemBetweenCartsUI, removeItemFromCartUI, removeItemFromAllCartsUI, addItemToCartUI } = useCarts();
+    const { notify } = useAlert();
     
     const getItems = async(cartId : string, itemCount: string) => {
         if (isLocked || isLoading || !isAuthenticated) return;
@@ -36,7 +38,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
             const items = await sendChromeMessage<ItemType[]>({action: "getItems", data});
             items.forEach(item => upsertItemUI(item));
         } catch (err) {
-            console.error(err);
+            notify("error", "Error getting items for cart");
         }
 
         setIsCartLoading?.(false);
@@ -62,15 +64,24 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
 
     const addItem = async(scrapedItem: ScrapedItemType, selectedCartIds: string[]) => {
         if (isLoading || !isAuthenticated) return;
-        if(!scrapedItem.name || !scrapedItem.price || !scrapedItem.image || !scrapedItem.url || selectedCartIds.length === 0) return;
+        if(!scrapedItem.name || !scrapedItem.price || !scrapedItem.image || !scrapedItem.url) {
+            notify("error", "Error adding item");
+            return;
+        }
+
+        if (selectedCartIds.length === 0) {
+            notify("error", "Select at least one cart");
+            return;
+        }
 
         try {
             const data = { scrapedItem, selectedCartIds };
             const res = await sendChromeMessage<{item: ItemType}>({action: "addItem", data});
             upsertItemUI(res.item);
             selectedCartIds.forEach(cartId => addItemToCartUI(cartId, res.item.item_id));
+            notify("success", "Item added successfully");
         } catch(err) {
-            console.error(err);
+            notify("error", "Error adding item");
         }
     }
 
@@ -83,7 +94,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
             await sendChromeMessage({action: "editItem", data})
             editNoteUI(itemId, notes);
         } catch(err) {
-            console.error(err);
+            notify("error", "Error editing note");
         }
     }
 
@@ -93,9 +104,9 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
         try {
             const data = {itemId, selectedCarts};
             await sendChromeMessage({action: "moveItem", data});
-            moveItemBetweenCartsUI(itemId, selectedCarts)
+            moveItemBetweenCartsUI(itemId, selectedCarts);
         } catch (err) {
-            console.error(err);
+            notify("error", "Error moving item");
         }
     }
 
@@ -107,7 +118,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
             await sendChromeMessage({action: "deleteItem", data});
             removeItemFromCartUI(cartId, itemId)
         } catch (err) {
-            console.error(err);
+            notify("error", "Error deleting item");
         }
     }
 
@@ -119,7 +130,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
             await sendChromeMessage({action: "deleteItemAll", data})
             removeItemFromAllCartsUI(itemId)
         } catch (err) {
-            console.error(err);
+            notify("error", "Error deleting item");
         }
     }
 

@@ -22,11 +22,9 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
         </div>
     )
     return (
-        <div 
-            className="flex flex-1 gap-2 w-full shrink-0"
-            // ref={organizationSectionRef}
-        >
-            {isLocked && <div className="absolute inset-0 bg-black/25 my-14"/>}
+        <div className="flex flex-1 gap-2 w-full shrink-0">
+            {isLocked && <div className="absolute inset-0 bg-black/25"/>}
+            
             {carts.length > 0 ? (
                 <div className="flex flex-col flex-1 gap-2 pt-2 w-full shrink-0">
                         {carts.map((cart) => (
@@ -42,12 +40,6 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
                     <p>Click <FontAwesomeIcon id="org-sec-empty-folder" icon={faFolder} /> to get started!</p>
                 </div>
             )}
-                {/* <UserNotification 
-                    notificationVisible={notificationVisible}
-                    notifStatus={notifStatus}
-                    notifMessage={notifMessage}
-                    addFileState={addFileState}
-                /> */}
         </div>
     )
 }

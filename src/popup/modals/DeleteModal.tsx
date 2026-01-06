@@ -15,6 +15,7 @@ import Button from '../ui/button';
 import Container from '../ui/containerUI/container';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import ContainerHeader from '../ui/containerUI/containerHeader';
+import ModalPortal from '../ui/ModalPortal';
 
 
 interface DeleteModalProps {
@@ -85,40 +86,42 @@ const DeleteModal = ({
     }
 
     return (
-        <CenterContainer>
-            <Container 
-                className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom"
-                ref={deleteModalRef}
-            > 
-                <ContainerHeader
-                    closeButtonProps={{
-                        onClick: closePopup 
-                    }}
-                />
-                <div className="mb-2">
-                    <FontAwesomeIcon 
-                        icon={faTrashCan} 
-                        className="text-base"
+        <ModalPortal>
+            <CenterContainer>
+                <Container 
+                    className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom"
+                    ref={deleteModalRef}
+                > 
+                    <ContainerHeader
+                        closeButtonProps={{
+                            onClick: closePopup 
+                        }}
                     />
-                </div>
-                <p> {getDeleteMessage()} </p>
-                <div className="flex gap-2 justify-center">
-                    <Button 
-                        onClick={handleSubmit}
-                        isDelete={true}
-                        isModal={true}
-                    > 
-                        Yes, I'm sure 
-                    </Button>
-                    <Button 
-                        onClick={closePopup}
-                        isModal={true}
-                    > 
-                        No, cancel 
-                    </Button>
-                </div>
-            </Container>
-        </CenterContainer> 
+                    <div className="mb-2">
+                        <FontAwesomeIcon 
+                            icon={faTrashCan} 
+                            className="text-base"
+                        />
+                    </div>
+                    <p> {getDeleteMessage()} </p>
+                    <div className="flex gap-2 justify-center">
+                        <Button 
+                            onClick={handleSubmit}
+                            isDelete={true}
+                            isModal={true}
+                        > 
+                            Yes, I'm sure 
+                        </Button>
+                        <Button 
+                            onClick={closePopup}
+                            isModal={true}
+                        > 
+                            No, cancel 
+                        </Button>
+                    </div>
+                </Container>
+            </CenterContainer> 
+        </ModalPortal>
     )
 };
 

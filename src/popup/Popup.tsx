@@ -1,97 +1,105 @@
-import Header from "./modules/Header";
-import Footer from "./modules/Footer";
-import "../styles/main.css"
-import AccountPage from "./pages/AccountPage";
 import { useEffect, useRef, useState } from "react";
+import "../styles/main.css"
+
 import { useAuth0 } from '@auth0/auth0-react';
-import HomePage from "./pages/HomePage";
-import AddCart from "./modals/AddCartModal";
 import { useTokenResponder } from "../hooks/tokenResponder";
-import AddItemModal from "./modals/AddItemModal";
 import useCartActions from "@/hooks/useCartActions";
 
+import AccountPage from "./pages/AccountPage";
+import HomePage from "./pages/HomePage";
+
+import Header from "./modules/Header";
+import Footer from "./modules/Footer";
+
+import AddCart from "./modals/AddCartModal";
+import AddItemModal from "./modals/AddItemModal";
+
+import Alert from "./ui/alert";
+
 const Popup = () => {
-  useTokenResponder();
+    useTokenResponder();
 
-  const [addItemVisible, setAddItemVisible] = useState(false);
-  const [addItemAnimating, setAddItemAnimating] = useState(false);
-  
-  const [addCartVisible, setAddCartVisible] = useState(false);
-  const [addCartAnimating, setAddCartAnimating] = useState(false);
+    const [addItemVisible, setAddItemVisible] = useState(false);
+    const [addItemAnimating, setAddItemAnimating] = useState(false);
+    
+    const [addCartVisible, setAddCartVisible] = useState(false);
+    const [addCartAnimating, setAddCartAnimating] = useState(false);
 
-  const [accountPageVisible, setAccountPageVisible] = useState(true);
+    const [accountPageVisible, setAccountPageVisible] = useState(true);
 
-  const [popupLoading, setPopupLoading] = useState(false);
+    const [popupLoading, setPopupLoading] = useState(false);
 
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
-  const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
+    const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
+    const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const { getCarts } = useCartActions({setPopupLoading});
 
-  const addItemButtoRef = useRef<HTMLButtonElement>(null);
-  const addCartButtonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    const getUser = async() => {
-      const { user } = await chrome.storage.session.get("user");
-      if (!user) return;
+    const addItemButtoRef = useRef<HTMLButtonElement>(null);
+    const addCartButtonRef = useRef<HTMLButtonElement>(null);
 
-      await getAccessTokenSilently({
-          authorizationParams: {
-              audience: AUTH0_AUDIENCE,
-          }
-      });
+    useEffect(() => {
+        const getUser = async() => {
+        const { user } = await chrome.storage.session.get("user");
+        if (!user) return;
 
-      console.log("user", user);
-      setAccountPageVisible(false);
-    }
+        await getAccessTokenSilently({
+            authorizationParams: {
+                audience: AUTH0_AUDIENCE,
+            }
+        });
 
-    getUser();
-  }, []);
+        console.log("user", user);
+        setAccountPageVisible(false);
+        }
 
-  const { getCarts } = useCartActions({setPopupLoading});
-  
-  useEffect(() => {  
-    getCarts();
-  }, [isLoading, isAuthenticated]);
+        getUser();
+    }, []);
+    
+    useEffect(() => {  
+        getCarts();
+    }, [isLoading, isAuthenticated]);
 
-  return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
+    return (
+        <div className="min-h-screen flex flex-col">
+            <Header />
 
-        <main className="flex flex-1 overflow-y-auto px-4">
-          {!accountPageVisible && <HomePage 
-            popupLoading={popupLoading}
-            setPopupLoading={setPopupLoading}
-          />}
-          {accountPageVisible && <AccountPage
-            setAccountPageVisible={setAccountPageVisible}
-          />}
-          
-          {(addItemVisible || addItemAnimating) && <AddItemModal
-            addItemVisible={addItemVisible}
-            setAddItemVisible={setAddItemVisible}
-            addItemButtonRef={addItemButtoRef}  
-            setAddItemAnimating={setAddItemAnimating}
-          />}
-          {(addCartVisible || addCartAnimating) && <AddCart 
-            addCartVisible={addCartVisible}
-            setAddCartVisibile={setAddCartVisible}
-            addCartButtonRef={addCartButtonRef}
-            setAddCartAnimating={setAddCartAnimating}
-          />}
-        </main>
+            <Alert />   
+            <main className="relative flex flex-1 overflow-y-auto px-4">
 
-        <Footer
-          addItemVisible={addItemVisible}
-          setAddItemVisible={setAddItemVisible}
-          addItemButtonRef={addItemButtoRef}
-          addCartVisible={addCartVisible}
-          setAddCartVisible={setAddCartVisible}
-          addCartButtonRef={addCartButtonRef}
-          accountPageVisible={accountPageVisible}
-          setAccountPageVisible={setAccountPageVisible}
-        />
-      </div>
-  );
+                {!accountPageVisible && <HomePage 
+                    popupLoading={popupLoading}
+                    setPopupLoading={setPopupLoading}
+                />}
+                {accountPageVisible && <AccountPage
+                    setAccountPageVisible={setAccountPageVisible}
+                />}
+                
+                {(addItemVisible || addItemAnimating) && <AddItemModal
+                    addItemVisible={addItemVisible}
+                    setAddItemVisible={setAddItemVisible}
+                    addItemButtonRef={addItemButtoRef}  
+                    setAddItemAnimating={setAddItemAnimating}
+                />}
+                {(addCartVisible || addCartAnimating) && <AddCart 
+                    addCartVisible={addCartVisible}
+                    setAddCartVisibile={setAddCartVisible}
+                    addCartButtonRef={addCartButtonRef}
+                    setAddCartAnimating={setAddCartAnimating}
+                />}
+            </main>
+
+            <Footer
+                addItemVisible={addItemVisible}
+                setAddItemVisible={setAddItemVisible}
+                addItemButtonRef={addItemButtoRef}
+                addCartVisible={addCartVisible}
+                setAddCartVisible={setAddCartVisible}
+                addCartButtonRef={addCartButtonRef}
+                accountPageVisible={accountPageVisible}
+                setAccountPageVisible={setAccountPageVisible}
+            />
+        </div>
+    );
 };
 
 export default Popup;

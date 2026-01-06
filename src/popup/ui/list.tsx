@@ -88,7 +88,7 @@ const List = ({ item, addItem, setSelectedCartIds } : ListProps) => {
                 )}
             </div>
             <hr className="bg-[var(--input-color)] my-1" />
-            <div>
+            <div className='overflow-y-auto h-[140px]'>
                 <ul className="flex flex-col">
                     {carts.map((cart) => (
                         <li key={cart.cart_id}>
