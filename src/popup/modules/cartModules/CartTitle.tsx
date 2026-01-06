@@ -39,7 +39,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
 
     return (
         <div 
-            className="flex flex-row relative gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full rounded-lg shadow-bottom"
+            className="flex flex-row relative gap-2 justify-between py-2 px-3 w-full"
             key={cart.cart_id} 
             ref={cartTitleRef}
         >

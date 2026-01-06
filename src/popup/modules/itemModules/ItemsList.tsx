@@ -22,7 +22,7 @@ const ItemsList = ({ cart, isExpanded, itemsListRef } : ItemsListProp) => {
     return (
         <div
             ref={itemsListRef}
-            className={`bg-[var(--secondary-background)] shadow-bottom rounded-lg items-list-animation ${isExpanded ? "-mt-2" : ""}`}
+            // className={`${isExpanded ? "-mt-2" : ""}`}
         >
             <div 
                 className="flex flex-col bg-[var(--secondary-background)] py-3 px-4 gap-2"

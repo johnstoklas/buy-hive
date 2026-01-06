@@ -20,19 +20,22 @@ const Cart = ({cart} : CartProps) => {
     const cartRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const el = itemsListRef.current
-        if (!el) return;
+        const lRef = itemsListRef.current;
+        const cRef = cartRef.current;
+        if (!lRef || !cRef) return;
 
         if (isExpanded) {
-            el.style.maxHeight = el.scrollHeight + "px";
+            cRef.style.maxHeight = String(lRef.scrollHeight + 50) + "px";
+            lRef.style.maxHeight = lRef.scrollHeight + "px";
         } else {
-            el.style.maxHeight = "0px";
+            cRef.style.maxHeight = "50px";
+            lRef.style.maxHeight = "0px";
         }
     }, [isCartLoading, isExpanded, items]);
 
     return (
         <div 
-            className="flex flex-col"
+            className="flex flex-col bg-[var(--secondary-background)] shadow-bottom rounded-lg items-list-animation"
             ref={cartRef}
         >
             <CartTitle 
