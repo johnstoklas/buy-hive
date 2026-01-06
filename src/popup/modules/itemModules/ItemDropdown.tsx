@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef, type Dispatch, type SetStateAction, type RefObject } from 'react';
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction, type RefObject, type CSSProperties } from 'react';
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu.js';
 import type { ItemType } from '@/types/ItemTypes.js';
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
 import type { CartType } from '@/types/CartType';
 import DeleteModal from '@/popup/modals/DeleteModal';
 import MoveItemModal from '@/popup/modals/MoveItemModal';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu';
 
 interface ItemDropdownProps {
     cart: CartType;
@@ -16,6 +16,7 @@ interface ItemDropdownProps {
     itemDropdownButtonRef: RefObject<HTMLButtonElement | null>;
     handleItemNoteSelect: () => void;
     parentRef: RefObject<HTMLDivElement | null>;
+    style: CSSProperties;
 }
 
 const ItemDropdown = ({
@@ -26,6 +27,7 @@ const ItemDropdown = ({
     itemDropdownButtonRef,
     handleItemNoteSelect,
     parentRef,
+    style
 } : ItemDropdownProps) => {  
         
     const [moveItemModal, setMoveItemModal] = useState(false);
@@ -97,8 +99,8 @@ const ItemDropdown = ({
                 actions={itemActions}
                 hidden={itemDropdownHidden}
                 dropdownRef={itemDropdownRef}
-                className={"mt-6 mr-9"}
                 dropdownPosition={itemDropdownPosition}
+                style={style}
             />
         </>
     );

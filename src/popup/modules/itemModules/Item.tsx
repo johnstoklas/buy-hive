@@ -1,6 +1,6 @@
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
 import type { ItemType } from '@/types/ItemTypes';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type CSSProperties } from 'react';
 import ItemDropdown from './ItemDropdown';
 import type { CartType } from '@/types/CartType';
 import useItemActions from '@/hooks/useItemActions';
@@ -15,6 +15,7 @@ interface ItemProp {
 const Item = ({ cart, item } : ItemProp) => {
 
     const {item_id: itemId} = item;
+
     const [itemDropdownVisible, setItemDropdownVisible] = useState(false);
     const [itemNote, setItemNote] = useState(item.notes || "");
     const [isEditing, setIsEditing] = useState(false);
@@ -25,6 +26,7 @@ const Item = ({ cart, item } : ItemProp) => {
     const itemRef = useRef<HTMLDivElement>(null);
 
     const { isLocked } = useLocked();
+    const { editItem } = useItemActions();
 
     useEffect(() => {
         setItemNote(item.notes || "");
@@ -37,15 +39,6 @@ const Item = ({ cart, item } : ItemProp) => {
         }
     }, [isEditing]);
 
-    const handleItemNoteSelect = () => {
-        if (isLocked) return;
-        setIsEditing(true);
-        setItemDropdownVisible(false);
-    };
-
-    // Edit item notes
-    const { editItem } = useItemActions();
-
     useEffect(() => {
         if (isEditing && itemNoteRef.current) {
             const length = itemNoteRef.current.value.length;
@@ -53,6 +46,27 @@ const Item = ({ cart, item } : ItemProp) => {
             itemNoteRef.current.focus();
         }
     }, [isEditing]);
+
+    const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({});
+
+    useEffect(() => {
+        if (!itemDropdownVisible || !itemDropdownButtonRef.current) return;
+
+        const rect = itemDropdownButtonRef.current.getBoundingClientRect();
+
+        setDropdownStyle({
+            position: "fixed",
+            top: rect.bottom,
+            left: rect.right - 80,
+        });
+    }, [itemDropdownVisible]);
+
+
+    const handleItemNoteSelect = () => {
+        if (isLocked) return;
+        setIsEditing(true);
+        setItemDropdownVisible(false);
+    };
 
     const handleSubmit = () => {
         if (itemNote.trim() === prevNoteRef.current.trim()) return;
@@ -62,7 +76,7 @@ const Item = ({ cart, item } : ItemProp) => {
 
     return (
         <div 
-            className="px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md"
+            className="relative px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md"
             ref={itemRef}
         >
             <ItemUI
@@ -82,42 +96,6 @@ const Item = ({ cart, item } : ItemProp) => {
                 }
                 handleNoteSelect={handleItemNoteSelect}
             />
-
-            {/* {!isLocked ? (
-                <a href={item.url} target="_blank" rel="noopener noreferrer">
-                    {<Image 
-                        item={item}
-                    />}
-                </a>
-                ) : (
-                    <Image 
-                        item={item}
-                    />
-            )}
-
-            <div className='flex flex-1 flex-col overflow-hidden gap-1'>
-                <div className='flex flex-row gap-1'>
-                    <ItemHeader
-                        item={item}
-                    />
-                    <DropdownButton
-                        dropdownVisible={itemDropdownVisible}
-                        setDropdownVisible={setItemDropdownVisible}
-                        buttonRef={itemDropdownButtonRef}
-                    />
-                </div>
-                <ItemNote
-                    isEditing={isEditing}
-                    noteRef={itemNoteRef}
-                    noteValue={itemNote}
-                    setNoteValue={(e) => setItemNote(e.target.value)}
-                    handleBlur={() => handleSubmit}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
-                        onNotShiftEnter(e, handleSubmit)
-                    }
-                    handleNoteSelect={handleItemNoteSelect}
-                />
-            </div> */}
             {itemDropdownVisible && <ItemDropdown 
                 cart={cart}
                 item={item}
@@ -126,6 +104,7 @@ const Item = ({ cart, item } : ItemProp) => {
                 itemDropdownButtonRef={itemDropdownButtonRef}
                 handleItemNoteSelect={handleItemNoteSelect}
                 parentRef={itemRef}
+                style={dropdownStyle}
             />}
         </div>
     )

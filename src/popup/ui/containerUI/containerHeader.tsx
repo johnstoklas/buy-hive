@@ -8,13 +8,13 @@ interface ContainerHeaderProps {
 
 const ContainerHeader = ({ titleText, className, closeButtonProps } : ContainerHeaderProps ) => {
     return (
-      <div className={`flex justify-between align-items ${className ?? ""}`}>
+      <div className={`flex items-center ${className ?? ""}`}>
         {titleText && <p className="font-semibold">
           {titleText}
         </p>}
         <p 
           {...closeButtonProps}
-          className="hover:cursor-pointer hover:font-bold" 
+          className="ml-auto hover:cursor-pointer hover:font-bold" 
         >
           &#10005; 
         </p>

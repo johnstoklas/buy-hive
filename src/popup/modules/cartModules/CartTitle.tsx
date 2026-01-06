@@ -38,49 +38,47 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
     };
 
     return (
-        <>
-            <div 
-                className="flex flex-row gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full rounded-lg shadow-bottom"
-                key={cart.cart_id} 
-                ref={cartTitleRef}
-            >
-                <div className="flex flex-row gap-2 items-center">
-                    <button
-                        className={
-                            `hover:cursor-pointer transition-transform duration-500 ease-in-out
-                            ${isExpanded ? "rotate-open-cart" : ""} 
-                            ${isLocked ? "disabled-hover-modify" : ""}`
-                        }          
-                        onClick={() => getItems(cart.cart_id, cart.item_count)}
-                    >
-                        ▶
-                    </button>
+        <div 
+            className="flex flex-row relative gap-2 justify-between bg-[var(--secondary-background)] py-2 px-3 w-full rounded-lg shadow-bottom"
+            key={cart.cart_id} 
+            ref={cartTitleRef}
+        >
+            <div className="flex flex-row gap-2 items-center">
+                <button
+                    className={
+                        `hover:cursor-pointer transition-transform duration-500 ease-in-out
+                        ${isExpanded ? "rotate-open-cart" : ""} 
+                        ${isLocked ? "disabled-hover-modify" : ""}`
+                    }          
+                    onClick={() => getItems(cart.cart_id, cart.item_count)}
+                >
+                    ▶
+                </button>
 
-                    {isEditing ? (
-                        <input
-                            ref={cartTitleRef}
-                            type="text"
-                            className="bg-[var(--input-color)] rounded-sm px-2 py-1"
-                            value={cartTitle}
-                            onChange={(e) => {setCartTitle(e.target.value)}}
-                            onBlur={() => renameCart(cart.cart_id, cartTitle)}
-                            onKeyDown={(e) => onEnter(e, () => renameCart(cart.cart_id, cartTitle))}
-                        />
-                    ) : (
-                        <h4 className="px-2 py-1" onDoubleClick={handleCartTitleSelect}>
-                            {cartTitle}
-                        </h4>
-                    )}
-                </div>
-
-                <div className="flex flex-row gap-2 items-center">
-                    <h4 className="bg-[var(--accent-color)] px-3 py-1 rounded-md">{cart.item_count}</h4>
-                    <DropdownButton
-                        dropdownVisible={cartDropdownVisible}
-                        setDropdownVisible={setCartDropdownVisible}
-                        buttonRef={cartDropdownButtonRef}
+                {isEditing ? (
+                    <input
+                        ref={cartTitleRef}
+                        type="text"
+                        className="bg-[var(--input-color)] rounded-sm px-2 py-1"
+                        value={cartTitle}
+                        onChange={(e) => {setCartTitle(e.target.value)}}
+                        onBlur={() => renameCart(cart.cart_id, cartTitle)}
+                        onKeyDown={(e) => onEnter(e, () => renameCart(cart.cart_id, cartTitle))}
                     />
-                </div>
+                ) : (
+                    <h4 className="px-2 py-1" onDoubleClick={handleCartTitleSelect}>
+                        {cartTitle}
+                    </h4>
+                )}
+            </div>
+
+            <div className="flex flex-row gap-2 items-center">
+                <h4 className="bg-[var(--accent-color)] px-3 py-1 rounded-md">{cart.item_count}</h4>
+                <DropdownButton
+                    dropdownVisible={cartDropdownVisible}
+                    setDropdownVisible={setCartDropdownVisible}
+                    buttonRef={cartDropdownButtonRef}
+                />
             </div>
             {cartDropdownVisible && <CartDropdown 
                 cart={cart}
@@ -90,7 +88,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
                 handleCartTitleSelect={handleCartTitleSelect}
                 parentRef={cartTitleRef}
             />}
-        </>
+        </div>     
     )
 }
 

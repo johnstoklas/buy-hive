@@ -95,7 +95,7 @@ const DeleteModal = ({
                         onClick: closePopup 
                     }}
                 />
-                <div className="mt-4 mb-2">
+                <div className="mb-2">
                     <FontAwesomeIcon 
                         icon={faTrashCan} 
                         className="text-base"
