@@ -6,12 +6,11 @@ interface UserOptioButtonsProps {
   setAccountPageVisible: Dispatch<SetStateAction<boolean>>,
 }
 const UserOptionButtons = ({setAccountPageVisible} : UserOptioButtonsProps) => {
-  const { isAuthenticated, logout } = useAuth0();
+  const { logout } = useAuth0();
   const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 
   // Logs a user out of their account
   const handleLogout = async() => {
-    console.log("logging out the user")
     await chrome.storage.session.clear();
     logout({
       logoutParams: {
@@ -19,7 +18,6 @@ const UserOptionButtons = ({setAccountPageVisible} : UserOptioButtonsProps) => {
       }
     });
 
-    console.log('auth', isAuthenticated)
   };
 
   return (

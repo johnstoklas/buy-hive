@@ -60,7 +60,6 @@ export async function handleScrapeItem(message, sender, sendResponse) {
                     return;
                 }
                 
-                console.log(response.data);
                 sendResponse({status: "success", data: response.data});
             });
         });

@@ -6,6 +6,10 @@ import type { CartType } from '@/types/CartType';
 import useItemActions from '@/hooks/useItemActions';
 import { onNotShiftEnter } from '@/utils/keyboard';
 import ItemUI from '@/popup/ui/itemUI/itemUI';
+import DropdownButton from '@/popup/ui/dropdownUI/dropdownButton';
+import ItemNoteEditing from '@/popup/ui/itemUI/itemNoteUI/itemNoteEditing';
+import ItemNoteStatic from '@/popup/ui/itemUI/itemNoteUI/ItemNoteStatic';
+import { createPortal } from 'react-dom';
 
 interface ItemProp {
     cart: CartType;
@@ -23,7 +27,7 @@ const Item = ({ cart, item } : ItemProp) => {
     const itemNoteRef = useRef<HTMLTextAreaElement>(null);
     const prevNoteRef = useRef(item.notes || "");
     const itemDropdownButtonRef = useRef<HTMLButtonElement>(null);
-    const itemRef = useRef<HTMLDivElement>(null);
+    const itemHeaderRef = useRef<HTMLDivElement>(null);
 
     const { isLocked } = useLocked();
     const { editItem } = useItemActions();
@@ -63,6 +67,7 @@ const Item = ({ cart, item } : ItemProp) => {
 
 
     const handleItemNoteSelect = () => {
+        console.log("is this firing")
         if (isLocked) return;
         setIsEditing(true);
         setItemDropdownVisible(false);
@@ -75,37 +80,53 @@ const Item = ({ cart, item } : ItemProp) => {
     }
 
     return (
-        <div 
-            className="relative px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md"
-            ref={itemRef}
-        >
+        <div className="relative px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md">
             <ItemUI
                 item={item}
+                ref={itemHeaderRef}
                 isClickable={true}
-                hasDropdown={true}
-                itemDropdownVisible={itemDropdownVisible}
-                setItemDropdownVisible={setItemDropdownVisible}
-                itemDropdownButtonRef={itemDropdownButtonRef}
-                isEditing={isEditing}
-                noteRef={itemNoteRef}
-                noteValue={itemNote}
-                setNoteValue={(e) => setItemNote(e.target.value)}
-                handleBlur={() => handleSubmit}
-                onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
-                    onNotShiftEnter(e, handleSubmit)
+                rightSlot={
+                    <>
+                        <DropdownButton
+                            dropdownVisible={itemDropdownVisible}
+                            setDropdownVisible={setItemDropdownVisible}
+                            buttonRef={itemDropdownButtonRef}
+                        />
+                        {itemDropdownVisible && 
+                            createPortal(
+                                <ItemDropdown 
+                                    cart={cart}
+                                    item={item}
+                                    itemDropdownVisible={itemDropdownVisible}
+                                    setItemDropdownVisible={setItemDropdownVisible}
+                                    itemDropdownButtonRef={itemDropdownButtonRef}
+                                    handleItemNoteSelect={handleItemNoteSelect}
+                                />,
+                                document.body
+                            )
+                        }
+                    </>
                 }
-                handleNoteSelect={handleItemNoteSelect}
+                noteSlot={
+                    isEditing ?
+                        (
+                            <ItemNoteEditing
+                                noteRef={itemNoteRef}
+                                noteValue={itemNote}
+                                setNoteValue={(e) => setItemNote(e.target.value)}
+                                handleBlur={handleSubmit}
+                                onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
+                                    onNotShiftEnter(e, handleSubmit)
+                                }
+                            />
+                        ) : (
+                            <ItemNoteStatic
+                                noteValue={itemNote}
+                                handleNoteSelect={handleItemNoteSelect}
+                            />
+                        )
+                }
             />
-            {itemDropdownVisible && <ItemDropdown 
-                cart={cart}
-                item={item}
-                itemDropdownVisible={itemDropdownVisible}
-                setItemDropdownVisible={setItemDropdownVisible}
-                itemDropdownButtonRef={itemDropdownButtonRef}
-                handleItemNoteSelect={handleItemNoteSelect}
-                parentRef={itemRef}
-                style={dropdownStyle}
-            />}
         </div>
     )
 };

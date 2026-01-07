@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-icons'
 import type { Dispatch, SetStateAction } from 'react';
+import { useLocked } from '../context/LockedContext/useLocked';
 
 interface FooterProps {
     addItemVisible: boolean;
@@ -25,6 +26,8 @@ const Footer = ({
     accountPageVisible, 
     setAccountPageVisible,
 } : FooterProps) => {
+    const { isLocked } = useLocked();
+
     const togglePage = (type: string) => {
         setAccountPageVisible(false);
         setAddCartVisible(false);
@@ -37,22 +40,25 @@ const Footer = ({
     return (
         <footer className="flex justify-between w-full z-100 h-14 items-center px-10 text-xl shadow-top">
             <button 
-                className='hover:cursor-pointer'
+                className={`${isLocked ? "" : "hover:cursor-pointer"}`}
                 onClick={() => togglePage("item")}
                 ref={addItemButtonRef}
+                disabled={isLocked}
             >
                 <FontAwesomeIcon icon={faCartShopping} />    
             </button>
             <button 
-                className='hover:cursor-pointer'
+                className={`${isLocked ? "" : "hover:cursor-pointer"}`}
                 onClick={() => togglePage("cart")}
                 ref={addCartButtonRef}
+                disabled={isLocked}
             >
                 <FontAwesomeIcon icon={faFolder} />
             </button>
             <button 
-                className='hover:cursor-pointer'
+                className={`${isLocked ? "" : "hover:cursor-pointer"}`}
                 onClick={() => togglePage("account")}
+                disabled={isLocked}
             >
                 <FontAwesomeIcon icon={faUser} />
             </button>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type Dispatch, type SetStateAction, type RefObject, type CSSProperties } from 'react';
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction, type RefObject, type CSSProperties, useLayoutEffect } from 'react';
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import type { ItemType } from '@/types/ItemTypes.js';
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
@@ -15,8 +15,7 @@ interface ItemDropdownProps {
     setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
     itemDropdownButtonRef: RefObject<HTMLButtonElement | null>;
     handleItemNoteSelect: () => void;
-    parentRef: RefObject<HTMLDivElement | null>;
-    style: CSSProperties;
+    parentRef?: RefObject<HTMLDivElement | null>;
 }
 
 const ItemDropdown = ({
@@ -27,7 +26,6 @@ const ItemDropdown = ({
     itemDropdownButtonRef,
     handleItemNoteSelect,
     parentRef,
-    style
 } : ItemDropdownProps) => {  
         
     const [moveItemModal, setMoveItemModal] = useState(false);
@@ -67,13 +65,68 @@ const ItemDropdown = ({
         setIsLocked(deleteItemModal || moveItemModal);
     }, [deleteItemModal, moveItemModal]);
     
-    useEffect(() => {
-        if (itemDropdownHidden || isLocked || !parentRef.current) return;
-        const parentRect = parentRef.current.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - parentRect.bottom;
+    const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
 
-        setItemDropdownPosition(spaceBelow < 150 ? "above" : "below");
-    }, []);
+    // useLayoutEffect(() => {
+    //     if (!itemDropdownVisible || isLocked || !itemDropdownButtonRef.current) return;
+
+    //     const buttonRect = itemDropdownButtonRef.current.getBoundingClientRect();
+    //     const dropdownHeight = 90;
+
+    //     const spaceBelow = window.innerHeight - buttonRect.bottom;
+    //     const spaceAbove = buttonRect.top;
+
+    //     const position =
+    //         spaceBelow < dropdownHeight && spaceAbove > dropdownHeight
+    //         ? "above"
+    //         : "below";
+
+    //     setItemDropdownPosition(position);
+
+    //     setDropdownStyle({
+    //         position: "fixed",
+    //         left: buttonRect.right - 80,
+    //         top:
+    //         position === "above"
+    //             ? buttonRect.top - dropdownHeight
+    //             : buttonRect.bottom,
+    //         zIndex: 100,
+    //     });
+    // }, [itemDropdownVisible, isLocked]);
+
+    useLayoutEffect(() => {
+        if (!itemDropdownVisible || !itemDropdownButtonRef.current) return;
+
+        const updatePosition = () => {
+            const buttonRect = itemDropdownButtonRef.current!.getBoundingClientRect();
+            const dropdownHeight = 90;
+
+            const spaceBelow = window.innerHeight - buttonRect.bottom;
+            const spaceAbove = buttonRect.top;
+
+            const position =
+                spaceBelow < dropdownHeight && spaceAbove > dropdownHeight
+                ? "above"
+                : "below";
+
+            setItemDropdownPosition(position);
+
+            setDropdownStyle({
+                position: "fixed",
+                left: buttonRect.right - 80,
+                top:
+                position === "above"
+                    ? buttonRect.top - dropdownHeight
+                    : buttonRect.bottom,
+                zIndex: 100,
+            });
+        };
+
+        updatePosition();
+        window.addEventListener("scroll", updatePosition, true);
+
+        return () => window.removeEventListener("scroll", updatePosition, true);
+    }, [itemDropdownVisible, itemDropdownPosition]);
 
     return (
         <>
@@ -100,7 +153,7 @@ const ItemDropdown = ({
                 hidden={itemDropdownHidden}
                 dropdownRef={itemDropdownRef}
                 dropdownPosition={itemDropdownPosition}
-                style={style}
+                style={dropdownStyle}
             />
         </>
     );

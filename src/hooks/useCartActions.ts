@@ -85,7 +85,7 @@ export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setC
 
         try {
             const data = { cartId: cartId, recipient: email};
-            await sendChromeMessage({action: "sendEmail", data});
+            await sendChromeMessage({action: "shareCart", data});
             // setIsLoading(false);
             closePopup?.();  
             // showNotification("Email succesfully sent!", true);

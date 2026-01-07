@@ -1,3 +1,4 @@
+import { useLocked } from "@/popup/context/LockedContext/useLocked";
 import { useEffect, type Dispatch, type RefObject, type SetStateAction } from "react";
 
 export function useClickOutside(
@@ -6,8 +7,10 @@ export function useClickOutside(
     setBool: Dispatch<SetStateAction<boolean>>,
     ignoreRefs: RefObject<HTMLElement | null>[] = []
 ) {
+    const { isLocked } = useLocked();
+    
     useEffect(() => {
-        if (!bool) return;
+        if (!bool || isLocked) return;
 
         const handler = (e: PointerEvent) => {
         const target = e.target as Node;

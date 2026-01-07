@@ -1,4 +1,10 @@
-import { handleGetCarts, handleAddNewCart, handleEditCart, handleDeleteCart } from "./carts/cartsService.js";
+import { 
+    handleGetCarts, 
+    handleAddNewCart, 
+    handleEditCart, 
+    handleShareCart, 
+    handleDeleteCart 
+} from "./carts/cartsService.js";
 import { 
     handleGetItems, 
     handleScrapeItem, 
@@ -44,9 +50,9 @@ export async function handleMessage(message, sender, sendResponse) {
          case "deleteItemAll":
             handleDeleteItemAll(message, sender, sendResponse);
             return true;
-        // case "sendEmail":
-        //     handleShareEmail(message, sender, sendResponse);
-        //     return true;        
+        case "shareCart":
+            handleShareCart(message, sender, sendResponse);
+            return true;        
         default:
             console.warn(`Unknown action: ${message.action}`);
             sendResponse({ status: "error", message: "Unknown action" });

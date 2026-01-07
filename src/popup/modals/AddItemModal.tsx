@@ -8,9 +8,10 @@ import type { ScrapedItemType } from '@/types/ItemTypes';
 import Button from '../ui/button';
 import Container from '../ui/containerUI/container';
 import ContainerHeader from '../ui/containerUI/containerHeader';
-import List from '../ui/list';
 import FixedContainer from '../ui/containerUI/fixedContainer';
 import ItemUI from '../ui/itemUI/itemUI';
+import List from '../ui/list';
+import ItemNoteEditing from '../ui/itemUI/itemNoteUI/itemNoteEditing';
 
 interface AddItemModalProps {
     addItemVisible: boolean;
@@ -66,15 +67,16 @@ const AddItemModal = ({
                     <ItemUI
                         item={scrapedItem}
                         isClickable={false}
-                        hasDropdown={false}
-                        isEditing={true}
-                        noteRef={null}
-                        placeholder="Notes"
-                        noteValue={scrapedItem.notes}
-                        setNoteValue={(value) => setScrapedItem(prev => ({ ...prev, note: value }))}
-                        handleBlur={() => {}}
-                        onKeyDown={() => {}}
-                        handleNoteSelect={() => {}}
+                        noteSlot= {
+                            <ItemNoteEditing
+                                noteRef={null}
+                                placeholder="Notes"
+                                noteValue={scrapedItem.notes}
+                                setNoteValue={(e) => setScrapedItem(prev => ({ ...prev, notes: e.target.value }))}
+                                handleBlur={() => {}}
+                                onKeyDown={() => {}}
+                            />
+                        }
                     />
                     <List
                         item={scrapedItem}

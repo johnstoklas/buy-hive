@@ -49,7 +49,6 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
 
         try {
             const item = await sendChromeMessage<ItemType>({action: "scrapeItem"});
-            // console.log(res);
             setScrapedItem?.(prev => ({
                 ...prev,
                 name: item.name,

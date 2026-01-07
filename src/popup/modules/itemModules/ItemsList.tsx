@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import type { ItemType } from "@/types/ItemTypes";
 import type { CartType } from "@/types/CartType";

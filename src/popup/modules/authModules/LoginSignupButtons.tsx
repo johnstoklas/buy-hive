@@ -8,7 +8,6 @@ const LoginSignupButtons = ({}) => {
     const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 
     const handleLogin = () => {
-        console.log(AUTH0_AUDIENCE)
         loginWithPopup({
             authorizationParams: {
                 audience: AUTH0_AUDIENCE,

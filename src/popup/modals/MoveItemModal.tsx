@@ -17,6 +17,7 @@ import CenterContainer from '../ui/containerUI/centerContainer';
 import Container from '../ui/containerUI/container';
 import ItemUI from '../ui/itemUI/itemUI';
 import ModalPortal from '../ui/ModalPortal';
+import ItemNoteStatic from '../ui/itemUI/itemNoteUI/ItemNoteStatic';
 
 interface MoveItemModalProps {
     cart: CartType;
@@ -83,8 +84,11 @@ const MoveItemModal = ({
                         <ItemUI
                             item={item}
                             isClickable={false}
-                            hasDropdown={false}
-                            noteValue={item.notes}
+                            noteSlot={
+                                <ItemNoteStatic
+                                    noteValue={item.notes}
+                                />
+                            }
                         />
                         <List 
                             item={item}

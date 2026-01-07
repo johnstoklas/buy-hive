@@ -2,60 +2,23 @@ import { useLocked } from "@/popup/context/LockedContext/useLocked";
 import type { ItemType, ScrapedItemType } from "@/types/ItemTypes";
 import ItemImage from "./itemImage";
 import ItemHeader from "./itemHeader";
-import DropdownButton from "../dropdownUI/dropdownButton";
-import ItemNote from "./itemNote";
-import type { Dispatch, RefObject, SetStateAction, KeyboardEvent, ChangeEventHandler } from "react";
 import LoadingBar from "../loadingUI/loadingBar";
+import type { ReactNode, RefObject } from "react";
 
-type ItemUIProps =
-    | {
-        item: ItemType
-        isClickable?: boolean;
-        hasDropdown: true;
-        itemDropdownVisible: boolean;
-        setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
-        itemDropdownButtonRef: RefObject<HTMLButtonElement | null>;
-        isEditing: boolean;
-        noteRef: RefObject<HTMLTextAreaElement | null> | null;
-        noteValue: string;
-        setNoteValue: ChangeEventHandler<HTMLTextAreaElement>;
-        handleBlur: () => void;
-        onKeyDown: (e: KeyboardEvent<HTMLTextAreaElement>) => void;
-        handleNoteSelect: () => void;
-        placeholder?: string;
-    }
-    | {
-        item: ItemType | ScrapedItemType;
-        isClickable?: boolean;
-        hasDropdown?: false;
-        itemDropdownVisible?: never;
-        setItemDropdownVisible?: never;
-        itemDropdownButtonRef?: never;
-        isEditing?: boolean;
-        noteRef?: RefObject<HTMLTextAreaElement | null> | null;
-        noteValue: string;
-        setNoteValue?: ChangeEventHandler<HTMLTextAreaElement>;
-        handleBlur?: () => void;
-        onKeyDown?: (e: KeyboardEvent<HTMLTextAreaElement>) => void;
-        handleNoteSelect?: () => void;
-        placeholder?: string;
-    }
+type ItemUIProps = {
+    item: ItemType | ScrapedItemType;
+    ref?: RefObject<HTMLDivElement | null>;
+    isClickable?: boolean;
+    rightSlot?: ReactNode;
+    noteSlot?: ReactNode;
+};
 
 const ItemUI = ({
     item, 
+    ref,
     isClickable, 
-    hasDropdown, 
-    itemDropdownVisible, 
-    setItemDropdownVisible, 
-    itemDropdownButtonRef,
-    isEditing,
-    noteRef,
-    noteValue,
-    setNoteValue,
-    handleBlur,
-    onKeyDown,
-    handleNoteSelect,
-    placeholder
+    rightSlot,
+    noteSlot
 } : ItemUIProps) => {
 
     const { isLocked } = useLocked();
@@ -81,7 +44,10 @@ const ItemUI = ({
             )}
 
             <div className='flex flex-1 flex-col overflow-hidden gap-1'>
-                <div className='flex flex-row gap-1'>
+                <div 
+                    className='flex flex-row gap-1 relative'
+                    ref={ref}
+                >
                     {item.name && item.price ? (
                         <ItemHeader
                             item={item}
@@ -96,22 +62,9 @@ const ItemUI = ({
                             />
                         </div>
                     )}
-                    {hasDropdown && <DropdownButton
-                        dropdownVisible={itemDropdownVisible}
-                        setDropdownVisible={setItemDropdownVisible}
-                        buttonRef={itemDropdownButtonRef}
-                    />}
+                    {rightSlot}
                 </div>
-                <ItemNote
-                    isEditing={isEditing}
-                    noteRef={noteRef}
-                    noteValue={noteValue}
-                    setNoteValue={setNoteValue}
-                    handleBlur={handleBlur}
-                    onKeyDown={onKeyDown}
-                    handleNoteSelect={handleNoteSelect}
-                    placeholder={placeholder}
-                />
+                {noteSlot}
             </div>
         </div>
     )

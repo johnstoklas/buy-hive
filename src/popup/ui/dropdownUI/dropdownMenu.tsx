@@ -14,7 +14,7 @@ type DropdownMenuProps = {
     dropdownRef: React.RefObject<HTMLDivElement | null>;
     dropdownPosition: string;
     className?: string;
-    style: CSSProperties;
+    style?: CSSProperties;
 };
 
 export function DropdownMenu({

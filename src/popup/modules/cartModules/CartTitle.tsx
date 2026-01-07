@@ -49,15 +49,10 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
         await renameCart(cart.cart_id, cartTitle);
         setIsEditing(false);
     };
-    
-    useEffect(() => {
-        console.log(isEditing)
-    }, [isEditing])
 
     return (
         <div 
             className="flex flex-row relative gap-2 justify-between py-2 px-3 w-full"
-            key={cart.cart_id} 
             ref={cartTitleRef}
         >
             <div className="flex flex-row gap-2 items-center">
