@@ -26,6 +26,7 @@ const Cart = ({cart} : CartProps) => {
             <ItemsList 
                 cart={cart}
                 isExpanded={isExpanded}
+                setIsExpanded={setIsExpanded}
                 isCartLoading={isCartLoading}
             />
         </div>

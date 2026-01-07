@@ -14,7 +14,6 @@ interface HomePageProps {
 const HomePage = ({ popupLoading } : HomePageProps) => {
 
     const { carts } = useCarts();
-    const { isLocked } = useLocked();
 
     if (popupLoading) return (
         <div className="flex items-center justify-center w-full">
@@ -23,7 +22,6 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
     )
     return (
         <div className="flex flex-1 gap-2 w-full shrink-0">
-            {isLocked && <div className="absolute inset-0 bg-black/25"/>}
             
             {carts.length > 0 ? (
                 <div className="flex flex-col flex-1 gap-2 pt-2 w-full shrink-0">

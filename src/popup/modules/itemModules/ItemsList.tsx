@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 import type { ItemType } from "@/types/ItemTypes";
 import type { CartType } from "@/types/CartType";
@@ -10,10 +10,11 @@ import LoadingSpinner from "@/popup/ui/loadingUI/loadingSpinner";
 interface ItemsListProp {
     cart: CartType;
     isExpanded: boolean;
+    setIsExpanded: Dispatch<SetStateAction<boolean>>;
     isCartLoading: boolean;
 }
 
-const ItemsList = ({ cart, isExpanded, isCartLoading } : ItemsListProp) => {
+const ItemsList = ({ cart, isExpanded, setIsExpanded, isCartLoading } : ItemsListProp) => {
     const { items } = useItems();
 
     const outerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +54,10 @@ const ItemsList = ({ cart, isExpanded, isCartLoading } : ItemsListProp) => {
         ro.observe(inner);
         return () => ro.disconnect();
     }, [isExpanded, cartItems.length]);
+
+    if (cartItems.length === 0) {
+        setIsExpanded(false);
+    }
 
     return (
         <div 

@@ -16,9 +16,10 @@ interface useItemActionsProps {
     setIsExpanded?: Dispatch<SetStateAction<boolean>>; 
     setIsCartLoading?: Dispatch<SetStateAction<boolean>>; 
     setScrapedItem?: Dispatch<SetStateAction<ScrapedItemType>>; 
+    setAddItemVisible?: Dispatch<SetStateAction<boolean>>; 
 }
 
-export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, setScrapedItem } : useItemActionsProps = {}) {
+export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, setScrapedItem, setAddItemVisible} : useItemActionsProps = {}) {
     const { isLoading, isAuthenticated } = useAuth0();
     const { isLocked } = useLocked();
     const { upsertItemUI, editNoteUI } = useItems();
@@ -49,6 +50,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
 
         try {
             const item = await sendChromeMessage<ItemType>({action: "scrapeItem"});
+            if(!item) return;
             setScrapedItem?.(prev => ({
                 ...prev,
                 name: item.name,
@@ -78,6 +80,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
             const res = await sendChromeMessage<{item: ItemType}>({action: "addItem", data});
             upsertItemUI(res.item);
             selectedCartIds.forEach(cartId => addItemToCartUI(cartId, res.item.item_id));
+            setAddItemVisible?.(false);
             notify("success", "Item added successfully");
         } catch(err) {
             notify("error", "Error adding item");

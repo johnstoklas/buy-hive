@@ -46,7 +46,7 @@ const MoveItemModal = ({
           .map(cart => cart.cart_id);
     const [selectedCartIds, setSelectedCartIds] = useState<string[]>(selected_cart_ids ?? []);
 
-    const { setIsLocked } = useLocked(); 
+    const { isLocked, setIsLocked } = useLocked(); 
 
     const { moveItem } = useItemActions();
 
@@ -70,6 +70,7 @@ const MoveItemModal = ({
     return (
         <>
             <ModalPortal>
+                {isLocked && <div className="flex fixed top-14 bottom-14 inset-0 bg-black/25"/>}
                 <CenterContainer>
                     <Container 
                         className="!flex-col flex-1 relative w-full shadow-bottom"

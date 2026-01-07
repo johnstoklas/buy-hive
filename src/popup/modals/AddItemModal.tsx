@@ -38,7 +38,7 @@ const AddItemModal = ({
   
     const addItemRef = useRef(null);
 
-    const { scrapeItem, addItem } = useItemActions({setScrapedItem});
+    const { scrapeItem, addItem } = useItemActions({setScrapedItem, setAddItemVisible});
 
     // Handles if user clicks outside of the component
     useClickOutside(addItemRef, addItemVisible, setAddItemVisible, [addItemButtonRef]);

@@ -41,7 +41,7 @@ const DeleteModal = ({
 } : DeleteModalProps) => {
 
     const { cart_id: cartId } = cart;
-    const { setIsLocked } = useLocked();
+    const { isLocked, setIsLocked } = useLocked();
 
     const { deleteCart } = useCartActions();
     const { deleteItem, deleteItemAll } = useItemActions();
@@ -87,6 +87,7 @@ const DeleteModal = ({
 
     return (
         <ModalPortal>
+            {isLocked && <div className="flex fixed top-14 bottom-14 inset-0 bg-black/25"/>}
             <CenterContainer>
                 <Container 
                     className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom"

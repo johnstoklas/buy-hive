@@ -24,6 +24,7 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
 
     const { cart_id: cartId } = cart;
     const { setIsLocked } = useLocked();
+    const { isLocked } = useLocked();
     const [email, setEmail] = useState("");
 
     useEffect(() => {
@@ -47,6 +48,7 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
 
   return (
     <ModalPortal>
+        {isLocked && <div className="flex fixed top-14 bottom-14 inset-0 bg-black/25"/>}
         <CenterContainer>
             <Container 
                 className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom z-60"
