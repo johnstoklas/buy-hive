@@ -12,7 +12,7 @@ function OrganizationSection({
   fetchOrganizationSections,
   showNotification,
 }) {
-  const { cart_id: sectionId, cart_name: title, items } = cart;
+  const { cart_id: sectionId, cart_name: title, items, item_count: item_count } = cart;
   
   const [sectionHeight, setSectionHeight] = useState("45px");
   const [sectionTitle, setSectionTitle] = useState(title);
@@ -78,6 +78,7 @@ function OrganizationSection({
           if (response?.status === "success") {
             console.log(response.data.items);
             setItemsInFolder(response.data.items);
+            setIsExpanded(true);
           } else {
             console.error("Error fetching data:", response?.message);
           }
@@ -85,7 +86,6 @@ function OrganizationSection({
         }
       );
     }
-    setIsExpanded(true);
   };
 
   const handleModifyClick = () => {
@@ -258,7 +258,7 @@ function OrganizationSection({
             </h4>
           )}
 
-          <h4 className="expand-section-items">{itemsInFolder ? itemsInFolder.length : 0}</h4>
+          <h4 className="expand-section-items">{item_count}</h4>
           <button 
             className={!isLocked ? "expand-section-modify" : "expand-section-modify disabled-hover-modify"} 
             onClick={handleModifyClick}>

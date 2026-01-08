@@ -131,3 +131,69 @@ export async function handleDeleteItem(message, sender, sendResponse) {
     }
 }
 
+// Moves an item between carts
+export async function handleMoveItem(message, sender, sendResponse) {
+    const { accessToken, itemId, selectedCarts } = message.data;
+
+    if (!accessToken || !itemId) {
+        sendResponse({ status: "error", message: "Invalid request: missing email or item ID" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/items/${itemId}/move`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "PUT",
+            headers: { 
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ selected_cart_ids: selectedCarts,})
+        });
+
+        let data;
+        try {
+            data = await response.json(); // Try to parse JSON
+        } catch (jsonError) {
+            throw new Error(`Invalid JSON response: ${jsonError.message}`);
+        }
+
+        if (!response.ok) {
+            throw new Error(data.detail || data.message || `HTTP error! Status: ${response.status}`);
+        }
+
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error modifying item:", error);
+        sendResponse({ status: "error", message: error.message || "An unknown error occurred" });
+    }
+}
+
+// Deletes all item from a cart
+export async function handleDeleteItemAll(message, sender, sendResponse) {
+    const { accessToken, itemId } = message.data;
+    if (!accessToken) {
+        sendResponse({ status: "error", message: "Invalid item data" });
+        return;
+    }
+
+    const endpoint = `${apiUrl}/carts/items/${itemId}/nuke`;
+    try {
+        const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}`, }
+        });
+
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sendResponse({ status: "success", data });
+    } catch (error) {
+        console.error("Error deleting item all:", error);
+        sendResponse({ status: "error", message: error.message });
+    }
+}
+

@@ -112,7 +112,7 @@ export const SITE_SELECTORS = {
   'walmart.com': {
     name: '#main-title',
     image: 'img.db',
-    price: 'span'
+    price: 'span[itemprop="price"]'
   },
   // Target
   'target.com': {
@@ -129,7 +129,7 @@ export const SITE_SELECTORS = {
   // Etsy
   'etsy.com': {
     name: 'h1.wt-line-height-tight',
-    price: '.wt-text-title-larger.wt-mr-xs-1.wt-text-black .wt-screen-reader-only, .wt-screen-reader-only, div.n-listing-card__price',
+    price: 'div.wt-display-flex-xs',
     image: 'img.wt-max-width-full'
   },
   // Wayfair
@@ -164,9 +164,9 @@ export const SITE_SELECTORS = {
   },
   // Pacsun
   'pacsun.com': {
-    name: '',
-    image: '',
-    price: ''
+    name: 'h1.text-product-name',
+    image: 'img.d-block',
+    price: 'div.bfx-price-container'
   },
   // Aeropostale
   'aeropostale.com': {

@@ -71,48 +71,37 @@ function Footer({
             const sendMessage = () => {
                 chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
                     if (chrome.runtime.lastError) {
-                        // Content script not ready - inject it automatically
-                        console.log("Content script not ready, injecting...");
-                        
                         chrome.scripting.executeScript({
                             target: { tabId: tabId },
                             files: ['dist/content/index.bundle.js']
                         }, (injectionResult) => {
                             if (chrome.runtime.lastError) {
-                                console.error("Failed to inject content script:", chrome.runtime.lastError.message);
+                                setError("Failed to inject content script. Please refresh the page.");
                                 return;
                             }
                             
-                            // Wait a bit for the script to initialize, then retry
+                            // Wait for ES6 modules to load
                             setTimeout(() => {
                                 chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
                                     if (chrome.runtime.lastError) {
-                                        console.error("Error after injection:", chrome.runtime.lastError.message);
+                                        setError("Content script not ready. Please refresh the page.");
                                         return;
                                     }
                                     
                                     if (response?.success) {
                                         const res = response.data;
-                                        console.log("=== EXTRACTION DEBUG ===");
-                                        console.log("Full response:", res);
-                                        console.log("Image URL:", res.image);
-                                        console.log("Image URL type:", typeof res.image);
-                                        console.log("Image URL length:", res.image?.length);
-                                        console.log("========================");
-                                        
                                         const scraped_data = {
                                             product_name: res.name,
                                             price: res.price,
                                         }
                                         setScrapedData(scraped_data);
                                         setScrapedImage(res.image);
-                                        
-                                        console.log("scrapedImage state set to:", res.image);
+                                        setError(null);
                                     } else {
-                                        console.error("Extraction failed:", response?.error);
+                                        setError(response?.error || "Failed to extract product information");
                                     }
                                 });
-                            }, 200); // Wait 200ms for script to initialize
+                            }, 1500);
                         });
                         return;
                     }
@@ -120,23 +109,15 @@ function Footer({
                     // Normal flow - content script is ready
                     if (response?.success) {
                         const res = response.data;
-                        console.log("=== EXTRACTION DEBUG ===");
-                        console.log("Full response:", res);
-                        console.log("Image URL:", res.image);
-                        console.log("Image URL type:", typeof res.image);
-                        console.log("Image URL length:", res.image?.length);
-                        console.log("========================");
-                        
                         const scraped_data = {
                             product_name: res.name,
                             price: res.price,
                         }
                         setScrapedData(scraped_data);
                         setScrapedImage(res.image);
-                        
-                        console.log("scrapedImage state set to:", res.image);
+                        setError(null);
                     } else {
-                        console.error("Extraction failed:", response?.error);
+                        setError(response?.error || "Failed to extract product information");
                     }
                 });
             };
