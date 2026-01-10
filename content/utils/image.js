@@ -64,3 +64,4 @@ export function extractProductImage() {
   return candidates[0]?.url || null;
 }
 
+

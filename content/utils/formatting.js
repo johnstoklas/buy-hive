@@ -34,3 +34,4 @@ export function formatSupportedSitesList(sites) {
   return formatted.join('\n');
 }
 
+

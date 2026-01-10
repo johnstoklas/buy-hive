@@ -4,3 +4,4 @@ export const ERROR_TYPES = {
   SITE_NOT_SUPPORTED: 'SITE_NOT_SUPPORTED'
 };
 
+

@@ -82,3 +82,4 @@ export function extractTargetProduct(domain, url, selectors, productData) {
   return productData;
 }
 
+

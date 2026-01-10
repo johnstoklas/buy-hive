@@ -284,3 +284,4 @@ export function extractEbayProduct(domain, url, selectors, productData) {
   return productData;
 }
 
+

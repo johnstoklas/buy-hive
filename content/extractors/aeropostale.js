@@ -78,3 +78,4 @@ export function extractAeropostaleProduct(domain, url, selectors, productData) {
   return productData;
 }
 
+

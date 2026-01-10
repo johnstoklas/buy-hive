@@ -30,3 +30,4 @@ export function extractProductName() {
   return candidates[0]?.text || null;
 }
 
+

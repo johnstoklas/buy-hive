@@ -78,3 +78,4 @@ export function extractWalmartProduct(domain, url, selectors, productData) {
   return productData;
 }
 
+
