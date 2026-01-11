@@ -13,4 +13,7 @@ export interface ScrapedItemType {
     url: string;
     image: string;
     notes: string;
+    nameConfidence?: number;   // Optional confidence level (0-100%)
+    priceConfidence?: number;  // Optional confidence level (0-100%)
+    imageConfidence?: number;  // Optional confidence level (0-100%)
 }

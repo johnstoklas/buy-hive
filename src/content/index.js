@@ -45,9 +45,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
  * Strategy:
  * - Finds all h1 elements on the page
  * - Scores each h1 based on position (higher on page = better) and length
- * - Returns the h1 with the lowest score (best candidate)
+ * - Returns the h1 with the lowest score (best candidate) with confidence
  * 
- * @returns {string|null} - Product name or null if no h1 found
+ * @returns {{name: string, confidence: number}|null} - Product name with confidence (60-90%) or null if no h1 found
  */
 function extractProductName() {
   const headings = Array.from(document.querySelectorAll("h1"));
@@ -57,18 +57,46 @@ function extractProductName() {
   // Score = vertical position + (text length * 0.5)
   // This prefers headings that are higher on the page and have reasonable length
   const candidates = headings
-    .filter(el => el.innerText.trim().length > 0) // Only non-empty headings
+    .filter(el => {
+      const text = el.innerText.trim();
+      return text.length > 0 && text.length >= 10 && text.length <= 200; // Reasonable length for product name
+    })
     .map(el => {
       const rect = el.getBoundingClientRect();
+      const text = el.innerText.trim();
       return {
-        text: el.innerText.trim(),
-        score: rect.top + el.innerText.length * 0.5 // Lower = better (higher on page)
+        text: text,
+        score: rect.top + text.length * 0.5, // Lower = better (higher on page)
+        length: text.length
       };
     });
 
+  if (candidates.length === 0) return null;
+
   // Sort by score (ascending) and return the best candidate
   candidates.sort((a, b) => a.score - b.score);
-  return candidates[0]?.text || null;
+  
+  const bestCandidate = candidates[0];
+  const worstScore = candidates[candidates.length - 1]?.score || bestCandidate.score;
+  const bestScore = bestCandidate.score;
+  
+  // Normalize score to confidence (60-90% for heuristic extraction)
+  // Lower scores are better, so we invert the relationship
+  const scoreRange = Math.max(Math.abs(worstScore - bestScore), 1); // Prevent division by zero
+  const normalizedScore = Math.max(0, Math.min(1, (worstScore - bestScore) / scoreRange));
+  
+  // Strong match: 85-90%, Medium match: 75-85%, Weak match: 60-75%
+  let confidence = 60 + (normalizedScore * 30); // Range: 60-90%
+  
+  // Boost confidence for reasonable name length (product names are typically 20-150 chars)
+  if (bestCandidate.length >= 20 && bestCandidate.length <= 150) {
+    confidence = Math.min(90, confidence + 5);
+  }
+  
+  return {
+    name: bestCandidate.text,
+    confidence: Math.round(confidence)
+  };
 }
 
 /**
@@ -226,20 +254,20 @@ function extractPriceWithDiscountPreference(containerSelector, variantAttribute 
  *    - Proximity to product name
  *    - Price value (reasonable range = better)
  *    - Font size (larger = more prominent)
- * 4. Return the highest-scoring price
+ * 4. Return the highest-scoring price with confidence
  * 
- * @returns {string|null} - Extracted price or null if not found
+ * @returns {{price: string, confidence: number}|null} - Extracted price with confidence (50-90%) or null if not found
  */
 function extractPrice() {
   const currencyRegex = /([$€£¥]\s?\d+(?:[\.,]\d+)?)/; // Match currency + number with optional decimals
   
   // Get product name position for proximity scoring
   // Prices near the product name are more likely to be the main product price
-  const productName = extractProductName();
+  const productNameResult = extractProductName();
   let nameElement = null;
-  if (productName) {
+  if (productNameResult && typeof productNameResult === 'object' && productNameResult.name) {
     const headings = Array.from(document.querySelectorAll("h1"));
-    nameElement = headings.find(h => h.innerText.trim() === productName);
+    nameElement = headings.find(h => h.innerText.trim() === productNameResult.name);
   }
 
   // Search all elements on the page
@@ -340,14 +368,38 @@ function extractPrice() {
       };
     });
 
-  // Step 3: Return the best candidate (lowest score)
+  // Step 3: Return the best candidate (lowest score) with confidence
   if (candidates.length === 0) return null;
 
   // Filter out null candidates and sort by score (ascending = best first)
   const validCandidates = candidates.filter(c => c !== null);
   validCandidates.sort((a, b) => a.score - b.score);
   
-  return validCandidates[0]?.price || null;
+  if (validCandidates.length === 0) return null;
+  
+  const bestCandidate = validCandidates[0];
+  const worstScore = validCandidates[validCandidates.length - 1]?.score || bestCandidate.score;
+  const bestScore = bestCandidate.score;
+  
+  // Normalize score to confidence (50-90% for heuristic extraction)
+  // Lower scores are better, so we invert the relationship
+  // If best score is much lower than worst, high confidence (90%)
+  // If scores are similar, lower confidence (50-70%)
+  const scoreRange = Math.max(Math.abs(worstScore - bestScore), 1); // Prevent division by zero
+  const normalizedScore = Math.max(0, Math.min(1, (worstScore - bestScore) / scoreRange));
+  
+  // Strong match: 80-90%, Medium match: 70-80%, Weak match: 50-70%
+  let confidence = 50 + (normalizedScore * 40); // Range: 50-90%
+  
+  // Boost confidence if multiple good indicators are present
+  if (bestCandidate.priceValue >= 5 && bestCandidate.priceValue <= 5000 && nameElement) {
+    confidence = Math.min(90, confidence + 5); // Boost to max 90%
+  }
+  
+  return {
+    price: bestCandidate.price,
+    confidence: Math.round(confidence)
+  };
 }
 
 /**
@@ -357,9 +409,9 @@ function extractPrice() {
  * 1. Find all images on the page
  * 2. Filter out small images (icons), hidden images, and non-product images (logos, etc.)
  * 3. Score each candidate based on size and position
- * 4. Return the highest-scoring image URL
+ * 4. Return the highest-scoring image URL with confidence
  * 
- * @returns {string|null} - Image URL or null if no suitable image found
+ * @returns {{image: string, confidence: number}|null} - Image URL with confidence (60-90%) or null if no suitable image found
  */
 function extractProductImage() {
   const images = Array.from(document.querySelectorAll("img"));
@@ -405,15 +457,43 @@ function extractProductImage() {
       
       return {
         url: src,
-        score: score // Higher = better
+        score: score, // Higher = better
+        area: area,
+        top: rect.top
       };
     });
 
-  // Step 3: Return the best candidate (highest score)
+  // Step 3: Return the best candidate (highest score) with confidence
   if (candidates.length === 0) return null;
 
   candidates.sort((a, b) => b.score - a.score); // Sort descending (highest score first)
-  return candidates[0]?.url || null;
+  
+  const bestCandidate = candidates[0];
+  const worstScore = candidates[candidates.length - 1]?.score || bestCandidate.score;
+  const bestScore = bestCandidate.score;
+  
+  // Normalize score to confidence (60-90% for heuristic extraction)
+  // Higher scores are better
+  const scoreRange = Math.max(Math.abs(bestScore - worstScore), 1); // Prevent division by zero
+  const normalizedScore = Math.max(0, Math.min(1, (bestScore - worstScore) / scoreRange));
+  
+  // Strong match: 85-90%, Medium match: 75-85%, Weak match: 60-75%
+  let confidence = 60 + (normalizedScore * 30); // Range: 60-90%
+  
+  // Boost confidence for large, prominent images (product images are typically > 300x300px)
+  if (bestCandidate.area >= 90000) { // 300x300 = 90,000
+    confidence = Math.min(90, confidence + 5);
+  }
+  
+  // Boost confidence if image is near the top of the page
+  if (bestCandidate.top < 500) {
+    confidence = Math.min(90, confidence + 3);
+  }
+  
+  return {
+    image: bestCandidate.url,
+    confidence: Math.round(confidence)
+  };
 }
 
 // Error types
@@ -692,6 +772,9 @@ async function extractProductInfo() {
     name: null,
     image: null,
     price: null,
+    nameConfidence: null,
+    imageConfidence: null,
+    priceConfidence: null,
     site: domain,
     url: url,
     timestamp: new Date().toISOString()
@@ -730,6 +813,7 @@ async function extractProductInfo() {
       const nameElement = document.querySelector(selectors.name);
       if (nameElement) {
         productData.name = nameElement.textContent.trim();
+        productData.nameConfidence = 95; // High confidence for site-specific selector match
       }
     }
     
@@ -797,6 +881,7 @@ async function extractProductInfo() {
             // If we found a price, use it and stop searching
             if (priceText && priceText.trim()) {
               productData.price = priceText.trim();
+              productData.priceConfidence = 95; // High confidence for site-specific selector match
               break;
             }
           }
@@ -833,6 +918,7 @@ async function extractProductInfo() {
           
           if (imageUrl) {
             productData.image = imageUrl;
+            productData.imageConfidence = 95; // High confidence for site-specific selector match
             break; // Found image, stop searching
           }
         }
@@ -842,13 +928,25 @@ async function extractProductInfo() {
     // --- Fallback to Heuristics ---
     // If site-specific selectors didn't work, use heuristic functions
     if (!productData.name) {
-      productData.name = extractProductName();
+      const nameResult = extractProductName();
+      if (nameResult && typeof nameResult === 'object' && nameResult.name) {
+        productData.name = nameResult.name;
+        productData.nameConfidence = nameResult.confidence;
+      }
     }
     if (!productData.price) {
-      productData.price = extractPrice();
+      const priceResult = extractPrice();
+      if (priceResult && typeof priceResult === 'object' && priceResult.price) {
+        productData.price = priceResult.price;
+        productData.priceConfidence = priceResult.confidence;
+      }
     }
     if (!productData.image) {
-      productData.image = extractProductImage();
+      const imageResult = extractProductImage();
+      if (imageResult && typeof imageResult === 'object' && imageResult.image) {
+        productData.image = imageResult.image;
+        productData.imageConfidence = imageResult.confidence;
+      }
     }
   // ============================================================================
   // EBAY-SPECIFIC EXTRACTION
@@ -1025,6 +1123,7 @@ async function extractProductInfo() {
         priceCandidates.sort((a, b) => b.score - a.score);
         const bestCandidate = priceCandidates[0];
         productData.price = bestCandidate.text;
+        productData.priceConfidence = 95; // High confidence for site-specific selector match
       }
     }
 
@@ -1041,6 +1140,7 @@ async function extractProductInfo() {
             imageElement.getAttribute('data-old-src');
           if (imageUrl) {
             productData.image = imageUrl;
+            productData.imageConfidence = 95; // High confidence for site-specific selector match
             break;
           }
         }
@@ -1049,7 +1149,11 @@ async function extractProductInfo() {
 
     // --- Fallback to Heuristics ---
     if (!productData.name) {
-      productData.name = extractProductName();
+      const nameResult = extractProductName();
+      if (nameResult && typeof nameResult === 'object' && nameResult.name) {
+        productData.name = nameResult.name;
+        productData.nameConfidence = nameResult.confidence;
+      }
     }
     if (!productData.price) {
       // For sites without specific logic, try selectors first, then heuristics
@@ -1114,16 +1218,25 @@ async function extractProductInfo() {
         if (priceCandidates.length > 0) {
           priceCandidates.sort((a, b) => b.score - a.score);
           productData.price = priceCandidates[0].text;
+          productData.priceConfidence = 95; // High confidence for selector match
         }
       }
       
       // If still no price, use heuristic function
       if (!productData.price) {
-        productData.price = extractPrice();
+        const priceResult = extractPrice();
+        if (priceResult && typeof priceResult === 'object' && priceResult.price) {
+          productData.price = priceResult.price;
+          productData.priceConfidence = priceResult.confidence;
+        }
       }
     }
     if (!productData.image) {
-      productData.image = extractProductImage();
+      const imageResult = extractProductImage();
+      if (imageResult && typeof imageResult === 'object' && imageResult.image) {
+        productData.image = imageResult.image;
+        productData.imageConfidence = imageResult.confidence;
+      }
     }
     
   // ============================================================================
@@ -1155,11 +1268,13 @@ async function extractProductInfo() {
       const mainHeaderElement = document.querySelector('h1.product-title-component.product-title-main-header');
       if (mainHeaderElement) {
         productData.name = mainHeaderElement.textContent.trim();
+        productData.nameConfidence = 95; // High confidence for site-specific selector match
       } else {
         // Fallback to regular product title
         const regularTitle = document.querySelector(selectors.name);
         if (regularTitle) {
           productData.name = regularTitle.textContent.trim();
+          productData.nameConfidence = 95; // High confidence for site-specific selector match
         }
       }
     }
@@ -1355,6 +1470,7 @@ async function extractProductInfo() {
         const priceValue = parseFloat(priceText.replace(/[$€£¥\s,]/g, '').replace(',', '.'));
         if (priceValue >= 0.50 && priceValue <= 100000) {
           productData.price = priceText;
+          productData.priceConfidence = 95; // High confidence for site-specific selector match
           if (isDiscounted) {
             productData.isDiscounted = true;
           }
@@ -1385,6 +1501,7 @@ async function extractProductInfo() {
               const priceValue = parseFloat(priceText.replace(/[$€£¥\s,]/g, '').replace(',', '.'));
               if (priceValue >= 0.50 && priceValue <= 100000) {
                 productData.price = priceText.trim();
+                productData.priceConfidence = 95; // High confidence for site-specific selector match
                 break;
               }
             }
@@ -1415,18 +1532,31 @@ async function extractProductInfo() {
       if (productImages.length > 0) {
         const img = productImages[0];
         productData.image = img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src');
+        productData.imageConfidence = 95; // High confidence for site-specific selector match
       }
     }
 
     // --- Fallback to Heuristics ---
     if (!productData.name) {
-      productData.name = extractProductName();
+      const nameResult = extractProductName();
+      if (nameResult && typeof nameResult === 'object' && nameResult.name) {
+        productData.name = nameResult.name;
+        productData.nameConfidence = nameResult.confidence;
+      }
     }
     if (!productData.price) {
-      productData.price = extractPrice();
+      const priceResult = extractPrice();
+      if (priceResult && typeof priceResult === 'object' && priceResult.price) {
+        productData.price = priceResult.price;
+        productData.priceConfidence = priceResult.confidence;
+      }
     }
     if (!productData.image) {
-      productData.image = extractProductImage();
+      const imageResult = extractProductImage();
+      if (imageResult && typeof imageResult === 'object' && imageResult.image) {
+        productData.image = imageResult.image;
+        productData.imageConfidence = imageResult.confidence;
+      }
     }
   // ============================================================================
   // GENERIC EXTRACTION (for all other supported sites)
@@ -1441,6 +1571,7 @@ async function extractProductInfo() {
       const nameElement = document.querySelector(selectors.name);
       if (nameElement) {
         productData.name = nameElement.textContent.trim();
+        productData.nameConfidence = 95; // High confidence for site-specific selector match
       }
     }
     
@@ -1508,6 +1639,7 @@ async function extractProductInfo() {
       if (priceCandidates.length > 0) {
         priceCandidates.sort((a, b) => b.score - a.score);
         productData.price = priceCandidates[0].text;
+        productData.priceConfidence = 95; // High confidence for site-specific selector match
       }
     }
     
@@ -1523,6 +1655,7 @@ async function extractProductInfo() {
                         imageElement.getAttribute('data-old-src');
           if (imageUrl) {
             productData.image = imageUrl;
+            productData.imageConfidence = 95; // High confidence for site-specific selector match
             break;
           }
         }
@@ -1532,13 +1665,25 @@ async function extractProductInfo() {
     // --- Fallback to Heuristics ---
     // If site-specific selectors didn't work, use heuristic functions
     if (!productData.name) {
-      productData.name = extractProductName();
+      const nameResult = extractProductName();
+      if (nameResult && typeof nameResult === 'object' && nameResult.name) {
+        productData.name = nameResult.name;
+        productData.nameConfidence = nameResult.confidence;
+      }
     }
     if (!productData.price) {
-      productData.price = extractPrice();
+      const priceResult = extractPrice();
+      if (priceResult && typeof priceResult === 'object' && priceResult.price) {
+        productData.price = priceResult.price;
+        productData.priceConfidence = priceResult.confidence;
+      }
     }
     if (!productData.image) {
-      productData.image = extractProductImage();
+      const imageResult = extractProductImage();
+      if (imageResult && typeof imageResult === 'object' && imageResult.image) {
+        productData.image = imageResult.image;
+        productData.imageConfidence = imageResult.confidence;
+      }
     }
   }
 

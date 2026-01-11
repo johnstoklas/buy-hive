@@ -49,7 +49,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
         if (isLoading || !isAuthenticated) return; 
 
         try {
-            const item = await sendChromeMessage<ItemType>({action: "scrapeItem"});
+            const item = await sendChromeMessage<ItemType & {nameConfidence?: number; priceConfidence?: number; imageConfidence?: number}>({action: "scrapeItem"});
             if(!item) return;
             setScrapedItem?.(prev => ({
                 ...prev,
@@ -57,6 +57,10 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
                 price: standardizePrice(item.price),
                 url: item.url,
                 image: item.image,
+                // Preserve confidence fields if they exist (for display only, not saved)
+                nameConfidence: (item as any).nameConfidence,
+                priceConfidence: (item as any).priceConfidence,
+                imageConfidence: (item as any).imageConfidence,
             }));
         } catch(err) {
             console.error(err);

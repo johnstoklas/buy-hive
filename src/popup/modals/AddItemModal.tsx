@@ -78,6 +78,22 @@ const AddItemModal = ({
                             />
                         }
                     />
+                    {/* Display confidence levels if available */}
+                    {(scrapedItem.nameConfidence || scrapedItem.priceConfidence || scrapedItem.imageConfidence) && (
+                        <div className="text-xs text-gray-500 px-4 py-2 border-t border-[var(--secondary-background-hover)]">
+                            <div className="flex flex-col gap-1">
+                                {scrapedItem.nameConfidence && (
+                                    <div>Name: {scrapedItem.nameConfidence}% confidence</div>
+                                )}
+                                {scrapedItem.priceConfidence && (
+                                    <div>Price: {scrapedItem.priceConfidence}% confidence</div>
+                                )}
+                                {scrapedItem.imageConfidence && (
+                                    <div>Image: {scrapedItem.imageConfidence}% confidence</div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                     <List
                         item={scrapedItem}
                         addItem={true}

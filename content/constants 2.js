@@ -1,0 +1,6 @@
+// Error types
+export const ERROR_TYPES = {
+  NOT_PRODUCT_PAGE: 'NOT_PRODUCT_PAGE',
+  SITE_NOT_SUPPORTED: 'SITE_NOT_SUPPORTED'
+};
+
