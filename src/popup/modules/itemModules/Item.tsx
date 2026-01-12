@@ -1,7 +1,6 @@
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
 import type { ItemType } from '@/types/ItemTypes';
 import { useState, useEffect, useRef } from 'react';
-import ItemDropdown from './ItemDropdown';
 import type { CartType } from '@/types/CartType';
 import useItemActions from '@/hooks/useItemActions';
 import { onNotShiftEnter } from '@/utils/keyboard';
@@ -9,7 +8,7 @@ import ItemUI from '@/popup/ui/itemUI/itemUI';
 import DropdownButton from '@/popup/ui/dropdownUI/dropdownButton';
 import ItemNoteEditing from '@/popup/ui/itemUI/itemNoteUI/itemNoteEditing';
 import ItemNoteStatic from '@/popup/ui/itemUI/itemNoteUI/ItemNoteStatic';
-import { createPortal } from 'react-dom';
+import ItemDropdown from './ItemDropdown';
 
 interface ItemProp {
     cart: CartType;
@@ -83,6 +82,7 @@ const Item = ({ cart, item } : ItemProp) => {
         <div className="relative px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md">
             <ItemUI
                 item={item}
+                itemHeaderRef={itemHeaderRef}
                 ref={itemHeaderRef}
                 isClickable={true}
                 rightSlot={
@@ -99,7 +99,7 @@ const Item = ({ cart, item } : ItemProp) => {
                             setItemDropdownVisible={setItemDropdownVisible}
                             itemDropdownButtonRef={itemDropdownButtonRef}
                             handleItemNoteSelect={handleItemNoteSelect}
-                            parentRef={itemDropdownButtonRef}
+                            parentRef={itemHeaderRef}
                         />}
                     </>
                 }

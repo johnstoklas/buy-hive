@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type Dispatch, type SetStateAction, type RefObject, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction, type RefObject } from 'react';
 import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import type { ItemType } from '@/types/ItemTypes.js';
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
@@ -15,7 +15,7 @@ interface ItemDropdownProps {
     setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
     itemDropdownButtonRef: RefObject<HTMLButtonElement | null>;
     handleItemNoteSelect: () => void;
-    parentRef: RefObject<HTMLDivElement | null>;
+    parentRef?: RefObject<HTMLDivElement | null>;
 }
 
 const ItemDropdown = ({
@@ -59,14 +59,14 @@ const ItemDropdown = ({
     ];
 
     useEffect(() => {
-        if (itemDropdownHidden || isLocked || !parentRef.current) return;
-        const parentRect = parentRef.current.getBoundingClientRect();
+        if (itemDropdownHidden || isLocked || !parentRef?.current) return;
+        const parentRect = parentRef?.current.getBoundingClientRect();
         const spaceBelow = window.innerHeight - parentRect.bottom;
 
         setItemDropdownPosition(spaceBelow < 150 ? "above" : "below");
     }, []);
 
-    // If the user clicks out of the modification pop-up it disappears
+    // If the user clicks out of the item dropdown it disappears
     useClickOutside(itemDropdownRef, itemDropdownVisible, setItemDropdownVisible, [itemDropdownButtonRef, moveItemModalRef, deleteItemModalRef, deleteItemAllModalRef]);
 
     useEffect(() => {
@@ -99,6 +99,7 @@ const ItemDropdown = ({
                 hidden={itemDropdownHidden}
                 dropdownRef={itemDropdownRef}
                 dropdownPosition={itemDropdownPosition}
+                className="!mx-0"
             />
         </>
     );

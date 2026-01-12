@@ -13,7 +13,7 @@ interface CartDropdownProps {
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
     cartDropdownButtonRef: React.RefObject<HTMLElement | null>;
     startEditing: () => void;
-    parentRef: RefObject<HTMLDivElement | null>;
+    parentRef: RefObject<HTMLInputElement | null>;
 }
 
 const CartDropdown = ({

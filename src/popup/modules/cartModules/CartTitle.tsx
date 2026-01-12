@@ -19,7 +19,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
     const [cartTitle, setCartTitle] = useState(cart.cart_name);
     const [cartDropdownVisible, setCartDropdownVisible] = useState(false);
 
-    const cartDropdownButtonRef = useRef(null);
+    const cartDropdownButtonRef = useRef<HTMLButtonElement>(null);
     const cartTitleRef = useRef<HTMLInputElement>(null);
     const prevTitleRef = useRef(cart.cart_name);
 
