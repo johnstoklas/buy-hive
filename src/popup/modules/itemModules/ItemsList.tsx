@@ -55,9 +55,11 @@ const ItemsList = ({ cart, isExpanded, setIsExpanded, isCartLoading } : ItemsLis
         return () => ro.disconnect();
     }, [isExpanded, cartItems.length]);
 
-    if (cartItems.length === 0) {
-        setIsExpanded(false);
-    }
+    useEffect(() => {
+        if (isCartLoading) return;
+        if (cartItems.length === 0) setIsExpanded(false);
+    }, [cartItems.length, isCartLoading])
+    
 
     return (
         <div 

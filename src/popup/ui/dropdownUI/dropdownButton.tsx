@@ -16,7 +16,7 @@ const DropdownButton = ({
     return (
         <button 
             className={`
-                text-base w-6 h-6 rounded-full hover:cursor-pointer hover:bg-[var(--secondary-background-hover)] shrink-0
+                text-base z-40 w-6 h-6 rounded-full hover:cursor-pointer hover:bg-[var(--secondary-background-hover)] shrink-0
                 ${isLocked ? "disabled-hover-modify" : ""}`
             } 
             onClick={() => setDropdownVisible(!dropdownVisible)}

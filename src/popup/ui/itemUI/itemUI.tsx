@@ -43,9 +43,9 @@ const ItemUI = ({
                 />
             )}
 
-            <div className='flex flex-1 flex-col overflow-hidden gap-1'>
+            <div className='flex flex-col gap-1'>
                 <div 
-                    className='flex flex-row gap-1 relative'
+                    className='flex flex-row gap-1 overflow-x-hidden overflow-y-visible relative'
                     ref={ref}
                 >
                     {item.name && item.price ? (

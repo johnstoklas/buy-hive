@@ -1,6 +1,5 @@
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { CSSProperties } from "react";
 
 type DropdownAction = {
     label: string;
@@ -14,7 +13,6 @@ type DropdownMenuProps = {
     dropdownRef: React.RefObject<HTMLDivElement | null>;
     dropdownPosition: string;
     className?: string;
-    style?: CSSProperties;
 };
 
 export function DropdownMenu({
@@ -23,12 +21,10 @@ export function DropdownMenu({
     dropdownRef,
     dropdownPosition,
     className,
-    style,
 }: DropdownMenuProps) {
     return (
         <div
             ref={dropdownRef}
-            style={style}
             className={`flex flex-col w-fit z-50 mr-3 right-0 absolute gap-1 rounded-md bg-[var(--secondary-background)] shadow-bottom
                 ${dropdownPosition === "above" ? "bottom-full mb-1" : "top-full mt-1"}
                 ${hidden ? "hidden" : ""}

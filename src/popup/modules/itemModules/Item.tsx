@@ -1,6 +1,6 @@
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
 import type { ItemType } from '@/types/ItemTypes';
-import { useState, useEffect, useRef, type CSSProperties } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ItemDropdown from './ItemDropdown';
 import type { CartType } from '@/types/CartType';
 import useItemActions from '@/hooks/useItemActions';
@@ -51,19 +51,19 @@ const Item = ({ cart, item } : ItemProp) => {
         }
     }, [isEditing]);
 
-    const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({});
+    // const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({});
 
-    useEffect(() => {
-        if (!itemDropdownVisible || !itemDropdownButtonRef.current) return;
+    // useEffect(() => {
+    //     if (!itemDropdownVisible || !itemDropdownButtonRef.current) return;
 
-        const rect = itemDropdownButtonRef.current.getBoundingClientRect();
+    //     const rect = itemDropdownButtonRef.current.getBoundingClientRect();
 
-        setDropdownStyle({
-            position: "fixed",
-            top: rect.bottom,
-            left: rect.right - 80,
-        });
-    }, [itemDropdownVisible]);
+    //     setDropdownStyle({
+    //         position: "fixed",
+    //         top: rect.bottom,
+    //         left: rect.right - 80,
+    //     });
+    // }, [itemDropdownVisible]);
 
 
     const handleItemNoteSelect = () => {
@@ -92,19 +92,15 @@ const Item = ({ cart, item } : ItemProp) => {
                             setDropdownVisible={setItemDropdownVisible}
                             buttonRef={itemDropdownButtonRef}
                         />
-                        {itemDropdownVisible && 
-                            createPortal(
-                                <ItemDropdown 
-                                    cart={cart}
-                                    item={item}
-                                    itemDropdownVisible={itemDropdownVisible}
-                                    setItemDropdownVisible={setItemDropdownVisible}
-                                    itemDropdownButtonRef={itemDropdownButtonRef}
-                                    handleItemNoteSelect={handleItemNoteSelect}
-                                />,
-                                document.body
-                            )
-                        }
+                        {itemDropdownVisible && <ItemDropdown 
+                            cart={cart}
+                            item={item}
+                            itemDropdownVisible={itemDropdownVisible}
+                            setItemDropdownVisible={setItemDropdownVisible}
+                            itemDropdownButtonRef={itemDropdownButtonRef}
+                            handleItemNoteSelect={handleItemNoteSelect}
+                            parentRef={itemDropdownButtonRef}
+                        />}
                     </>
                 }
                 noteSlot={

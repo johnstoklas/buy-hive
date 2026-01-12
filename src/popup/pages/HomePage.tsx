@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
 import Cart from "../modules/cartModules/Cart";
 import { useCarts } from "../context/CartContext/useCart";
-import { useLocked } from "../context/LockedContext/useLocked";
 import LoadingSpinner from "../ui/loadingUI/loadingSpinner";
 
 interface HomePageProps {
