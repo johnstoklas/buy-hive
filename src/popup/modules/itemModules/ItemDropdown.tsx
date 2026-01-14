@@ -15,7 +15,7 @@ interface ItemDropdownProps {
     setItemDropdownVisible: Dispatch<SetStateAction<boolean>>;
     itemDropdownButtonRef: RefObject<HTMLButtonElement | null>;
     handleItemNoteSelect: () => void;
-    parentRef: RefObject<HTMLDivElement | null>;
+    parentRef: RefObject<HTMLElement | null>;
 }
 
 const ItemDropdown = ({
