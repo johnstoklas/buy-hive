@@ -30,10 +30,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     (async () => {
       try {
         const result = await extractProductInfo();
+        // Don't log confidence scores for success - they're in the payload
         sendResponse({ success: true, data: result });
       } catch (error) {
         // Check if it's a structured error (has error.type property)
         if (error.type) {
+          // Log error with pageConfidence if available
+          const pageConfidence = error.confidence || error.errorData?.confidence;
+          console.log('[Content Script] Extraction failed -', {
+            pageConfidence: pageConfidence,
+            error: error.message,
+            errorType: error.type
+          });
           sendResponse({ 
             success: false, 
             error: error.message,
@@ -42,6 +50,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
           });
         } else {
           // Generic error - wrap in standard format
+          console.log('[Content Script] Extraction failed -', {
+            error: error.message || 'Failed to extract product information'
+          });
           sendResponse({ 
             success: false, 
             error: error.message || 'Failed to extract product information',
@@ -76,41 +87,12 @@ if (typeof window !== 'undefined' && (process.env.NODE_ENV !== 'production' || w
  */
 async function extractProductInfo() {
   // ============================================================================
-  // STEP 1: VALIDATE SITE SUPPORT
+  // STEP 1: DETECT IF PAGE IS A PRODUCT PAGE
   // ============================================================================
   const url = window.location.href;
   const domain = getBaseDomain(url);
   
-  // Check if this site is in our supported sites list
-  const isSupported = isSupportedSite(domain);
-  
-  if (!isSupported) {
-    // Site is not supported - add to junk sites list and throw error
-    // const isJunk = await isJunkSite(domain);
-    
-    // if (!isJunk) {
-    //   // Add to junk sites list (so we don't check it again)
-    //   await addToJunkSites(domain);
-    // }
-    
-    // Get supported sites list for error message
-    const supportedSites = getSupportedSitesList();
-    const supportedSitesFormatted = formatSupportedSitesList(supportedSites);
-    
-    const error = {
-      type: ERROR_TYPES.SITE_NOT_SUPPORTED,
-      message: `Site not supported: ${domain}`,
-      supportedSites: supportedSites,
-      supportedSitesFormatted: supportedSitesFormatted,
-      domain: domain
-    };
-    
-    throw error;
-  }
-  
-  // ============================================================================
-  // STEP 2: DETECT IF PAGE IS A PRODUCT PAGE
-  // ============================================================================
+  // Always check if it's a product page first
   const pageCheck = detectProductPage(url, domain);
   
   if (!pageCheck.isProductPage) {
@@ -127,17 +109,13 @@ async function extractProductInfo() {
   }
   
   // ============================================================================
-  // STEP 3: GET SITE-SPECIFIC SELECTORS
+  // STEP 2: GET SITE-SPECIFIC SELECTORS (if available)
   // ============================================================================
   const selectors = getSelectorsForSite(url);
-  
-  if (!selectors) {
-    // This shouldn't happen if isSupportedSite worked correctly, but just in case
-    throw new Error(`Site not supported: ${domain}`);
-  }
+  const isSupported = isSupportedSite(domain);
 
   // ============================================================================
-  // STEP 4: INITIALIZE PRODUCT DATA OBJECT
+  // STEP 3: INITIALIZE PRODUCT DATA OBJECT
   // ============================================================================
   const productData = {
     name: null,
@@ -145,11 +123,12 @@ async function extractProductInfo() {
     price: null,
     site: domain,
     url: url,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    pageConfidence: pageCheck.confidence
   };
 
   // ============================================================================
-  // STEP 5: EXTRACT PRODUCT DATA (SITE-SPECIFIC LOGIC)
+  // STEP 4: EXTRACT PRODUCT DATA (SITE-SPECIFIC LOGIC OR GENERIC)
   // ============================================================================
   const isAmazon = domain.includes('amazon.');
   const isEbay = domain.includes('ebay.');
@@ -164,28 +143,31 @@ async function extractProductInfo() {
   
   let result;
   try {
-    if (isAmazon) {
+    // Only use site-specific extractors if site is actually supported
+    if (isAmazon && isSupported) {
       result = extractAmazonProduct(domain, url, selectors, productData);
-    } else if (isEbay) {
+    } else if (isEbay && isSupported) {
       result = extractEbayProduct(domain, url, selectors, productData);
-    } else if (isAbercrombie) {
+    } else if (isAbercrombie && isSupported) {
       result = extractAbercrombieProduct(domain, url, selectors, productData);
-    } else if (isWalmart) {
+    } else if (isWalmart && isSupported) {
       result = extractWalmartProduct(domain, url, selectors, productData);
-    } else if (isTarget) {
+    } else if (isTarget && isSupported) {
       result = extractTargetProduct(domain, url, selectors, productData);
-    } else if (isBestBuy) {
+    } else if (isBestBuy && isSupported) {
       result = extractBestBuyProduct(domain, url, selectors, productData);
-    } else if (isEtsy) {
+    } else if (isEtsy && isSupported) {
       result = extractEtsyProduct(domain, url, selectors, productData);
-    } else if (isTemu) {
+    } else if (isTemu && isSupported) {
       result = extractTemuProduct(domain, url, selectors, productData);
-    } else if (isPacsun) {
+    } else if (isPacsun && isSupported) {
       result = extractPacsunProduct(domain, url, selectors, productData);
-    } else if (isAeropostale) {
+    } else if (isAeropostale && isSupported) {
       result = extractAeropostaleProduct(domain, url, selectors, productData);
     } else {
-      result = extractGenericProduct(domain, url, selectors, productData);
+      // For unsupported sites that pass product page detection, use generic extraction
+      console.log('[Content Script] Using generic extraction for unsupported site:', domain);
+      result = extractGenericProduct(domain, url, selectors || {}, productData);
     }
     
     // Validate that we got at least some product data
@@ -205,3 +187,4 @@ async function extractProductInfo() {
     }
   }
 }
+

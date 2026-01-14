@@ -26,10 +26,12 @@ export function extractTemuProduct(domain, url, selectors, productData) {
   }
 
   // Extract product name (Temu doesn't have reliable name selector, use heuristics)
+  let nameUsedSelector = false;
   if (selectors.name) {
     const nameElement = document.querySelector(selectors.name);
     if (nameElement) {
       productData.name = nameElement.textContent.trim();
+      nameUsedSelector = true;
     }
   }
   // Always fall back to heuristics for name since Temu selector is empty
@@ -38,6 +40,7 @@ export function extractTemuProduct(domain, url, selectors, productData) {
   }
 
   // Extract product price
+  let priceUsedSelector = false;
   if (selectors.price) {
     const priceElement = document.querySelector(selectors.price);
     if (priceElement) {
@@ -45,13 +48,16 @@ export function extractTemuProduct(domain, url, selectors, productData) {
       const priceMatch = priceText.match(/([$€£¥]\s?\d+(?:[\.,]\d+)?)/);
       if (priceMatch) {
         productData.price = priceMatch[1].trim();
+        priceUsedSelector = true;
       } else if (priceText) {
         productData.price = priceText.trim();
+        priceUsedSelector = true;
       }
     }
   }
 
   // Extract product image (Temu uses lazy-loaded images)
+  let imageUsedSelector = false;
   if (selectors.image) {
     const imageSelectors = selectors.image.split(',').map(s => s.trim());
     for (const selector of imageSelectors) {
@@ -71,6 +77,7 @@ export function extractTemuProduct(domain, url, selectors, productData) {
           // Prefer larger images (product images are usually 200x200+)
           if (rect.width >= 200 && rect.height >= 200) {
             productData.image = imageUrl;
+            imageUsedSelector = true;
             break;
           }
         }
@@ -86,6 +93,11 @@ export function extractTemuProduct(domain, url, selectors, productData) {
   if (!productData.image) {
     productData.image = extractProductImage();
   }
+
+  // Add confidence scores: 95% for site-specific selectors, 75% for heuristics
+  productData.nameConfidence = nameUsedSelector ? 95 : (productData.name ? 75 : undefined);
+  productData.priceConfidence = priceUsedSelector ? 95 : (productData.price ? 75 : undefined);
+  productData.imageConfidence = imageUsedSelector ? 95 : (productData.image ? 75 : undefined);
 
   return productData;
 }

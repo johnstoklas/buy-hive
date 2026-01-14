@@ -25,14 +25,17 @@ export function extractEbayProduct(domain, url, selectors, productData) {
   // eBay extraction: Use selectors first, then heuristics as fallback
   
   // --- Extract Product Name ---
+  let nameUsedSelector = false;
   if (selectors.name) {
     const nameElement = document.querySelector(selectors.name);
     if (nameElement) {
       productData.name = nameElement.textContent.trim();
+      nameUsedSelector = true;
     }
   }
 
   // --- Extract Product Price ---
+  let priceUsedSelector = false;
   if (selectors.price) {
     const priceSelectors = selectors.price.split(',').map(s => s.trim());
     // Regex to match prices with thousands separators and decimals
@@ -180,10 +183,12 @@ export function extractEbayProduct(domain, url, selectors, productData) {
       priceCandidates.sort((a, b) => b.score - a.score);
       const bestCandidate = priceCandidates[0];
       productData.price = bestCandidate.text;
+      priceUsedSelector = true;
     }
   }
 
   // --- Extract Product Image ---
+  let imageUsedSelector = false;
   if (selectors.image) {
     const imageSelectors = selectors.image.split(',').map(s => s.trim());
     for (const selector of imageSelectors) {
@@ -196,6 +201,7 @@ export function extractEbayProduct(domain, url, selectors, productData) {
           imageElement.getAttribute('data-old-src');
         if (imageUrl) {
           productData.image = imageUrl;
+          imageUsedSelector = true;
           break;
         }
       }
@@ -280,6 +286,11 @@ export function extractEbayProduct(domain, url, selectors, productData) {
   if (!productData.image) {
     productData.image = extractProductImage();
   }
+
+  // Add confidence scores: 95% for site-specific selectors, 75% for heuristics
+  productData.nameConfidence = nameUsedSelector ? 95 : (productData.name ? 75 : undefined);
+  productData.priceConfidence = priceUsedSelector ? 95 : (productData.price ? 75 : undefined);
+  productData.imageConfidence = imageUsedSelector ? 95 : (productData.image ? 75 : undefined);
 
   return productData;
 }

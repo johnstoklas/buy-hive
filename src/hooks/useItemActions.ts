@@ -45,23 +45,30 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
         setIsCartLoading?.(false);
     };
 
-    const scrapeItem = async() => {
-        if (isLoading || !isAuthenticated) return; 
-
+    const scrapeItem = async () => {
+        if (isLoading || !isAuthenticated) return;
+      
         try {
-            const item = await sendChromeMessage<ItemType>({action: "scrapeItem"});
-            if(!item) return;
-            setScrapedItem?.(prev => ({
-                ...prev,
-                name: item.name,
-                price: standardizePrice(item.price),
-                url: item.url,
-                image: item.image,
-            }));
-        } catch(err) {
-            console.error(err);
+          const item = await sendChromeMessage<ScrapedItemType>({ action: "scrapeItem" });
+          if (!item) return;
+      
+          setScrapedItem?.(prev => ({
+            ...prev,
+            name: item.name,
+            price: standardizePrice(item.price),
+            url: item.url,
+            image: item.image,
+            notes: item.notes ?? prev?.notes ?? "",
+            pageConfidence: item.pageConfidence,
+            nameConfidence: item.nameConfidence,
+            priceConfidence: item.priceConfidence,
+            imageConfidence: item.imageConfidence,
+          }));
+        } catch (err: any) {
+          const errorMessage = err?.message || "Error scraping item";
+          notify("error", errorMessage);
         }
-    }
+      };
 
     const addItem = async(scrapedItem: ScrapedItemType, selectedCartIds: string[]) => {
         if (isLoading || !isAuthenticated) return;

@@ -30,16 +30,19 @@ export function extractAbercrombieProduct(domain, url, selectors, productData) {
     }
 
     // --- Extract Product Name ---
+    let nameUsedSelector = false;
     if (selectors.name) {
       // Try main header on main page (sub-item/variant title)
       const mainHeaderElement = document.querySelector('h1.product-title-component.product-title-main-header');
       if (mainHeaderElement) {
         productData.name = mainHeaderElement.textContent.trim();
+        nameUsedSelector = true;
       } else {
         // Fallback to regular product title
         const regularTitle = document.querySelector(selectors.name);
         if (regularTitle) {
           productData.name = regularTitle.textContent.trim();
+          nameUsedSelector = true;
         }
       }
     }
@@ -231,10 +234,12 @@ export function extractAbercrombieProduct(domain, url, selectors, productData) {
       }
       
       // Store the extracted price if valid
+      let priceUsedSelector = false;
       if (priceText) {
         const priceValue = parseFloat(priceText.replace(/[$€£¥\s,]/g, '').replace(',', '.'));
         if (priceValue >= 0.50 && priceValue <= 100000) {
           productData.price = priceText;
+          priceUsedSelector = true;
           if (isDiscounted) {
             productData.isDiscounted = true;
           }
@@ -265,6 +270,7 @@ export function extractAbercrombieProduct(domain, url, selectors, productData) {
               const priceValue = parseFloat(priceText.replace(/[$€£¥\s,]/g, '').replace(',', '.'));
               if (priceValue >= 0.50 && priceValue <= 100000) {
                 productData.price = priceText.trim();
+                priceUsedSelector = true;
                 break;
               }
             }
@@ -275,6 +281,7 @@ export function extractAbercrombieProduct(domain, url, selectors, productData) {
 
     // --- Extract Product Image ---
     // Filter for large images (product images are typically 200x200px or larger)
+    let imageUsedSelector = false;
     if (selectors.image) {
       const images = Array.from(document.querySelectorAll('img'));
       const productImages = images.filter(img => {
@@ -295,6 +302,7 @@ export function extractAbercrombieProduct(domain, url, selectors, productData) {
       if (productImages.length > 0) {
         const img = productImages[0];
         productData.image = img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src');
+        imageUsedSelector = true;
       }
     }
 
@@ -308,6 +316,11 @@ export function extractAbercrombieProduct(domain, url, selectors, productData) {
     if (!productData.image) {
       productData.image = extractProductImage();
     }
+
+  // Add confidence scores: 95% for site-specific selectors, 75% for heuristics
+  productData.nameConfidence = nameUsedSelector ? 95 : (productData.name ? 75 : undefined);
+  productData.priceConfidence = priceUsedSelector ? 95 : (productData.price ? 75 : undefined);
+  productData.imageConfidence = imageUsedSelector ? 95 : (productData.image ? 75 : undefined);
 
   return productData;
 }

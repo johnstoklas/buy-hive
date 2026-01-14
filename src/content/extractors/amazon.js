@@ -31,14 +31,17 @@ export function extractAmazonProduct(domain, url, selectors, productData) {
 
   // For Amazon, try specific selectors first (more reliable)
   // Extract product name
+  let nameUsedSelector = false;
   if (selectors.name) {
     const nameElement = document.querySelector(selectors.name);
     if (nameElement) {
       productData.name = nameElement.textContent.trim();
+      nameUsedSelector = true;
     }
   }
   
   // --- Extract Product Price ---
+  let priceUsedSelector = false;
   if (selectors.price) {
     const priceSelectors = selectors.price.split(',').map(s => s.trim()); // Handle multiple selectors
     const priceRegex = /([$€£¥]\s?\d+(?:[\.,]\d+)?)/; // Match currency + number with optional decimals
@@ -102,6 +105,7 @@ export function extractAmazonProduct(domain, url, selectors, productData) {
           // If we found a price, use it and stop searching
           if (priceText && priceText.trim()) {
             productData.price = priceText.trim();
+            priceUsedSelector = true;
             break;
           }
         }
@@ -110,6 +114,7 @@ export function extractAmazonProduct(domain, url, selectors, productData) {
   }
   
   // --- Extract Product Image ---
+  let imageUsedSelector = false;
   if (selectors.image) {
     const imageSelectors = selectors.image.split(',').map(s => s.trim());
     
@@ -138,6 +143,7 @@ export function extractAmazonProduct(domain, url, selectors, productData) {
         
         if (imageUrl) {
           productData.image = imageUrl;
+          imageUsedSelector = true;
           break; // Found image, stop searching
         }
       }
@@ -155,6 +161,11 @@ export function extractAmazonProduct(domain, url, selectors, productData) {
   if (!productData.image) {
     productData.image = extractProductImage();
   }
+
+  // Add confidence scores: 95% for site-specific selectors, 75% for heuristics
+  productData.nameConfidence = nameUsedSelector ? 95 : (productData.name ? 75 : undefined);
+  productData.priceConfidence = priceUsedSelector ? 95 : (productData.price ? 75 : undefined);
+  productData.imageConfidence = imageUsedSelector ? 95 : (productData.image ? 75 : undefined);
 
   return productData;
 }

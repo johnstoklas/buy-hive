@@ -13,4 +13,8 @@ export interface ScrapedItemType {
     url: string;
     image: string;
     notes: string;
+    pageConfidence?: number;
+    nameConfidence?: number;
+    priceConfidence?: number;
+    imageConfidence?: number;
 }

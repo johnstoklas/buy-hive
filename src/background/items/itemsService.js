@@ -56,11 +56,35 @@ export async function handleScrapeItem(message, sender, sendResponse) {
 
             chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
                 if (chrome.runtime.lastError) {
+                    console.log('[Background Script] Scrape failed -', {
+                        error: 'chrome runtime last',
+                        message: chrome.runtime.lastError.message
+                    });
                     sendResponse({status: "error", message: "chrome runtime last"});
                     return;
                 }
                 
-                sendResponse({status: "success", data: response.data});
+                if (response && response.success && response.data) {
+                    // Don't log confidence scores for success - they're in the payload
+                    sendResponse({status: "success", data: response.data});
+                } else if (response && !response.success) {
+                    // Handle error response from content script
+                    const errorData = response.errorData || {};
+                    console.log('[Background Script] Scrape failed -', {
+                        pageConfidence: errorData.confidence || errorData.pageConfidence,
+                        error: response.error || 'Unknown error',
+                        errorType: response.errorType
+                    });
+                    sendResponse({
+                        status: "error",
+                        message: response.error || 'Unknown error',
+                        errorType: response.errorType,
+                        errorData: errorData
+                    });
+                } else {
+                    // Fallback for unexpected response format
+                    sendResponse({status: "error", message: "Unexpected response format"});
+                }
             });
         });
     } catch {
@@ -90,6 +114,10 @@ export async function handleAddItem(message, sender, sendResponse) {
         url: scrapedItem.url,
         notes: scrapedItem.notes,
         selected_cart_ids: selectedCartIds,
+        ...(scrapedItem.pageConfidence !== undefined && { page_confidence: scrapedItem.pageConfidence }),
+        ...(scrapedItem.nameConfidence !== undefined && { name_confidence: scrapedItem.nameConfidence }),
+        ...(scrapedItem.priceConfidence !== undefined && { price_confidence: scrapedItem.priceConfidence }),
+        ...(scrapedItem.imageConfidence !== undefined && { image_confidence: scrapedItem.imageConfidence }),
     };
 
     const endpoint = `${apiUrl}/carts/items/add-new`;
