@@ -52,6 +52,9 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
           const item = await sendChromeMessage<ScrapedItemType>({ action: "scrapeItem" });
           if (!item) return;
       
+          // TEMP: Log raw price from content script
+          console.log("[Popup] Raw price from content script:", item.price);
+      
           setScrapedItem?.(prev => ({
             ...prev,
             name: item.name,
@@ -135,9 +138,9 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
         if(isLoading || !isAuthenticated) return;
 
         try {
-            const data = { itemId }
-            await sendChromeMessage({action: "deleteItemAll", data})
-            removeItemFromAllCartsUI(itemId)
+            const data = { itemId };
+            await sendChromeMessage({action: "deleteItemAll", data});
+            removeItemFromAllCartsUI(itemId);
         } catch (err) {
             notify("error", "Error deleting item");
         }
