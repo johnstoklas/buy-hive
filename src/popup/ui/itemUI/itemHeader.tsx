@@ -3,7 +3,7 @@ import type { RefObject } from "react";
 
 interface itemHeaderProps {
     item: ItemType | ScrapedItemType;
-    itemHeaderRef: RefObject<HTMLDivElement | null>;
+    itemHeaderRef: RefObject<HTMLDivElement | null> | undefined;
 }
 
 const itemHeader = ({ item, itemHeaderRef } : itemHeaderProps) => {

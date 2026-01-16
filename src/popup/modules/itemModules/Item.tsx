@@ -82,7 +82,6 @@ const Item = ({ cart, item } : ItemProp) => {
         <div className="relative px-2 py-2 gap-2 border border-[var(--secondary-background-hover)] rounded-md">
             <ItemUI
                 item={item}
-                itemHeaderRef={itemHeaderRef}
                 ref={itemHeaderRef}
                 isClickable={true}
                 rightSlot={
