@@ -1,6 +1,5 @@
 import {
     handleGetItems,
-    handleScrapeItem,
     handleAddItem,
     handleEditItem,
     handleDeleteItem,
@@ -10,7 +9,6 @@ import {
 
 export const itemRouter = {
     getItems: handleGetItems,
-    scrapeItem: handleScrapeItem,
     addItem: handleAddItem,
     editItem: handleEditItem,
     deleteItem: handleDeleteItem,

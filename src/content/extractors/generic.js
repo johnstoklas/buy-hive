@@ -14,15 +14,18 @@ export function extractGenericProduct(domain, url, selectors, productData) {
   // 2. Fall back to heuristic functions if selectors don't work
   
   // --- Extract Product Name ---
-  if (selectors.name) {
+  let nameUsedSelector = false;
+  if (selectors && selectors.name) {
     const nameElement = document.querySelector(selectors.name);
     if (nameElement) {
       productData.name = nameElement.textContent.trim();
+      nameUsedSelector = true;
     }
   }
     
   // --- Extract Product Price ---
-  if (selectors.price) {
+  let priceUsedSelector = false;
+  if (selectors && selectors.price) {
     const priceSelectors = selectors.price.split(',').map(s => s.trim());
     // Use global regex to find all price matches, prioritize ones with decimals
     const priceRegex = /([$€£¥]\s?\d+\.\d{1,2}|[$€£¥]\s?\d+)/g;
@@ -85,11 +88,13 @@ export function extractGenericProduct(domain, url, selectors, productData) {
     if (priceCandidates.length > 0) {
       priceCandidates.sort((a, b) => b.score - a.score);
       productData.price = priceCandidates[0].text;
+      priceUsedSelector = true;
     }
   }
     
   // --- Extract Product Image ---
-  if (selectors.image) {
+  let imageUsedSelector = false;
+  if (selectors && selectors.image) {
     const imageSelectors = selectors.image.split(',').map(s => s.trim());
     for (const selector of imageSelectors) {
       // Use querySelectorAll to get ALL matching images, not just the first one
@@ -153,6 +158,7 @@ export function extractGenericProduct(domain, url, selectors, productData) {
         if (imageCandidates.length > 0) {
           imageCandidates.sort((a, b) => b.score - a.score); // Sort descending (best first)
           productData.image = imageCandidates[0].url;
+          imageUsedSelector = true;
           break; // Found image, stop trying other selectors
         }
       }
@@ -176,6 +182,13 @@ export function extractGenericProduct(domain, url, selectors, productData) {
   if (!productData.name && !productData.image && !productData.price) {
     throw new Error('Could not find product information on this page. Make sure you are on a product page.');
   }
+
+  // Add confidence scores: 85% for site-specific selectors (if selectors exist), 70% for heuristics
+  // For generic extractor, if selectors exist and were used, use 85%, otherwise 70% for heuristics
+  const hasSelectors = selectors && (selectors.name || selectors.price || selectors.image);
+  productData.nameConfidence = nameUsedSelector ? 85 : (productData.name ? 70 : undefined);
+  productData.priceConfidence = priceUsedSelector ? 85 : (productData.price ? 70 : undefined);
+  productData.imageConfidence = imageUsedSelector ? 85 : (productData.image ? 70 : undefined);
 
   return productData;
 }

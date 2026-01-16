@@ -1,9 +1,11 @@
 import { cartRouter } from "./carts/cartsRouter.js";
 import { itemRouter } from "./items/itemsRouter.js";
+import { extractionRouter } from "./extraction/extractionRouter.js"
 
 const routers = {
     ...cartRouter,
     ...itemRouter,
+    ...extractionRouter,
 };
 
 export function handleMessage(message, sender, sendResponse) {

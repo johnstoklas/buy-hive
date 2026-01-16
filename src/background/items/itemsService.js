@@ -38,37 +38,6 @@ export async function handleGetItems(message, sender, sendResponse) {
     }
 };
 
-export async function handleScrapeItem(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
-
-    if (!accessToken) {
-        sendResponse({ status: "error", message: "User must be signed in" });
-        return;
-    }
-
-    try {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const tabId = tabs[0]?.id;
-            if (!tabId) {
-                sendResponse({ status: "error", message: "No active tab" });
-                return;
-            }
-
-            chrome.tabs.sendMessage(tabId, { action: "extractProduct" }, (response) => {
-                if (chrome.runtime.lastError) {
-                    sendResponse({status: "error", message: "chrome runtime last"});
-                    return;
-                }
-                
-                sendResponse({status: "success", data: response.data});
-            });
-        });
-    } catch {
-        console.error("Error adding item:", error);
-        sendResponse({ status: "error", error });
-    }
-}
-
 // Adds an item to specified carts
 export async function handleAddItem(message, sender, sendResponse) {
     const accessToken = await getAccessToken();

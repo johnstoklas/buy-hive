@@ -14,14 +14,17 @@ export function extractAeropostaleProduct(domain, url, selectors, productData) {
   // This extractor will use heuristics until selectors are defined
   
   // Extract product name
+  let nameUsedSelector = false;
   if (selectors.name) {
     const nameElement = document.querySelector(selectors.name);
     if (nameElement) {
       productData.name = nameElement.textContent.trim();
+      nameUsedSelector = true;
     }
   }
 
   // Extract product price
+  let priceUsedSelector = false;
   if (selectors.price) {
     const priceElement = document.querySelector(selectors.price);
     if (priceElement) {
@@ -35,11 +38,13 @@ export function extractAeropostaleProduct(domain, url, selectors, productData) {
       }
       if (priceText) {
         productData.price = priceText.trim();
+        priceUsedSelector = true;
       }
     }
   }
 
   // Extract product image
+  let imageUsedSelector = false;
   if (selectors.image) {
     const imageElement = document.querySelector(selectors.image);
     if (imageElement) {
@@ -48,6 +53,7 @@ export function extractAeropostaleProduct(domain, url, selectors, productData) {
                       imageElement.getAttribute('data-lazy-src');
       if (imageUrl && !imageUrl.includes('data:image')) {
         productData.image = imageUrl;
+        imageUsedSelector = true;
       }
     }
   }
@@ -74,6 +80,11 @@ export function extractAeropostaleProduct(domain, url, selectors, productData) {
     };
     throw error;
   }
+
+  // Add confidence scores: 95% for site-specific selectors, 70% for heuristics (lower for Aeropostale since selectors may be empty)
+  productData.nameConfidence = nameUsedSelector ? 95 : (productData.name ? 70 : undefined);
+  productData.priceConfidence = priceUsedSelector ? 95 : (productData.price ? 70 : undefined);
+  productData.imageConfidence = imageUsedSelector ? 95 : (productData.image ? 70 : undefined);
 
   return productData;
 }

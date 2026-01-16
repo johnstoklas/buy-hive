@@ -16,7 +16,7 @@ import { extractProductName } from './productName.js';
  * @returns {string|null} - Extracted price (e.g., "$29.99") or null
  */
 export function extractPriceFromElement(el) {
-  const currencyRegex = /([$€£¥])\s?(\d+)/; // Match currency symbol + main price digits
+  const currencyRegex = /([$€£¥])\s?(\d{1,3}(?:,\d{3})*|\d+)/; // Match currency symbol + main price digits
   const text = el.innerText?.trim() || '';
   
   // Step 1: Find currency symbol and main price digits
@@ -276,6 +276,6 @@ export function extractPrice() {
   const validCandidates = candidates.filter(c => c !== null);
   validCandidates.sort((a, b) => a.score - b.score);
   
-  return validCandidates[0]?.price || null;
+  return validCandidates[0].price || null;
 }
 
