@@ -17,4 +17,5 @@ export interface ScrapedItemType {
     nameConfidence?: number;
     priceConfidence?: number;
     imageConfidence?: number;
+    extractorType?: string;
 }

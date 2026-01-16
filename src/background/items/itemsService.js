@@ -118,6 +118,7 @@ export async function handleAddItem(message, sender, sendResponse) {
         ...(scrapedItem.nameConfidence !== undefined && { name_confidence: scrapedItem.nameConfidence }),
         ...(scrapedItem.priceConfidence !== undefined && { price_confidence: scrapedItem.priceConfidence }),
         ...(scrapedItem.imageConfidence !== undefined && { image_confidence: scrapedItem.imageConfidence }),
+        ...(scrapedItem.extractorType && { extractor_type: scrapedItem.extractorType }),
     };
 
     const endpoint = `${apiUrl}/carts/items/add-new`;

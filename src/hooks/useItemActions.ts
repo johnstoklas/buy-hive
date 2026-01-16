@@ -66,6 +66,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
             nameConfidence: item.nameConfidence,
             priceConfidence: item.priceConfidence,
             imageConfidence: item.imageConfidence,
+            extractorType: item.extractorType,
           }));
         } catch (err: any) {
           const errorMessage = err?.message || "Error scraping item";
