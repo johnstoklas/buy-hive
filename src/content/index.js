@@ -145,28 +145,39 @@ async function extractProductInfo() {
   try {
     // Only use site-specific extractors if site is actually supported
     if (isAmazon && isSupported) {
+      productData.extractorType = 'amazon';
       result = extractAmazonProduct(domain, url, selectors, productData);
     } else if (isEbay && isSupported) {
+      productData.extractorType = 'ebay';
       result = extractEbayProduct(domain, url, selectors, productData);
     } else if (isAbercrombie && isSupported) {
+      productData.extractorType = 'abercrombie';
       result = extractAbercrombieProduct(domain, url, selectors, productData);
     } else if (isWalmart && isSupported) {
+      productData.extractorType = 'walmart';
       result = extractWalmartProduct(domain, url, selectors, productData);
     } else if (isTarget && isSupported) {
+      productData.extractorType = 'target';
       result = extractTargetProduct(domain, url, selectors, productData);
     } else if (isBestBuy && isSupported) {
+      productData.extractorType = 'bestbuy';
       result = extractBestBuyProduct(domain, url, selectors, productData);
     } else if (isEtsy && isSupported) {
+      productData.extractorType = 'etsy';
       result = extractEtsyProduct(domain, url, selectors, productData);
     } else if (isTemu && isSupported) {
+      productData.extractorType = 'temu';
       result = extractTemuProduct(domain, url, selectors, productData);
     } else if (isPacsun && isSupported) {
+      productData.extractorType = 'pacsun';
       result = extractPacsunProduct(domain, url, selectors, productData);
     } else if (isAeropostale && isSupported) {
+      productData.extractorType = 'aeropostale';
       result = extractAeropostaleProduct(domain, url, selectors, productData);
     } else {
       // For unsupported sites that pass product page detection, use generic extraction
       console.log('[Content Script] Using generic extraction for unsupported site:', domain);
+      productData.extractorType = 'generic';
       result = extractGenericProduct(domain, url, selectors || {}, productData);
     }
     
@@ -180,6 +191,7 @@ async function extractProductInfo() {
     // If extraction failed, try GPT fallback
     // GPT extractor will check for API key in storage or options
     try {
+      productData.extractorType = 'gpt';
       return await extractProductWithGPT(domain, url, productData);
     } catch (gptError) {
       // If GPT also fails, throw the original error
