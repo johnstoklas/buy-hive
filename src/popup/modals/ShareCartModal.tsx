@@ -11,6 +11,7 @@ import ContainerHeader from '../ui/containerUI/containerHeader';
 import Container from '../ui/containerUI/container';
 import CenterContainer from '../ui/containerUI/centerContainer';
 import ModalPortal from '../ui/ModalPortal';
+import InputField from '../ui/inputField';
 
 interface DeletePopupProps {
     cart: CartType;
@@ -61,13 +62,12 @@ const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setS
                     }}
                 />
                 <p> Enter a valid email to share cart </p>
-                <input 
-                    className="bg-[var(--input-color)] px-2 py-1 mx-4 rounded-sm"
-                    type="text" 
-                    placeholder="Enter Email" 
+                <InputField
+                    placeholder='Enter Email'
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)} 
-                    //   onKeyDown={handleKeyDown}
+                    setValue={setEmail}
+                    onSubmit={(val) => shareCart(val, cartId)}
+                    className="bg-[var(--input-color)] px-2 py-1 mx-4 rounded-sm"
                 />
                 <div className="flex gap-2 justify-center">
                     <Button 
