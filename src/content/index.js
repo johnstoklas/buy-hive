@@ -63,6 +63,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     })();
     return true; // Keep message channel open for async response (required for Chrome extensions)
   }
+
+  if (request.action === 'getHTML') {
+    sendResponse({
+      html: document.documentElement.innerHTML,
+    });
+    return false; // synchronous response, no async work
+  }
+  
   return false; // Don't handle other message types
 });
 

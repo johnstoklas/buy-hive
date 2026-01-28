@@ -53,7 +53,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
           if (!item) return;
       
           // TEMP: Log raw price from content script
-          console.log("[Popup] Raw price from content script:", item.price);
+          console.log("[Popup] Scraped item:", item);
       
           setScrapedItem?.(prev => ({
             ...prev,
