@@ -70,7 +70,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });
     return false; // synchronous response, no async work
   }
-  
+
   return false; // Don't handle other message types
 });
 
@@ -193,6 +193,12 @@ async function extractProductInfo() {
     if (!result.name && !result.image && !result.price) {
       throw new Error('Could not extract product information using standard methods');
     }
+
+    result.pageConfidence = result.pageConfidence ?? 0;
+    result.nameConfidence = result.nameConfidence ?? 0;
+    result.priceConfidence = result.priceConfidence ?? 0;
+    result.imageConfidence = result.imageConfidence ?? 0;
+    result.extractorType = result.extractorType ?? 0;
     
     return result;
   } catch (error) {
@@ -200,7 +206,13 @@ async function extractProductInfo() {
     // GPT extractor will check for API key in storage or options
     try {
       productData.extractorType = 'gpt';
-      return await extractProductWithGPT(domain, url, productData);
+      const gptResult = await extractProductWithGPT(domain, url, productData);
+      gptResult.pageConfidence = gptResult.pageConfidence ?? 0;
+      gptResult.nameConfidence = gptResult.nameConfidence ?? 0;
+      gptResult.priceConfidence = gptResult.priceConfidence ?? 0;
+      gptResult.imageConfidence = gptResult.imageConfidence ?? 0;
+      gptResult.extractorType = gptResult.extractorType ?? 0;
+      return gptResult;
     } catch (gptError) {
       // If GPT also fails, throw the original error
       throw error;
