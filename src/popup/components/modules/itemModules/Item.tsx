@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import type { CartType } from '@/types/CartType';
 import useItemActions from '@/hooks/useItemActions';
 import { onNotShiftEnter } from '@/utils/keyboard';
-import ItemUI from '@/popup/ui/itemUI/itemUI';
-import DropdownButton from '@/popup/ui/dropdownUI/dropdownButton';
-import ItemNoteEditing from '@/popup/ui/itemUI/itemNoteUI/itemNoteEditing';
-import ItemNoteStatic from '@/popup/ui/itemUI/itemNoteUI/ItemNoteStatic';
+import ItemUI from '@/popup/components/ui/itemUI/itemUI';
+import DropdownButton from '@/popup/components/ui/dropdownUI/dropdownButton';
+import ItemNoteEditing from '@/popup/components/ui/itemUI/itemNoteUI/itemNoteEditing';
+import ItemNoteStatic from '@/popup/components/ui/itemUI/itemNoteUI/ItemNoteStatic';
 import ItemDropdown from './ItemDropdown';
 
 interface ItemProp {

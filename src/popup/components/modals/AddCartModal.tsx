@@ -3,12 +3,12 @@ import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
-import { useClickOutside } from '../../hooks/useClickOutside';
-import { onEnter } from '../../utils/keyboard';
+import { useClickOutside } from '../../../hooks/useClickOutside';
 
 import FixedContainer from '../ui/containerUI/fixedContainer';
 import Container from '../ui/containerUI/container';
 import useCartActions from '@/hooks/useCartActions';
+import InputField from '../ui/inputField';
 
 interface AddCartModalProps {
     addCartVisible: boolean;
@@ -46,13 +46,12 @@ const AddCartModal = ({
                     if (!addCartVisible) setAddCartAnimating(false);
                 }}
             > 
-                <input 
-                    type="text" 
+                <InputField
+                    placeholder='Cart Name'
+                    value={cartName}
+                    setValue={setCartName}
+                    onSubmit={(val) => addCart(val)}
                     className="flex-1 bg-[var(--input-color)] p-1 rounded-md"
-                    placeholder="Cart Name" 
-                    value={cartName} 
-                    onChange={(e) => setCartName(e.target.value)}
-                    onKeyDown={(e) => onEnter(e, () => addCart(cartName))}
                 />
                 <button 
                     type="button" 

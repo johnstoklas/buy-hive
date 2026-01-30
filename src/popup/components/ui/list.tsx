@@ -1,6 +1,6 @@
 import type { ItemType, ScrapedItemType } from '@/types/ItemTypes';
 import{ useState, useEffect, type SetStateAction, type Dispatch } from 'react';
-import { useCarts } from '../context/CartContext/useCart';
+import { useCarts } from '../../context/CartContext/useCart';
 import CheckboxItem from './checboxItem';
 import Button from './button';
 import Checkbox from './checkbox';
