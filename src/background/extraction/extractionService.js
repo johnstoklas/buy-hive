@@ -29,13 +29,15 @@ export async function handleScrapeItem(message, sender, sendResponse) {
                     return;
                 }
 
-                console.log(response);
                 const { extractorType } = response.data;
                 
                 if (response.success) {
                     // if we used a specific scraper, we are confident and we send the data back
                     if(extractorType !== "generic") {
-                        sendResponse({status: "success", data: response.data});
+                        const { url, image, name, price } = response.data;
+                        const item_data = { url, image, name, price };
+
+                        sendResponse({status: "success", data: item_data});
                         return;
                     }
 
@@ -51,19 +53,30 @@ export async function handleScrapeItem(message, sender, sendResponse) {
                     if (imageConfidence >= 70 && nameConfidence >= 70 && priceConfidence >= 70) {
                         // inform the backend that this was done by the generic scraper
                         payload.type = "GEN_SCRAPER_CONFIDENT";
-                        // await handleAddFailedExtraction(payload, accessToken, "item");
+                        await handleAddFailedExtraction(payload, accessToken, "item");
 
                         // we send the product details back to the frontend
-                        sendResponse({status: "success", data: response.data});
+                        const { url, image, name, price } = response.data;
+                        const item_data = { url, image, name, price };
+
+                        sendResponse({status: "success", data: item_data});
                         return;
                     }
                     else {
                         // if it wasn't confident, we send the url to our backend with the proper message
                         payload.type = "GEN_SCRAPER_NOT_CONFIDENT";
-                        // await handleAddFailedExtraction(payload, accessToken, "item");
+                        await handleAddFailedExtraction(payload, accessToken, "item");
 
                         // we have OpenAI scrape the innerHTML as a backup method
-                        await handleOpenAIScrape(accessToken, tabId);
+                        const { cart_items } = await handleOpenAIScrape(accessToken, tabId);
+                        const { price, product_name } = cart_items;
+                        const item_data = {
+                            image: null,
+                            price: price,
+                            url: url,
+                            name: product_name,
+                        };
+                        sendResponse({status: "success", data: item_data});
                     }   
                 }
                 else {
@@ -111,44 +124,42 @@ async function handleAddFailedExtraction(payload, accessToken, type) {
     }
 }
 
-async function handleOpenAIScrape(accessToken, tabId) {
-    // scrape the innerHTML of the page for the OpenAI endpoint
-    chrome.tabs.sendMessage(tabId, { action: "getInnerText" }, async(res) => {
-        if (chrome.runtime.lastError) {
-            sendResponse({status: "error", message: "Chrome runtime last"});
-            return;
-        }
-
-        const { innerText } = res.data;
-        const payload = {
-            inner_text: innerText,
-        }
-
-        if (!innerText || innerText.trim().length === 0) {
-            throw new Error("No innerText returned from content script");
-        }
-
-        const endpoint = `${apiUrl}/extract/extract`;
-        try {
-            const response = await fetch(endpoint, {
-                method: "POST",
-                headers: { 
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json" 
-                },
-                body: JSON.stringify(payload),
-            });
-
-            console.log(response);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+function handleOpenAIScrape(accessToken, tabId) {
+    return new Promise((resolve, reject) => {
+        // scrape the innerHTML to send to the openAI endpoint
+        chrome.tabs.sendMessage(tabId, { action: "getInnerText" }, async (res) => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError);
+                return;
             }
 
-            return await response.json();
-        } catch (error) {
-            console.error("Error scraping on OpenAI:", error);
-            throw new Error(error);
-        }
+            try {
+                const { innerText } = res.data;
+
+                if (!innerText || innerText.trim().length === 0) {
+                    throw new Error("No innerText returned from content script");
+                }
+
+                const endpoint = `${apiUrl}/extract/extract`;
+
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { 
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ inner_text: innerText }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resolve(data);
+            } catch (error) {
+                reject(error);
+            }
+        });
     });
 }
