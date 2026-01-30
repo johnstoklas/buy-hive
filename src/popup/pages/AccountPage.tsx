@@ -1,9 +1,9 @@
 // import React from 'react';
 // import Profile from './Profile.jsx';
 // import LogoutButton from './LogoutButton.jsx';
-import LoginSignupButtons from '../modules/authModules/LoginSignupButtons';
-import UserOptioButtons from '../modules/authModules/UserOptionButtons';
-import Profile from '../modules/authModules/Profile';
+import LoginSignupButtons from '../components/modules/authModules/LoginSignupButtons';
+import UserOptioButtons from '../components/modules/authModules/UserOptionButtons';
+import Profile from '../components/modules/authModules/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
 import type { Dispatch, SetStateAction } from 'react';
 

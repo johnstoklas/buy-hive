@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartShopping, faFolder, faUser } from '@fortawesome/free-solid-svg-icons'
 import type { Dispatch, SetStateAction } from 'react';
-import { useLocked } from '../context/LockedContext/useLocked';
+import { useLocked } from '../../context/LockedContext/useLocked';
 
 interface FooterProps {
     addItemVisible: boolean;

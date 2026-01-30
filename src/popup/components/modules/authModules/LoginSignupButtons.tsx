@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import Button from '../../ui/button';
 
-const LoginSignupButtons = ({}) => {
+const LoginSignupButtons = () => {
     const { loginWithPopup } = useAuth0();
 
     const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
@@ -23,14 +23,6 @@ const LoginSignupButtons = ({}) => {
                 <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-foreground"> Welcome to BuyHive! </h1>
                 <p className="text-md font-semibold leading-relaxed text-muted-foreground"> The all in one shopping cart. </p>
             </div>
-
-            {/* <button>
-                Sign Up
-            </button> */}
-
-            {/* <button className="alt-button">
-                Sign In
-            </button> */}
             <div className="flex flex-col gap-2">
                 <Button
                     onClick={handleLogin}
@@ -41,7 +33,6 @@ const LoginSignupButtons = ({}) => {
                     onClick={handleLogin}
                 > Sign In </Button>
             </div>
-
         </div>        
     )
 }

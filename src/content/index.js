@@ -63,6 +63,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     })();
     return true; // Keep message channel open for async response (required for Chrome extensions)
   }
+  else if (request.action === "getInnerText") {
+    const data = {
+      innerText: document.documentElement.innerText,
+    }
+    sendResponse({ success: true, data: data });      
+  }
   return false; // Don't handle other message types
 });
 

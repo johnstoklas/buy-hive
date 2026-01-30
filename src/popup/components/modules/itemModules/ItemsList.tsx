@@ -5,7 +5,7 @@ import type { CartType } from "@/types/CartType";
 
 import Item from "./Item";
 import { useItems } from "@/popup/context/ItemContext/useItem";
-import LoadingSpinner from "@/popup/ui/loadingUI/loadingSpinner";
+import LoadingSpinner from "@/popup/components/ui/loadingUI/loadingSpinner";
 
 interface ItemsListProp {
     cart: CartType;

@@ -3,10 +3,10 @@ import { faPenToSquare, faShare, faTrashCan } from '@fortawesome/free-solid-svg-
 import type { ItemType } from '@/types/ItemTypes.js';
 import { useLocked } from '@/popup/context/LockedContext/useLocked';
 import type { CartType } from '@/types/CartType';
-import DeleteModal from '@/popup/modals/DeleteModal';
-import MoveItemModal from '@/popup/modals/MoveItemModal';
+import DeleteModal from '@/popup/components/modals/DeleteModal';
+import MoveItemModal from '@/popup/components/modals/MoveItemModal';
 import { useClickOutside } from '@/hooks/useClickOutside';
-import { DropdownMenu } from '@/popup/ui/dropdownUI/dropdownMenu';
+import { DropdownMenu } from '@/popup/components/ui/dropdownUI/dropdownMenu';
 
 interface ItemDropdownProps {
     cart: CartType;

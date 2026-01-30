@@ -1,0 +1,114 @@
+import { useEffect, useState, type Dispatch, type RefObject, type SetStateAction } from 'react';
+
+import useCartActions from '@/hooks/useCartActions';
+
+import { useLocked } from '../../context/LockedContext/useLocked';
+
+import type { CartType } from '@/types/CartType';
+
+import Button from '../ui/button';
+import ContainerHeader from '../ui/containerUI/containerHeader';
+import Container from '../ui/containerUI/container';
+import CenterContainer from '../ui/containerUI/centerContainer';
+import ModalPortal from '../ui/ModalPortal';
+import InputField from '../ui/inputField';
+
+interface DeletePopupProps {
+    cart: CartType;
+    setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
+    setCartDropdownHidden: Dispatch<SetStateAction<boolean>>;
+    setShareCartModal: Dispatch<SetStateAction<boolean>>;
+    shareCartModalRef: RefObject<HTMLDivElement | null>;
+}
+
+const DeletePopup = ({ cart, setCartDropdownVisible, setCartDropdownHidden, setShareCartModal, shareCartModalRef } : DeletePopupProps) => {
+
+    const { cart_id: cartId } = cart;
+    const { setIsLocked } = useLocked();
+    const { isLocked } = useLocked();
+    const [email, setEmail] = useState("");
+
+    useEffect(() => {
+        setCartDropdownHidden(true);
+    }, [setCartDropdownHidden]);
+
+    const closePopup = () => {
+        setCartDropdownVisible(false);
+        setCartDropdownHidden(false);
+        setIsLocked(false);
+        setShareCartModal(false);
+    }
+
+    const { shareCart } = useCartActions({closePopup});
+
+    // const handleKeyDown = (e) => {
+    //     if (e.key === 'Enter') {
+    //         sendEmail();
+    //     }
+    // };
+
+    // temporary modal until AWS responds
+    return (
+        <ModalPortal>
+            {isLocked && <div className="flex fixed top-14 bottom-14 inset-0 bg-black/25"/>}
+            <CenterContainer>
+                <Container 
+                    className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom z-60"
+                    ref={shareCartModalRef}
+                > 
+                    <ContainerHeader 
+                        titleText='Share Cart'
+                        closeButtonProps={{
+                            onClick: closePopup
+                        }}
+                    />
+                    <p> Coming Soon! </p>
+                </Container>
+            </CenterContainer> 
+        </ModalPortal>
+    )
+    
+    return (
+        <ModalPortal>
+            {isLocked && <div className="flex fixed top-14 bottom-14 inset-0 bg-black/25"/>}
+            <CenterContainer>
+                <Container 
+                    className="flex-1 !flex-col relative justify-center text-center gap-2 !rounded-lg shadow-bottom z-60"
+                    ref={shareCartModalRef}
+                > 
+                    <ContainerHeader 
+                        titleText='Share Cart'
+                        closeButtonProps={{
+                            onClick: closePopup
+                        }}
+                    />
+                    <p> Coming Soon! </p>
+                    <p> Enter a valid email to share cart </p>
+                    <InputField
+                        placeholder='Enter Email'
+                        value={email}
+                        setValue={setEmail}
+                        onSubmit={(val) => shareCart(val, cartId)}
+                        className="bg-[var(--input-color)] px-2 py-1 mx-4 rounded-sm"
+                    />
+                    <div className="flex gap-2 justify-center">
+                        <Button 
+                            onClick={() => shareCart(email, cartId)}
+                            isModal={true}
+                        > 
+                            Send
+                        </Button>
+                        <Button 
+                            onClick={closePopup}
+                            isModal={true}
+                        > 
+                            Cancel
+                        </Button>
+                    </div>
+                </Container>
+            </CenterContainer> 
+        </ModalPortal>
+    )
+};
+
+export default DeletePopup;

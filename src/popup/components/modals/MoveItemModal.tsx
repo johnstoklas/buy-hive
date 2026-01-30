@@ -2,8 +2,8 @@ import { useEffect, useState, type Dispatch, type RefObject, type SetStateAction
 
 import useItemActions from '@/hooks/useItemActions';
 
-import { useLocked } from '../context/LockedContext/useLocked';
-import { useCarts } from '../context/CartContext/useCart';
+import { useLocked } from '../../context/LockedContext/useLocked';
+import { useCarts } from '../../context/CartContext/useCart';
 
 import type { ItemType } from '@/types/ItemTypes';
 import type { CartType } from '@/types/CartType';

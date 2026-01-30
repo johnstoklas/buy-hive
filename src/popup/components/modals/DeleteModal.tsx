@@ -3,7 +3,7 @@ import { useEffect, type Dispatch, type RefObject, type SetStateAction } from 'r
 import useCartActions from '@/hooks/useCartActions';
 import useItemActions from '@/hooks/useItemActions';
 
-import { useLocked } from '../context/LockedContext/useLocked';
+import { useLocked } from '../../context/LockedContext/useLocked';
 
 import type { CartType } from '@/types/CartType';
 import type { ItemType } from '@/types/ItemTypes';
