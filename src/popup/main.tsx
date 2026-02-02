@@ -10,6 +10,7 @@ import { AlertProvider } from './context/AlertContext/AlertProvider.tsx';
 
 const AUTH0_DOMAIN = import.meta.env.VITE_AUTH0_DOMAIN;
 const AUTH0_CLIENT_ID = import.meta.env.VITE_AUTH0_CLIENT_ID;
+const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 
 createRoot(document.getElementById('root')!).render(
@@ -18,11 +19,12 @@ createRoot(document.getElementById('root')!).render(
             domain={AUTH0_DOMAIN}
             clientId={AUTH0_CLIENT_ID}
             authorizationParams={{
-                redirect_uri: `chrome-extension:${REDIRECT_URI}/popup.html`,
-                scope: 'openid profile email offline_access',
+                redirect_uri: chrome.identity.getRedirectURL(),
+                audience: AUTH0_AUDIENCE, 
+                scope: 'openid profile email',
             }}
-            useRefreshTokens={true}
-            cacheLocation='localstorage'
+            cacheLocation="memory"
+            useRefreshTokens={false}
         >
             <LockedProvider>
                 <AlertProvider>
