@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, type Dispatch, type SetStateAction } from 'react';
 
-import { useClickOutside } from '../../hooks/useClickOutside';
+import { useClickOutside } from '../../../hooks/useClickOutside';
 import useItemActions from '@/hooks/useItemActions';
 
 import type { ScrapedItemType } from '@/types/ItemTypes';

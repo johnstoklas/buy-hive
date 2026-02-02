@@ -51,6 +51,7 @@ export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, se
         try {
             const item = await sendChromeMessage<ItemType>({action: "scrapeItem"});
             if(!item) return;
+            if(!item.image) { item.image = "https://blocks.astratic.com/img/general-img-square.png"; }
             setScrapedItem?.(prev => ({
                 ...prev,
                 name: item.name,

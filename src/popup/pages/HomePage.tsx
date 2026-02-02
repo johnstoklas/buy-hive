@@ -1,9 +1,9 @@
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction } from "react";
-import Cart from "../modules/cartModules/Cart";
+import Cart from "../components/modules/cartModules/Cart";
 import { useCarts } from "../context/CartContext/useCart";
-import LoadingSpinner from "../ui/loadingUI/loadingSpinner";
+import LoadingSpinner from "../components/ui/loadingUI/loadingSpinner";
 
 interface HomePageProps {
     popupLoading: boolean;

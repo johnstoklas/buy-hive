@@ -8,13 +8,13 @@ import useCartActions from "@/hooks/useCartActions";
 import AccountPage from "./pages/AccountPage";
 import HomePage from "./pages/HomePage";
 
-import Header from "./modules/Header";
-import Footer from "./modules/Footer";
+import Header from "./components/modules/Header";
+import Footer from "./components/modules/Footer";
 
-import AddCart from "./modals/AddCartModal";
-import AddItemModal from "./modals/AddItemModal";
+import AddCart from "./components/modals/AddCartModal";
+import AddItemModal from "./components/modals/AddItemModal";
 
-import Alert from "./ui/alert";
+import Alert from "./components/ui/alert";
 
 const Popup = () => {
     useTokenResponder();

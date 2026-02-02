@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAlert } from "../context/AlertContext/useAlert";
+import { useAlert } from "../../context/AlertContext/useAlert";
 import { faCheck, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 const Alert = () => {

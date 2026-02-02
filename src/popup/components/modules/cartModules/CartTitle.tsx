@@ -1,7 +1,7 @@
 import type { CartType } from "@/types/CartType";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import CartDropdown from "./CartDropdown";
-import DropdownButton from "@/popup/ui/dropdownUI/dropdownButton";
+import DropdownButton from "@/popup/components/ui/dropdownUI/dropdownButton";
 import { onEnter } from "@/utils/keyboard";
 import useCartActions from "@/hooks/useCartActions";
 import useItemActions from "@/hooks/useItemActions";
