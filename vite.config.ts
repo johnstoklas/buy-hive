@@ -20,7 +20,6 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       input: {
-        popup: resolve(__dirname, "popup.html"),
         background: resolve(__dirname, "src/background/index.js"),
         content: resolve(__dirname, "src/content/index.js"),
       },
@@ -28,7 +27,7 @@ export default defineConfig({
         entryFileNames: (chunk) => {
           if (chunk.name === "background") return "background.js";
           if (chunk.name === "content") return "content.js";
-          return "assets/[name]-[hash].js";
+          return "popup.js";
         }
       }
     }
