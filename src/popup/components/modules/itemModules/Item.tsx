@@ -66,7 +66,6 @@ const Item = ({ cart, item } : ItemProp) => {
 
 
     const handleItemNoteSelect = () => {
-        console.log("is this firing")
         if (isLocked) return;
         setIsEditing(true);
         setItemDropdownVisible(false);

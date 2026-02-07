@@ -1,5 +1,5 @@
 import Button from '@/popup/components/ui/button';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth } from '@/popup/context/AuthContext/useAuth';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface UserOptioButtonsProps {
@@ -7,18 +7,11 @@ interface UserOptioButtonsProps {
 }
 
 const UserOptionButtons = ({setAccountPageVisible} : UserOptioButtonsProps) => {
-    const { logout } = useAuth0();
-    const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
+    const { logout } = useAuth();
 
     // Logs a user out of their account
-    const handleLogout = async() => {
-        await chrome.storage.session.clear();
-
-        logout({
-            logoutParams: {
-                returnTo:  `chrome-extension://${REDIRECT_URI}/popup.html`,
-            }
-        });
+    const handleLogout = () => {
+        logout();
     };
 
     return (
@@ -26,7 +19,7 @@ const UserOptionButtons = ({setAccountPageVisible} : UserOptioButtonsProps) => {
             <Button onClick={() => setAccountPageVisible(false)}> 
                 View Items 
             </Button>
-            <Button onClick={() => window.open('https://buyhive.dev/report', '_blank')}>
+            <Button onClick={() => window.open('https://buyhive.dev/support', '_blank')}>
                 Report an Issue
             </Button>
             <Button onClick={handleLogout}>

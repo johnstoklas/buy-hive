@@ -24,6 +24,19 @@ import { extractProductWithGPT } from './extractors/gpt.js';
  * 2. Returns success response with product data, or error response with details
  * 3. Handles both structured errors (NOT_PRODUCT_PAGE, SITE_NOT_SUPPORTED) and generic errors
  */
+
+window.addEventListener("message", (event) => {
+  if (event.source !== window) return;
+
+  if (event.data?.action === "sendUserData" && event.data.access_token) {
+    chrome.runtime.sendMessage({
+      action: "storeUserData",
+      access_token: event.data.access_token,
+      user: event.data.user,
+    });
+  }
+});
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === 'extractProduct') {
     // Use async IIFE to handle async extractProductInfo() function
@@ -37,11 +50,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if (error.type) {
           // Log error with pageConfidence if available
           const pageConfidence = error.confidence || error.errorData?.confidence;
-          console.log('[Content Script] Extraction failed -', {
-            pageConfidence: pageConfidence,
-            error: error.message,
-            errorType: error.type
-          });
+          // console.log('[Content Script] Extraction failed -', {
+          //   pageConfidence: pageConfidence,
+          //   error: error.message,
+          //   errorType: error.type
+          // });
           sendResponse({ 
             success: false, 
             error: error.message,
@@ -50,9 +63,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
           });
         } else {
           // Generic error - wrap in standard format
-          console.log('[Content Script] Extraction failed -', {
-            error: error.message || 'Failed to extract product information'
-          });
+          // console.log('[Content Script] Extraction failed -', {
+          //   error: error.message || 'Failed to extract product information'
+          // });
           sendResponse({ 
             success: false, 
             error: error.message || 'Failed to extract product information',
@@ -184,7 +197,7 @@ async function extractProductInfo() {
       result = extractAeropostaleProduct(domain, url, selectors, productData);
     } else {
       // For unsupported sites that pass product page detection, use generic extraction
-      console.log('[Content Script] Using generic extraction for unsupported site:', domain);
+      // console.log('[Content Script] Using generic extraction for unsupported site:', domain);
       productData.extractorType = 'generic';
       result = extractGenericProduct(domain, url, selectors || {}, productData);
     }

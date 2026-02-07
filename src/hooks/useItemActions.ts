@@ -3,13 +3,13 @@ import type { Dispatch, SetStateAction } from "react";
 import { useCarts } from "@/popup/context/CartContext/useCart";
 import { useItems } from "@/popup/context/ItemContext/useItem";
 import { useLocked } from "@/popup/context/LockedContext/useLocked";
-import { useAuth0 } from "@auth0/auth0-react";
 
 import type { ItemType, ScrapedItemType } from "@/types/ItemTypes";
 
 import { sendChromeMessage } from "@/services/chromeService";
 import { standardizePrice } from "@/utils/standardizePrice";
 import { useAlert } from "@/popup/context/AlertContext/useAlert";
+import { useAuth } from "@/popup/context/AuthContext/useAuth";
 
 interface useItemActionsProps {
     isExpanded?: boolean;
@@ -20,7 +20,7 @@ interface useItemActionsProps {
 }
 
 export function useItemActions({ isExpanded, setIsExpanded, setIsCartLoading, setScrapedItem, setAddItemVisible} : useItemActionsProps = {}) {
-    const { isLoading, isAuthenticated } = useAuth0();
+    const { isLoading, isAuthenticated } = useAuth();
     const { isLocked } = useLocked();
     const { upsertItemUI, editNoteUI } = useItems();
     const { moveItemBetweenCartsUI, removeItemFromCartUI, removeItemFromAllCartsUI, addItemToCartUI } = useCarts();

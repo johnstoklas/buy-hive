@@ -1,10 +1,12 @@
 import { cartRouter } from "./carts/cartsRouter.js";
 import { itemRouter } from "./items/itemsRouter.js";
+import { authRouter } from "./auth/authRouter.js";
 import { extractionRouter } from "./extraction/extractionRouter.js"
 
 const routers = {
     ...cartRouter,
     ...itemRouter,
+    ...authRouter,
     ...extractionRouter,
 };
 

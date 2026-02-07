@@ -1,9 +1,7 @@
-import { getAccessToken } from "../auth/authService.js";
-
 const apiUrl = "https://buyhive-backend-production.up.railway.app"
 
 export async function handleGetItems(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const { access_token: accessToken } = await chrome.storage.local.get("access_token");
     const { cartId } = message.data;
 
     if (!accessToken) {
@@ -40,7 +38,7 @@ export async function handleGetItems(message, sender, sendResponse) {
 
 // Adds an item to specified carts
 export async function handleAddItem(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const { access_token: accessToken } = await chrome.storage.local.get("access_token");
     const { scrapedItem, selectedCartIds } = message.data;
 
     if (!accessToken) {
@@ -86,7 +84,7 @@ export async function handleAddItem(message, sender, sendResponse) {
 
 // Edits the notes of an item
 export async function handleEditItem(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const { access_token: accessToken } = await chrome.storage.local.get("access_token");
     const { notes, itemId } = message.data;
     
     if (!accessToken) {
@@ -123,7 +121,7 @@ export async function handleEditItem(message, sender, sendResponse) {
 
 // Deletes an item from a cart
 export async function handleDeleteItem(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const { access_token: accessToken } = await chrome.storage.local.get("access_token");
     const { cartId, itemId } = message.data;
 
     if (!accessToken) {
@@ -156,7 +154,7 @@ export async function handleDeleteItem(message, sender, sendResponse) {
 
 // Moves an item between carts
 export async function handleMoveItem(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const { access_token: accessToken } = await chrome.storage.local.get("access_token");
     const { itemId, selectedCarts } = message.data;
 
     if (!accessToken) {
@@ -194,7 +192,7 @@ export async function handleMoveItem(message, sender, sendResponse) {
 
 // Deletes an item from every cart it is in
 export async function handleDeleteItemAll(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const { access_token: accessToken } = await chrome.storage.local.get("access_token");
     const { itemId } = message.data;
     if (!accessToken) {
         sendResponse({ status: "error", message: "User must be signed in" });

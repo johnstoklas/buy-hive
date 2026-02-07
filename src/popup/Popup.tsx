@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "../styles/main.css"
 
-import { useAuth0 } from '@auth0/auth0-react';
-import { useTokenResponder } from "../hooks/tokenResponder";
 import useCartActions from "@/hooks/useCartActions";
 
 import AccountPage from "./pages/AccountPage";
@@ -15,10 +13,9 @@ import AddCart from "./components/modals/AddCartModal";
 import AddItemModal from "./components/modals/AddItemModal";
 
 import Alert from "./components/ui/alert";
+import { useAuth } from "./context/AuthContext/useAuth";
 
 const Popup = () => {
-    useTokenResponder();
-
     const [addItemVisible, setAddItemVisible] = useState(false);
     const [addItemAnimating, setAddItemAnimating] = useState(false);
     
@@ -29,34 +26,17 @@ const Popup = () => {
 
     const [popupLoading, setPopupLoading] = useState(false);
 
-    const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
-    const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
     const { getCarts } = useCartActions({setPopupLoading});
-
+    const { isAuthenticated } = useAuth();
 
     const addItemButtoRef = useRef<HTMLButtonElement>(null);
     const addCartButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        const getUser = async() => {
-        const { user } = await chrome.storage.session.get("user");
-        if (!user) return;
-
-        await getAccessTokenSilently({
-            authorizationParams: {
-                audience: AUTH0_AUDIENCE,
-            }
-        });
-
+        if (!isAuthenticated) return;
         setAccountPageVisible(false);
-        }
-
-        getUser();
-    }, []);
-    
-    useEffect(() => {  
         getCarts();
-    }, [isLoading, isAuthenticated]);
+    }, [isAuthenticated]);
 
     return (
         <div className="min-h-screen flex flex-col">

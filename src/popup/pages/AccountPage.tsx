@@ -4,21 +4,21 @@
 import LoginSignupButtons from '../components/modules/authModules/LoginSignupButtons';
 import UserOptioButtons from '../components/modules/authModules/UserOptionButtons';
 import Profile from '../components/modules/authModules/Profile';
-import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
+import { useAuth } from '../context/AuthContext/useAuth';
 
 interface AccountPageProps {
     setAccountPageVisible: Dispatch<SetStateAction<boolean>>,
 }
 
 const AccountPage = ({setAccountPageVisible} : AccountPageProps) => {
-    const { isLoading, isAuthenticated } = useAuth0();
+    const { isAuthenticated } = useAuth();
 
     return (
         <section id="sign-in-page" className="flex flex-1 justify-center items-center pt-14 pb-14">
-            {isLoading ? (
+            {/* {false ? (
                 <div className="spinner-loader"></div>
-            ) : (
+            ) : ( */}
                 <>           
                     {!isAuthenticated ? (
                         <LoginSignupButtons />
@@ -31,7 +31,7 @@ const AccountPage = ({setAccountPageVisible} : AccountPageProps) => {
                         </div>
                     )}
                 </>
-            )}
+            {/* )} */}
         </section>
     );
 };
