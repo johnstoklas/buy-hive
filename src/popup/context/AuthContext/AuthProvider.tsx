@@ -1,37 +1,30 @@
 import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import type { UserType } from "@/types/UserType";
+import { sendChromeMessage } from "@/services/chromeService";
+
+export type AuthStateResponse =
+    | { authorized: true; user: UserType }
+    | { authorized: false };
+
 
 export function AuthProvider({ children } : { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userData, setUserData] = useState<UserType | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [token, setToken] = useState<string | null>(null);
-
-    // const resolveUser = async () => {
-    //     const { user } = await chrome.storage.session.get("user");
-    //     if (user) return user;
-
-    //     const fetchedUser = await sendChromeMessage({ action: "getUserData" });
-    //     if (fetchedUser) {
-    //         await chrome.storage.session.set({ user: fetchedUser });
-    //     }
-
-    //     return fetchedUser ?? null;
-    // };
 
     useEffect(() => {
         const bootstrapAuth = async() => {
             setIsLoading(true);
-            const { access_token } = await chrome.storage.local.get<{ access_token?: string }>("access_token");
-            const { user } = await chrome.storage.local.get<{ user?: UserType }>("user");
-            if (!access_token || !user) {
+            const res = await sendChromeMessage<AuthStateResponse>({action: "getAuthState"});
+
+            if(!res.authorized) {
                 setIsAuthenticated(false);
+                setIsLoading(false);
                 return;
             }
             
-            setUserData(user);
-            setToken(access_token);
+            setUserData(res.user);
             setIsAuthenticated(true);
             setIsLoading(false);
         };
@@ -39,17 +32,19 @@ export function AuthProvider({ children } : { children: React.ReactNode }) {
         bootstrapAuth();
     }, []);
 
-    const logout = () => {
+    const logout = async() => {
         setIsLoading(true);
-        chrome.storage.local.remove('access_token');
-        chrome.storage.local.remove('user');
+
+        await sendChromeMessage({action: "logout"});
+        
         chrome.tabs.create({
-            url: "https://www.buyhive.dev/logout?source=extension"
+            url: `${import.meta.env.VITE_WEBSITE}/logout?source=extension`
         });
+        setIsLoading(false);
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isLoading, userData, token, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, isLoading, userData, logout }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,8 +1,9 @@
+import { getValidAccessToken } from "../auth/authService";
+
 const apiUrl = "https://buyhive-backend-production.up.railway.app"
 
 export async function handleScrapeItem(message, sender, sendResponse) {
-    const { access_token: accessToken } = await chrome.storage.local.get("access_token");
-
+    const accessToken = await getValidAccessToken();
     if (!accessToken) {
         sendResponse({ status: "error", message: "User must be signed in" });
         return;

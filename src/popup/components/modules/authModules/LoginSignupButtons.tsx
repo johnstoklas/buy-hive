@@ -3,7 +3,7 @@ import Button from '../../ui/button';
 const LoginSignupButtons = () => {
     const handleLogin = () => {
         chrome.tabs.create({
-            url: "https://www.buyhive.dev/login?source=extension"
+            url: `${import.meta.env.VITE_WEBSITE}/login?source=extension`
         });
     };
 

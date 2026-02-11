@@ -17,8 +17,7 @@
   "permissions": [
     "scripting",
     "storage",
-    "activeTab",
-    "identity"
+    "activeTab"
   ],
   "host_permissions": [
     "https://buyhive-backend-production.up.railway.app/*"

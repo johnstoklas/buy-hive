@@ -5,7 +5,6 @@ type AuthContextType = {
     isAuthenticated: boolean;
     isLoading: boolean;
     userData: UserType | null;
-    token: string | null
     logout: () => void;
 }
 

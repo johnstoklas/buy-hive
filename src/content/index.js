@@ -25,13 +25,20 @@ import { extractProductWithGPT } from './extractors/gpt.js';
  * 3. Handles both structured errors (NOT_PRODUCT_PAGE, SITE_NOT_SUPPORTED) and generic errors
  */
 
+const ALLOWED_ORIGINS = [
+  "https://www.buyhive.dev",
+  "http://localhost:5173",
+];
+
 window.addEventListener("message", (event) => {
   if (event.source !== window) return;
+  if (!ALLOWED_ORIGINS.includes(event.origin)) return;
 
   if (event.data?.action === "sendUserData" && event.data.access_token) {
     chrome.runtime.sendMessage({
       action: "storeUserData",
       access_token: event.data.access_token,
+      refresh_token: event.data.refresh_token,
       user: event.data.user,
     });
   }

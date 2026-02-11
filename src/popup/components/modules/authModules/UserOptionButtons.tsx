@@ -19,7 +19,7 @@ const UserOptionButtons = ({setAccountPageVisible} : UserOptioButtonsProps) => {
             <Button onClick={() => setAccountPageVisible(false)}> 
                 View Items 
             </Button>
-            <Button onClick={() => window.open('https://buyhive.dev/support', '_blank')}>
+            <Button onClick={() => window.open(`${import.meta.env.VITE_WEBSITE}/support`, '_blank')}>
                 Report an Issue
             </Button>
             <Button onClick={handleLogout}>

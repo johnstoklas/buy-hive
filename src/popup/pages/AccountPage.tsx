@@ -12,13 +12,13 @@ interface AccountPageProps {
 }
 
 const AccountPage = ({setAccountPageVisible} : AccountPageProps) => {
-    const { isAuthenticated } = useAuth();
+    const { isLoading, isAuthenticated } = useAuth();
 
     return (
         <section id="sign-in-page" className="flex flex-1 justify-center items-center pt-14 pb-14">
-            {/* {false ? (
+            {isLoading ? (
                 <div className="spinner-loader"></div>
-            ) : ( */}
+            ) : (
                 <>           
                     {!isAuthenticated ? (
                         <LoginSignupButtons />
@@ -31,7 +31,7 @@ const AccountPage = ({setAccountPageVisible} : AccountPageProps) => {
                         </div>
                     )}
                 </>
-            {/* )} */}
+            )}
         </section>
     );
 };
