@@ -1,11 +1,11 @@
-import { getAccessToken } from "../auth/authService.js"
+import { getValidAccessToken } from "../auth/authService";
 
 const apiUrl = "https://buyhive-backend-production.up.railway.app"
 
 export async function handleGetCarts(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const accessToken = await getValidAccessToken();
     if (!accessToken) {
-        sendResponse({ status: "error", message: "User must be signed in"});
+        sendResponse({ status: "error", message: "User must be signed in" });
         return;
     }
 
@@ -30,7 +30,7 @@ export async function handleGetCarts(message, sender, sendResponse) {
 };
 
 export async function handleAddNewCart(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const accessToken = await getValidAccessToken();
     const { cartName } = message.data;
 
     if (!accessToken) {
@@ -64,7 +64,7 @@ export async function handleAddNewCart(message, sender, sendResponse) {
 }
 
 export async function handleEditCart(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const accessToken = await getValidAccessToken();
     const { cartId, newCartName } = message.data;
 
     if (!accessToken) {
@@ -98,7 +98,7 @@ export async function handleEditCart(message, sender, sendResponse) {
 }
 
 export async function handleShareCart(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const accessToken = await getValidAccessToken();
     const { cartId, recipient } = message.data;
 
     if (!accessToken) {
@@ -135,7 +135,7 @@ export async function handleShareCart(message, sender, sendResponse) {
 }
 
 export async function handleDeleteCart(message, sender, sendResponse) {
-    const accessToken = await getAccessToken();
+    const accessToken = await getValidAccessToken();
     const { cartId } = message.data;
 
     if (!accessToken) {

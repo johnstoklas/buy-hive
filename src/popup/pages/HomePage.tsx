@@ -19,6 +19,7 @@ const HomePage = ({ popupLoading } : HomePageProps) => {
             <LoadingSpinner/>
         </div>
     )
+    
     return (
         <div className="flex flex-1 gap-2 w-full shrink-0">
             

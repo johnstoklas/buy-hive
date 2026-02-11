@@ -2,12 +2,12 @@ import type { Dispatch, SetStateAction } from "react";
 
 import { useCarts } from "@/popup/context/CartContext/useCart";
 import { useLocked } from "@/popup/context/LockedContext/useLocked";
-import { useAuth0 } from "@auth0/auth0-react";
 
 import type { CartType } from "@/types/CartType";
 
 import { sendChromeMessage } from "@/services/chromeService";
 import { useAlert } from "@/popup/context/AlertContext/useAlert";
+import { useAuth } from "@/popup/context/AuthContext/useAuth";
 
 interface useCartActionsProps {
     setIsEditing?: Dispatch<SetStateAction<boolean>>;
@@ -19,12 +19,11 @@ interface useCartActionsProps {
 
 export function useCartActions({ setIsEditing, closePopup, setPopupLoading, setCartName } : useCartActionsProps = {}) {
     const { carts, hydrateCartsUI, upsertCartUI, renameCartUI, deleteCartUI } = useCarts();
-    const { isLoading, isAuthenticated } = useAuth0();
+    const { isLoading, isAuthenticated } = useAuth();
     const { isLocked } = useLocked();
     const { notify } = useAlert();
     
     const getCarts = async() => {
-        if (isLoading || !isAuthenticated) return;
         setPopupLoading?.(true);
 
         try {

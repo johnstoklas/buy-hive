@@ -1,21 +1,11 @@
-import { useAuth0 } from '@auth0/auth0-react';
 import Button from '../../ui/button';
 
 const LoginSignupButtons = () => {
-    const { loginWithPopup } = useAuth0();
-
-    const AUTH0_AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
-    const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
-
     const handleLogin = () => {
-        loginWithPopup({
-            authorizationParams: {
-                audience: AUTH0_AUDIENCE,
-                scope: "openid profile email offline_access",
-                redirect_uri: `chrome-extension:${REDIRECT_URI}/popup.html`
-            }
-        })
-    }
+        chrome.tabs.create({
+            url: `${import.meta.env.VITE_WEBSITE}/login?source=extension`
+        });
+    };
 
     return (
         <div className="text-center flex flex-col gap-4">

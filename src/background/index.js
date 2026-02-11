@@ -1,8 +1,8 @@
 import { handleMessage } from "./router.js";
 
-console.log("Background script started");
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (sender.id !== chrome.runtime.id) return;
+
     handleMessage(message, sender, sendResponse);
     return true;
 });
