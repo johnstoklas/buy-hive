@@ -1,9 +1,10 @@
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import Cart from "../components/modules/cartModules/Cart";
 import { useCarts } from "../context/CartContext/useCart";
 import LoadingSpinner from "../components/ui/loadingUI/loadingSpinner";
+import { useLocked } from "../context/LockedContext/useLocked";
 
 interface HomePageProps {
     popupLoading: boolean;
@@ -13,16 +14,43 @@ interface HomePageProps {
 const HomePage = ({ popupLoading } : HomePageProps) => {
 
     const { carts } = useCarts();
+    const { isScrollLocked } = useLocked();
+
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const preventScroll = (e: Event) => {
+            e.preventDefault();
+        };
+
+        if (isScrollLocked) {
+            container.addEventListener("wheel", preventScroll, { passive: false });
+            container.addEventListener("touchmove", preventScroll, { passive: false });
+        } else {
+            container.removeEventListener("wheel", preventScroll);
+            container.removeEventListener("touchmove", preventScroll);
+        }
+
+        return () => {
+            container.removeEventListener("wheel", preventScroll);
+            container.removeEventListener("touchmove", preventScroll);
+        };
+    }, [isScrollLocked]);
 
     if (popupLoading) return (
         <div className="flex items-center justify-center w-full">
             <LoadingSpinner/>
         </div>
     )
-    
+
     return (
-        <div className="flex flex-1 gap-2 w-full shrink-0">
-            
+        <div 
+            className="flex flex-1 gap-2 w-full shrink-0"
+            ref={scrollContainerRef}
+        >
             {carts.length > 0 ? (
                 <div className="flex flex-col flex-1 gap-2 pt-2 w-full shrink-0">
                         {carts.map((cart) => (

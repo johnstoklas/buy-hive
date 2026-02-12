@@ -55,7 +55,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
             className="flex flex-row relative gap-2 justify-between py-2 px-3 w-full"
             ref={cartTitleRef}
         >
-            <div className="flex flex-row gap-2 items-center">
+            <div className="flex flex-row gap-2 items-center min-w-0">
                 <button
                     className={
                         `hover:cursor-pointer transition-transform duration-500 ease-in-out
@@ -78,7 +78,7 @@ const CartTitle = ({cart, isExpanded, setIsExpanded, isLocked, setIsCartLoading}
                         onKeyDown={(e) => onEnter(e, () => submitEditing())}
                     />
                 ) : (
-                    <h4 className="px-2 py-1" onDoubleClick={startEditing}>
+                    <h4 className="px-2 py-1 truncate" onDoubleClick={startEditing}>
                         {cartTitle}
                     </h4>
                 )}

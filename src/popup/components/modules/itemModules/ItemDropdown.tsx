@@ -100,6 +100,7 @@ const ItemDropdown = ({
                 dropdownRef={itemDropdownRef}
                 dropdownPosition={itemDropdownPosition}
                 className="!mx-0"
+                anchorRef={itemDropdownButtonRef}
             />
         </>
     );

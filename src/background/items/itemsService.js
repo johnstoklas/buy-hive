@@ -93,7 +93,7 @@ export async function handleEditItem(message, sender, sendResponse) {
         sendResponse({ status: "error", message: "User must be signed in" });
         return;
     }
-    if (!notes || !itemId) {
+    if (notes === null|| !itemId) {
         sendResponse({ status: "error", message: "Invalid payload" });
         return;
     }
