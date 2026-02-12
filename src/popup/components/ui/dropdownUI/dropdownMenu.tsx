@@ -33,20 +33,26 @@ export function DropdownMenu({
 
         const rect = anchorRef.current.getBoundingClientRect();
 
-        setPosition({
-            top: rect.bottom + window.scrollY,
-            left: rect.right - 80 + window.scrollX,
-        });
+        const dropdownHeight = 100; 
+        const spaceBelow = window.innerHeight - rect.bottom;
+
+        const shouldRenderAbove = spaceBelow < dropdownHeight;
+
+        const top = shouldRenderAbove
+            ? rect.top - dropdownHeight + 10 + window.scrollY
+            : rect.bottom + window.scrollY;
+
+        const left = rect.right - 80 + window.scrollX;
+
+        setPosition({ top, left });
     }, [anchorRef, hidden]);
 
     return createPortal(
         <div
             ref={dropdownRef}
             className={`flex flex-col w-fit z-50 mr-3 right-0 absolute gap-1 rounded-md bg-[var(--secondary-background)] shadow-bottom
-                ${dropdownPosition === "above" ? "bottom-full mb-1" : "top-full mt-1"}
                 ${hidden ? "hidden" : ""}
                 ${className ?? ""}
-                
             `}
             style={{
                 top: position?.top,
