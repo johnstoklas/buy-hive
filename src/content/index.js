@@ -13,6 +13,7 @@ import { extractPacsunProduct } from './extractors/pacsun.js';
 import { extractAeropostaleProduct } from './extractors/aeropostale.js';
 import { extractGenericProduct } from './extractors/generic.js';
 import { extractProductWithGPT } from './extractors/gpt.js';
+import { injectCircle } from "./add-item-button.js";
 
 // Set up message listener IMMEDIATELY after imports
 // This ensures it's registered as soon as the module loads
@@ -29,6 +30,8 @@ const ALLOWED_ORIGINS = [
   "https://www.buyhive.dev",
   "http://localhost:5173",
 ];
+
+injectCircle();
 
 window.addEventListener("message", (event) => {
   if (event.source !== window) return;

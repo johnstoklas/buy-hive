@@ -52,12 +52,19 @@ const ItemUI = ({
                     className='flex flex-row gap-1 relative min-w-0'
                 >
                     {item.name && item.price ? (
-                        <ItemHeader
-                            item={item}
-                            setItem={setItem}
-                            itemHeaderRef={ref}
-                            isForm={isForm}
-                        />
+                        isForm && setItem ? (
+                            <ItemHeader
+                                item={item}
+                                setItem={setItem}
+                                itemHeaderRef={ref}
+                                isForm={isForm}
+                            />
+                        ) : (
+                            <ItemHeader
+                                item={item}
+                                itemHeaderRef={ref}
+                            />
+                        )
                     ) : (
                         <div className="flex flex-1 flex-col gap-1">
                             <LoadingBar 
