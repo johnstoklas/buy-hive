@@ -22,7 +22,6 @@ export function DropdownMenu({
     actions,
     hidden = false,
     dropdownRef,
-    dropdownPosition,
     className,
     anchorRef,
 }: DropdownMenuProps) {
