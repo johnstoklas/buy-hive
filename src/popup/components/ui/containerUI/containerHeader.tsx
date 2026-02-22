@@ -7,18 +7,21 @@ interface ContainerHeaderProps {
 }
 
 const ContainerHeader = ({ titleText, className, closeButtonProps } : ContainerHeaderProps ) => {
+  
     return (
-      <div className={`flex items-center ${className ?? ""}`}>
-        {titleText && <p className="font-semibold">
-          {titleText}
-        </p>}
-        <p 
-          {...closeButtonProps}
-          className="ml-auto hover:cursor-pointer hover:font-bold" 
-        >
-          &#10005; 
-        </p>
-    </div>
+        <div className={`flex items-center ${className ?? ""}`}>
+            {titleText && 
+                <p className="font-semibold">
+                    {titleText}
+                </p>
+            }
+            <p 
+                {...closeButtonProps}
+                className="ml-auto hover:cursor-pointer hover:font-bold" 
+            >
+                &#10005; 
+            </p>
+        </div>
     );
 }
 

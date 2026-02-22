@@ -66,6 +66,7 @@ const AddItemModal = ({
                     />
                     <ItemUI
                         item={scrapedItem}
+                        setItem={setScrapedItem}
                         isClickable={false}
                         noteSlot= {
                             <ItemNoteEditing
@@ -77,6 +78,7 @@ const AddItemModal = ({
                                 onKeyDown={() => {}}
                             />
                         }
+                        isForm={true}
                     />
                     <List
                         item={scrapedItem}

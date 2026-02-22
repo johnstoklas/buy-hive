@@ -3,22 +3,26 @@ import type { ItemType, ScrapedItemType } from "@/types/ItemTypes";
 import ItemImage from "./itemImage";
 import ItemHeader from "./itemHeader";
 import LoadingBar from "../loadingUI/loadingBar";
-import type { ReactNode, RefObject } from "react";
+import type { ReactNode, RefObject, SetStateAction } from "react";
 
 type ItemUIProps = {
     item: ItemType | ScrapedItemType;
+    setItem?: React.Dispatch<SetStateAction<ScrapedItemType>>;
     ref?: RefObject<HTMLDivElement | null>;
     isClickable?: boolean;
     rightSlot?: ReactNode;
     noteSlot?: ReactNode;
+    isForm?: boolean;
 };
 
 const ItemUI = ({
     item, 
+    setItem,
     ref,
     isClickable, 
     rightSlot,
-    noteSlot
+    noteSlot,
+    isForm,
 } : ItemUIProps) => {
 
     const { isLocked } = useLocked();
@@ -50,7 +54,9 @@ const ItemUI = ({
                     {item.name && item.price ? (
                         <ItemHeader
                             item={item}
+                            setItem={setItem}
                             itemHeaderRef={ref}
+                            isForm={isForm}
                         />
                     ) : (
                         <div className="flex flex-1 flex-col gap-1">
