@@ -11,7 +11,7 @@ interface CartDropdownProps {
     cart: CartType;
     cartDropdownVisible: boolean;
     setCartDropdownVisible: Dispatch<SetStateAction<boolean>>;
-    cartDropdownButtonRef: React.RefObject<HTMLElement | null>;
+    cartDropdownButtonRef: React.RefObject<HTMLButtonElement | null>;
     startEditing: () => void;
     parentRef: RefObject<HTMLInputElement | null>;
 }
@@ -91,6 +91,7 @@ const CartDropdown = ({
                 hidden={cartDropdownHidden}
                 dropdownRef={cartDropdownRef}
                 dropdownPosition={cartDropdownPosition}
+                anchorRef={cartDropdownButtonRef}
             />
         </>
     );

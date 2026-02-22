@@ -1,4 +1,4 @@
-import type { Dispatch, RefObject, SetStateAction } from "react";
+import { useEffect, type Dispatch, type RefObject, type SetStateAction } from "react";
 import { useLocked } from "../../../context/LockedContext/useLocked";
 
 interface DropdownButtonProps {
@@ -12,11 +12,20 @@ const DropdownButton = ({
     setDropdownVisible,
     buttonRef
 } : DropdownButtonProps) => {
-    const { isLocked } = useLocked();
+    const { isLocked, setIsScrollLocked } = useLocked();
+
+    useEffect(() => {
+        setIsScrollLocked(dropdownVisible);
+    }, [dropdownVisible]);
+
+    useEffect(() => {
+        console.log(isLocked)
+    }, [isLocked])
+
     return (
         <button 
             className={`
-                text-base z-40 w-6 h-6 rounded-full hover:cursor-pointer hover:bg-[var(--secondary-background-hover)] shrink-0
+                text-base w-6 h-6 rounded-full hover:cursor-pointer hover:bg-[var(--secondary-background-hover)] shrink-0
                 ${isLocked ? "disabled-hover-modify" : ""}`
             } 
             onClick={() => setDropdownVisible(!dropdownVisible)}

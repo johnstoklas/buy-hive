@@ -9,6 +9,7 @@ import DropdownButton from '@/popup/components/ui/dropdownUI/dropdownButton';
 import ItemNoteEditing from '@/popup/components/ui/itemUI/itemNoteUI/itemNoteEditing';
 import ItemNoteStatic from '@/popup/components/ui/itemUI/itemNoteUI/ItemNoteStatic';
 import ItemDropdown from './ItemDropdown';
+import ModalPortal from '../../ui/ModalPortal';
 
 interface ItemProp {
     cart: CartType;
@@ -72,8 +73,7 @@ const Item = ({ cart, item } : ItemProp) => {
     };
 
     const handleSubmit = () => {
-        if (itemNote.trim() === prevNoteRef.current.trim()) return;
-        editItem(itemNote, itemId);
+        if (itemNote.trim() !== prevNoteRef.current.trim()) editItem(itemNote, itemId);
         setIsEditing(false);
     }
 
@@ -90,15 +90,17 @@ const Item = ({ cart, item } : ItemProp) => {
                             setDropdownVisible={setItemDropdownVisible}
                             buttonRef={itemDropdownButtonRef}
                         />
-                        {itemDropdownVisible && <ItemDropdown 
-                            cart={cart}
-                            item={item}
-                            itemDropdownVisible={itemDropdownVisible}
-                            setItemDropdownVisible={setItemDropdownVisible}
-                            itemDropdownButtonRef={itemDropdownButtonRef}
-                            handleItemNoteSelect={handleItemNoteSelect}
-                            parentRef={itemHeaderRef}
-                        />}
+                        {itemDropdownVisible && 
+                            <ItemDropdown 
+                                cart={cart}
+                                item={item}
+                                itemDropdownVisible={itemDropdownVisible}
+                                setItemDropdownVisible={setItemDropdownVisible}
+                                itemDropdownButtonRef={itemDropdownButtonRef}
+                                handleItemNoteSelect={handleItemNoteSelect}
+                                parentRef={itemHeaderRef}
+                            />
+                        }
                     </>
                 }
                 noteSlot={
