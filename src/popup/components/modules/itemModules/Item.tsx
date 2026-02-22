@@ -9,7 +9,6 @@ import DropdownButton from '@/popup/components/ui/dropdownUI/dropdownButton';
 import ItemNoteEditing from '@/popup/components/ui/itemUI/itemNoteUI/itemNoteEditing';
 import ItemNoteStatic from '@/popup/components/ui/itemUI/itemNoteUI/ItemNoteStatic';
 import ItemDropdown from './ItemDropdown';
-import ModalPortal from '../../ui/ModalPortal';
 
 interface ItemProp {
     cart: CartType;
